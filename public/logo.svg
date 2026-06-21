@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 218 64" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-labelledby="title desc">
   <title id="title">QRWing</title>
   <desc id="desc">A scannable QR code for https://qrwing.vercel.app/ beside the QRWing wordmark.</desc>
   <defs>
-    <linearGradient id="qrwingAccent" x1="82" y1="12" x2="194" y2="46" gradientUnits="userSpaceOnUse">
+    <linearGradient id="qrwingAccent" x1="82" y1="12" x2="216" y2="46" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#4c1d95"/>
       <stop offset="0.55" stop-color="#7c3aed"/>
       <stop offset="1" stop-color="#a78bfa"/>
@@ -26,6 +26,6 @@
     <text x="76" y="42" class="word-main" font-size="38" font-weight="950" paint-order="stroke" stroke="#ffffff" stroke-width="0.65">QR</text>
     <text x="130" y="42" class="word-accent" font-size="38" font-weight="820">Wing</text>
   </g>
-  <path d="M131 51h58" stroke="#7c3aed" stroke-width="3" stroke-linecap="round" opacity="0.24"/>
+  <path d="M131 51h66" stroke="#7c3aed" stroke-width="3" stroke-linecap="round" opacity="0.24"/>
 </svg>
 
