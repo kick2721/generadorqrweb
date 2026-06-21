@@ -62,6 +62,34 @@ export default function QRGenerator() {
     }
   }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl]);
 
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const maxDim = 1200;
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          const ratio = Math.min(maxDim / width, maxDim / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((b) => {
+          if (b) resolve(b);
+          else reject(new Error("Compression failed"));
+        }, "image/jpeg", 0.8);
+      };
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = url;
+    });
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -69,8 +97,9 @@ export default function QRGenerator() {
     setImageError("");
     setImageUploadedUrl("");
     try {
+      const compressed = await compressImage(file);
       const form = new FormData();
-      form.append("file", file);
+      form.append("file", compressed, "qr-image.jpg");
       const res = await fetch("/api/upload", { method: "POST", body: form });
       if (!res.ok) throw new Error(`Error ${res.status}`);
       const data = await res.json();
