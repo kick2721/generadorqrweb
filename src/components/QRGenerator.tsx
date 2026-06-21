@@ -52,7 +52,7 @@ export default function QRGenerator() {
       case "vcard":
         return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
       case "email":
-        return `MATMSG:TO:${emailAddr};SUB:${emailSubject};BODY:${emailBody};;`;
+        return `https://qrwing.vercel.app/mail?to=${encodeURIComponent(emailAddr)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       case "image":
         return imageUrl;
       default:
