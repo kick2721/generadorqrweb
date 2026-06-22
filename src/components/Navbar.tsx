@@ -32,7 +32,7 @@ export default function Navbar() {
           </Link>
           {session?.user && (
             <Link href="/dashboard" className="hover:text-purple-600 transition-colors">
-              Dashboard
+              {t("dashboardTitle")}
             </Link>
           )}
           <LangSwitcher />
@@ -56,10 +56,10 @@ export default function Navbar() {
                     {session.user.email}
                   </div>
                   <Link href="/dashboard" onClick={() => setUserMenu(false)} className="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800">
-                    Dashboard
+                    {t("dashboardTitle")}
                   </Link>
                   <button onClick={() => signOut()} className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-50 dark:hover:bg-gray-800">
-                    Cerrar sesión
+                    {t("signOut")}
                   </button>
                 </div>
               )}
@@ -94,15 +94,15 @@ export default function Navbar() {
             {t("navPricing")}
           </Link>
           <button onClick={toggle} className="text-left hover:text-purple-600">
-            {theme === "dark" ? "☀️ Modo claro" : "🌙 Modo oscuro"}
+            {theme === "dark" ? t("themeLight") : t("themeDark")}
           </button>
           {session?.user ? (
             <>
               <Link href="/dashboard" onClick={() => setOpen(false)} className="hover:text-purple-600">
-                Dashboard
+                {t("dashboardTitle")}
               </Link>
               <button onClick={() => signOut()} className="text-left text-red-600 hover:text-red-700">
-                Cerrar sesión
+                {t("signOut")}
               </button>
             </>
           ) : (

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import QRCode from "qrcode";
+import { useLang } from "@/context/LangContext";
 
 interface QRCodeData {
   id: string;
@@ -25,6 +26,7 @@ interface ScanStats {
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
+  const { t } = useLang();
   const router = useRouter();
   const [qrcodes, setQrcodes] = useState<QRCodeData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,38 +102,38 @@ export default function Dashboard() {
     <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t("dashboardTitle")}</h1>
           <p className="text-gray-500 text-sm mt-1">{session?.user?.name} — {session?.user?.email}</p>
         </div>
-        <Link href="/" className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors">+ Nuevo QR</Link>
+        <Link href="/" className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors">{t("dashboardNewQR")}</Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
-          <p className="text-sm text-gray-400">QR Creados</p>
+          <p className="text-sm text-gray-400">{t("dashboardCreated")}</p>
           <p className="text-3xl font-bold mt-1">{qrcodes.length}</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
-          <p className="text-sm text-gray-400">Escaneos totales</p>
+          <p className="text-sm text-gray-400">{t("dashboardScans")}</p>
           <p className="text-3xl font-bold mt-1">{totalScans}</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
-          <p className="text-sm text-gray-400">Plan actual</p>
-          <p className="text-lg font-bold mt-1 text-purple-600">Gratuito</p>
+          <p className="text-sm text-gray-400">{t("dashboardPlan")}</p>
+          <p className="text-lg font-bold mt-1 text-purple-600">{t("dashboardFree")}</p>
         </div>
       </div>
 
       {qrcodes.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-12 text-center">
           <p className="text-4xl mb-4">🪄</p>
-          <h2 className="text-xl font-semibold mb-2">Todavía no tienes QR</h2>
-          <p className="text-gray-500 mb-6">Crea tu primer código QR desde la página principal</p>
-          <Link href="/" className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">Crear QR gratis</Link>
+          <h2 className="text-xl font-semibold mb-2">{t("dashboardEmpty")}</h2>
+          <p className="text-gray-500 mb-6">{t("dashboardEmptyDesc")}</p>
+          <Link href="/" className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">{t("dashboardCreateFirst")}</Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className={`${selectedQR ? "lg:col-span-2" : "lg:col-span-3"} space-y-4`}>
-            <h2 className="text-lg font-semibold">Mis QR</h2>
+            <h2 className="text-lg font-semibold">{t("dashboardMyQRs")}</h2>
             {qrcodes.map(qr => (
               <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => viewStats(qr.id)}>
                 <div className="flex items-center gap-4">
@@ -144,7 +146,7 @@ export default function Dashboard() {
                     <p className="font-medium truncate">{qr.label || qr.content}</p>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
                       <span>{typeIcon(qr.type)} {typeLabel(qr.type)}</span>
-                      <span>👁 {qr.scan_count} escaneos</span>
+                      <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>
                       <span>{new Date(qr.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
@@ -156,7 +158,7 @@ export default function Dashboard() {
                         <span className="text-gray-300 dark:text-gray-700">|</span>
                       </>
                     )}
-                    <button onClick={e => { e.stopPropagation(); confirmDelete(qr.id); }} className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Eliminar</button>
+                    <button onClick={e => { e.stopPropagation(); confirmDelete(qr.id); }} className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">{t("dashboardDelete")}</button>
                   </div>
                 </div>
               </div>
@@ -166,16 +168,16 @@ export default function Dashboard() {
           {selectedQR && stats && (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-5">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Estadísticas</h3>
+                <h3 className="font-semibold">{t("dashboardStats")}</h3>
                 <button onClick={() => { setSelectedQR(null); setStats(null); }} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
               </div>
               <div className="text-center">
                 <p className="text-4xl font-bold text-purple-600">{stats.total}</p>
-                <p className="text-sm text-gray-400">escaneos totales</p>
+                <p className="text-sm text-gray-400">{t("dashboardTotalScans")}</p>
               </div>
               {stats.daily.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Últimos 30 días</p>
+                  <p className="text-sm font-medium mb-2">{t("dashboardLast30")}</p>
                   <div className="flex items-end gap-1 h-20">
                     {stats.daily.slice(0, 14).reverse().map(d => {
                       const max = Math.max(...stats.daily.map(x => x.count), 1);
@@ -192,12 +194,12 @@ export default function Dashboard() {
               )}
               {stats.recent.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Escaneos recientes</p>
+                  <p className="text-sm font-medium mb-2">{t("dashboardRecent")}</p>
                   <div className="space-y-2 max-h-48 overflow-y-auto text-xs">
                     {stats.recent.map((s, i) => (
                       <div key={i} className="flex items-center gap-2 text-gray-400 pb-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <span className="text-gray-600 dark:text-gray-300 w-16 flex-shrink-0">{new Date(s.scanned_at).toLocaleDateString()}</span>
-                        <span className="truncate flex-1">{s.referrer ? new URL(s.referrer).hostname : "directo"}</span>
+                        <span className="truncate flex-1">{s.referrer ? new URL(s.referrer).hostname : t("dashboardDirect")}</span>
                       </div>
                     ))}
                   </div>
@@ -210,14 +212,14 @@ export default function Dashboard() {
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold mb-2">Eliminar QR</h3>
-            <p className="text-sm text-gray-500 mb-6">¿Estás seguro? Esta acción no se puede deshacer y los escaneos asociados también se eliminarán.</p>
+            <h3 className="text-lg font-semibold mb-2">{t("dashboardConfirmTitle")}</h3>
+            <p className="text-sm text-gray-500 mb-6">{t("dashboardConfirmDesc")}</p>
             <div className="flex gap-3 justify-end">
               <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                Cancelar
+                {t("dashboardCancel")}
               </button>
               <button onClick={deleteQR} className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors">
-                Eliminar
+                {t("dashboardConfirmDelete")}
               </button>
             </div>
           </div>

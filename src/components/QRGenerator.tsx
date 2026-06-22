@@ -567,7 +567,7 @@ export default function QRGenerator() {
                   disabled={saving}
                   className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
                 >
-                  {saving ? "Guardando..." : saved ? "✅ Guardado" : "Guardar"}
+                  {saving ? t("saving") : saved ? t("saved") : t("save")}
                 </button>
               )}
             </div>
