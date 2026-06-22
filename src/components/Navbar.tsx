@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useLang } from "@/context/LangContext";
+import { useTheme } from "./ThemeProvider";
 import LangSwitcher from "./LangSwitcher";
 
 export default function Navbar() {
@@ -12,6 +13,7 @@ export default function Navbar() {
   const [userMenu, setUserMenu] = useState(false);
   const { data: session } = useSession();
   const { t } = useLang();
+  const { theme, toggle } = useTheme();
 
   return (
     <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-50">
@@ -33,6 +35,9 @@ export default function Navbar() {
             </Link>
           )}
           <LangSwitcher />
+          <button onClick={toggle} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-lg" aria-label="Toggle theme">
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
           {session?.user ? (
             <div className="relative">
               <button onClick={() => setUserMenu(!userMenu)} className="flex items-center gap-2 hover:opacity-80">
@@ -87,6 +92,9 @@ export default function Navbar() {
           <Link href="/pricing" onClick={() => setOpen(false)} className="hover:text-purple-600">
             {t("navPricing")}
           </Link>
+          <button onClick={toggle} className="text-left hover:text-purple-600">
+            {theme === "dark" ? "☀️ Modo claro" : "🌙 Modo oscuro"}
+          </button>
           {session?.user ? (
             <>
               <Link href="/dashboard" onClick={() => setOpen(false)} className="hover:text-purple-600">

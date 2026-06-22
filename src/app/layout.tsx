@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LangProvider } from "@/context/LangContext";
 import SessionProvider from "@/components/SessionProvider";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html className={`${geistSans.variable} ${geistMono.variable} dark`} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col antialiased">
+        <ThemeProvider>
         <SessionProvider>
           <LangProvider>
             <Navbar />
@@ -37,6 +39,7 @@ export default function RootLayout({
             <Footer />
           </LangProvider>
         </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
