@@ -1,15 +1,21 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, Suspense, useEffect } from "react";
 
 function SignInForm() {
+  const { data: session } = useSession();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [providers, setProviders] = useState<Record<string,any>>({});
+
+  useEffect(() => {
+    if (session) router.push("/");
+  }, [session, router]);
 
   useEffect(() => {
     fetch("/api/auth/providers").then((r) => r.json()).then((p) => {

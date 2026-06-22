@@ -3,6 +3,13 @@ import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Discord from "next-auth/providers/discord";
 import Nodemailer from "next-auth/providers/nodemailer";
+import { Pool } from "pg";
+import PostgresAdapter from "@auth/pg-adapter";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
 const providerList = [
   Google,
@@ -23,13 +30,15 @@ const providerList = [
 ];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: PostgresAdapter(pool),
   providers: providerList,
   session: { strategy: "jwt" },
   pages: { signIn: "/auth/signin" },
   trustHost: true,
   callbacks: {
-    async session({ session, token }) {
-      if (token.sub) session.user.id = token.sub;
+    async session({ session, token, user }) {
+      if (user?.id) session.user.id = user.id;
+      else if (token?.sub) session.user.id = token.sub;
       return session;
     },
   },
