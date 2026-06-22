@@ -30,6 +30,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedQR, setSelectedQR] = useState<string | null>(null);
   const [stats, setStats] = useState<ScanStats | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -37,11 +38,16 @@ export default function Dashboard() {
     fetch("/api/qrcodes").then(r => r.json()).then(d => { setQrcodes(d); setLoading(false); });
   }, [status, router]);
 
-  async function deleteQR(id: string) {
-    if (!confirm("¿Eliminar este QR?")) return;
-    await fetch(`/api/qrcodes/${id}`, { method: "DELETE" });
-    setQrcodes(prev => prev.filter(q => q.id !== id));
-    if (selectedQR === id) { setSelectedQR(null); setStats(null); }
+  function confirmDelete(id: string) {
+    setDeleteConfirm(id);
+  }
+
+  async function deleteQR() {
+    if (!deleteConfirm) return;
+    await fetch(`/api/qrcodes/${deleteConfirm}`, { method: "DELETE" });
+    setQrcodes(prev => prev.filter(q => q.id !== deleteConfirm));
+    if (selectedQR === deleteConfirm) { setSelectedQR(null); setStats(null); }
+    setDeleteConfirm(null);
   }
 
   async function viewStats(id: string) {
@@ -150,7 +156,7 @@ export default function Dashboard() {
                         <span className="text-gray-300 dark:text-gray-700">|</span>
                       </>
                     )}
-                    <button onClick={e => { e.stopPropagation(); deleteQR(qr.id); }} className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Eliminar</button>
+                    <button onClick={e => { e.stopPropagation(); confirmDelete(qr.id); }} className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -199,6 +205,22 @@ export default function Dashboard() {
               )}
             </div>
           )}
+        </div>
+      )}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold mb-2">Eliminar QR</h3>
+            <p className="text-sm text-gray-500 mb-6">¿Estás seguro? Esta acción no se puede deshacer y los escaneos asociados también se eliminarán.</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                Cancelar
+              </button>
+              <button onClick={deleteQR} className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors">
+                Eliminar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
