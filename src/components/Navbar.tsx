@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useLang } from "@/context/LangContext";
 import { useTheme } from "./ThemeProvider";
+import { useRouter } from "next/navigation";
 import Logo from "./Logo";
 import LangSwitcher from "./LangSwitcher";
 
@@ -16,10 +17,11 @@ export default function Navbar() {
   const { data: session } = useSession();
   const { t } = useLang();
   const { theme, toggle } = useTheme();
+  const router = useRouter();
 
   function handleSignIn() {
     setSigningIn(true);
-    requestAnimationFrame(() => signIn());
+    requestAnimationFrame(() => router.push("/auth/signin"));
   }
 
   return (
