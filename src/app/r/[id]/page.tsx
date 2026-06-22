@@ -23,9 +23,5 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   } catch {}
 
   const dest = qr.redirect_to;
-  if (qr.type === "email") {
-    redirect(`/mail?to=${encodeURIComponent(dest)}`);
-  } else {
-    redirect(dest.startsWith("http") ? dest : `https://${dest}`);
-  }
+  redirect(dest.startsWith("http") ? dest : `https://${dest}`);
 }
