@@ -59,7 +59,7 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <button onClick={() => signIn("google")} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+            <button onClick={() => signIn()} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
               {t("navLogin")}
             </button>
           )}
@@ -97,7 +97,7 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <button onClick={() => signIn("google")} className="text-left hover:text-purple-600">
+            <button onClick={() => signIn()} className="text-left hover:text-purple-600">
               {t("navLogin")}
             </button>
           )}
