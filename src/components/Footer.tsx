@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useLang } from "@/context/LangContext";
+import Logo from "./Logo";
 
 export default function Footer() {
   const { t } = useLang();
@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="border-t border-gray-200 dark:border-gray-800 py-8 mt-12">
       <div className="max-w-6xl mx-auto px-4 text-center text-sm text-gray-500">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Image src="/logo.svg?v=4" alt="QRWing" width={240} height={64} className="h-9 w-auto" />
+          <Logo />
         </div>
         <p>{t("footerDesc")}</p>
         <p className="mt-3 text-xs">{t("footerLegal")}</p>

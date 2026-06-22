@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useLang } from "@/context/LangContext";
 import { useTheme } from "./ThemeProvider";
+import Logo from "./Logo";
 import LangSwitcher from "./LangSwitcher";
 
 export default function Navbar() {
@@ -19,7 +20,7 @@ export default function Navbar() {
     <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.svg?v=4" alt="QRWing" width={240} height={64} className="h-12 w-auto" priority />
+          <Logo />
         </Link>
 
         <div className="hidden sm:flex items-center gap-6 text-sm font-medium">
