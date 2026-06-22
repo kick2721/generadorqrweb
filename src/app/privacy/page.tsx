@@ -54,7 +54,7 @@ export default function PrivacyPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">7. Contact</h2>
-          <p>For any privacy-related inquiries, contact us at: <a href="mailto:kick02721@gmail.com" className="text-purple-600 hover:underline">kick02721@gmail.com</a></p>
+          <p>For any privacy-related inquiries, contact us at: <a href="mailto:qrwing.app@gmail.com" className="text-purple-600 hover:underline">qrwing.app@gmail.com</a></p>
         </div>
       </section>
     </main>

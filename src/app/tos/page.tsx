@@ -52,7 +52,7 @@ export default function TosPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">8. Contact</h2>
-          <p>For questions about these terms: <a href="mailto:kick02721@gmail.com" className="text-purple-600 hover:underline">kick02721@gmail.com</a></p>
+          <p>For questions about these terms: <a href="mailto:qrwing.app@gmail.com" className="text-purple-600 hover:underline">qrwing.app@gmail.com</a></p>
         </div>
       </section>
     </main>
