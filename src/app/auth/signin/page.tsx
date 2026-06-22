@@ -2,13 +2,20 @@
 
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 
 function SignInForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
+  const [hasEmail, setHasEmail] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/providers").then((r) => r.json()).then((p) => {
+      if (p?.nodemailer) setHasEmail(true);
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
@@ -35,44 +42,48 @@ function SignInForm() {
           <span className="font-medium">Continuar con Google</span>
         </button>
 
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-700" />
-          </div>
-          <div className="relative flex justify-center text-xs">
-            <span className="bg-white dark:bg-black px-3 text-gray-400">o con email</span>
-          </div>
-        </div>
+        {hasEmail && (
+          <>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-700" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white dark:bg-black px-3 text-gray-400">o con email</span>
+              </div>
+            </div>
 
-        {emailSent ? (
-          <div className="text-center py-8">
-            <p className="text-green-600 font-medium mb-2">📧 Revisa tu correo</p>
-            <p className="text-sm text-gray-500">Te enviamos un link mágico a <strong>{email}</strong></p>
-          </div>
-        ) : (
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              await signIn("nodemailer", { email, redirect: false });
-              setEmailSent(true);
-            }}
-            className="space-y-3"
-          >
-            <input
-              type="email"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none"
-            />
-            <button
-              type="submit"
-              className="w-full px-5 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors"
-            >
-              Enviar link mágico
-            </button>
-          </form>
+            {emailSent ? (
+              <div className="text-center py-8">
+                <p className="text-green-600 font-medium mb-2">📧 Revisa tu correo</p>
+                <p className="text-sm text-gray-500">Te enviamos un link mágico a <strong>{email}</strong></p>
+              </div>
+            ) : (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  await signIn("nodemailer", { email, redirect: false });
+                  setEmailSent(true);
+                }}
+                className="space-y-3"
+              >
+                <input
+                  type="email"
+                  placeholder="tu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none"
+                />
+                <button
+                  type="submit"
+                  className="w-full px-5 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors"
+                >
+                  Enviar link mágico
+                </button>
+              </form>
+            )}
+          </>
         )}
 
         <p className="text-xs text-gray-400 text-center mt-6">
