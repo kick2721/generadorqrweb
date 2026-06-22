@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLang } from "@/context/LangContext";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image";
@@ -20,6 +21,9 @@ import type { TranslationKey } from "@/lib/i18n";
 
 export default function QRGenerator() {
   const { t } = useLang();
+  const { data: session } = useSession();
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [qrType, setQrType] = useState<QrType>("url");
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
@@ -197,6 +201,27 @@ export default function QRGenerator() {
         downloadQR("png");
       }
     });
+  };
+
+  const saveQR = async () => {
+    if (!session?.user) return;
+    setSaving(true);
+    try {
+      await fetch("/api/qrcodes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: qrType,
+          content: val,
+          label: val.slice(0, 60),
+          config: { fgColor, bgColor, size, logo },
+        }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const val = qrValue();
@@ -513,6 +538,15 @@ export default function QRGenerator() {
               >
                 {copied ? t("copied") : t("copy")}
               </button>
+              {session?.user && (
+                <button
+                  onClick={saveQR}
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                >
+                  {saving ? "Guardando..." : saved ? "✅ Guardado" : "Guardar"}
+                </button>
+              )}
             </div>
           )}
 
