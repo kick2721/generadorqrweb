@@ -8,11 +8,13 @@ import { QRCodeSVG } from "qrcode.react";
 import QRCode from "qrcode";
 import { useLang } from "@/context/LangContext";
 import { FREE_MAX_QR } from "@/lib/constants";
+import EditModal from "@/components/EditModal";
 
 interface QRCodeData {
   id: string;
   type: string;
   content: string;
+  redirect_to: string;
   label: string;
   config: any;
   scan_count: number;
@@ -38,6 +40,7 @@ export default function Dashboard() {
   const [qrCount, setQrCount] = useState(0);
   const [qrLimit, setQrLimit] = useState(FREE_MAX_QR);
   const [statsBlocked, setStatsBlocked] = useState(false);
+  const [editQR, setEditQR] = useState<QRCodeData | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -196,6 +199,7 @@ export default function Dashboard() {
                         <span className="text-gray-300 dark:text-gray-700">|</span>
                       </>
                     )}
+                    {plan === "pro" && <button onClick={e => { e.stopPropagation(); setEditQR(qr); }} className="text-blue-400 hover:text-blue-600 text-sm px-2 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition duration-75 active:scale-[0.9]">✏️ {t("editQR")}</button>}
                     <button onClick={e => { e.stopPropagation(); confirmDelete(qr.id); }} className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition duration-75 active:scale-[0.9]">{t("dashboardDelete")}</button>
                   </div>
                 </div>
@@ -304,6 +308,7 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+      {editQR && <EditModal qr={editQR} onClose={() => setEditQR(null)} onSaved={() => { setEditQR(null); window.location.reload(); }} />}
     </div>
   );
 }
