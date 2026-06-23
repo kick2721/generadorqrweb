@@ -184,7 +184,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{qr.label || qr.content}</p>
+                    <p className="font-medium truncate">{qr.label || qr.redirect_to || qr.content}</p>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
                       <span>{typeIcon(qr.type)} {typeLabel(qr.type)}</span>
                       <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>

@@ -37,17 +37,17 @@ export async function POST(req: Request) {
 
   const rows = await query(
     `INSERT INTO public.qrcodes (user_id, type, content, label, config, redirect_to) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [session.user.id, type, content, label || "", JSON.stringify(config || {}), plan === "pro" ? actualContent : ""]
+    [session.user.id, type, content, label || "", JSON.stringify(config || {}), actualContent]
   );
 
   const qr = rows[0];
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
+  const redirectUrl = `${baseUrl}/r/${qr.id}`;
+  await query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
 
   if (plan === "pro") {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
-    const redirectUrl = `${baseUrl}/r/${qr.id}`;
-    await query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
     return NextResponse.json({ ...qr, content: redirectUrl, redirect_to: actualContent }, { status: 201 });
   }
 
-  return NextResponse.json({ ...qr, content: actualContent, redirect_to: null }, { status: 201 });
+  return NextResponse.json({ ...qr, content: redirectUrl, redirect_to: actualContent }, { status: 201 });
 }
