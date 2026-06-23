@@ -7,6 +7,7 @@ import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import QRCode from "qrcode";
 import { useLang } from "@/context/LangContext";
+import { FREE_MAX_QR } from "@/lib/constants";
 
 interface QRCodeData {
   id: string;
@@ -33,11 +34,21 @@ export default function Dashboard() {
   const [selectedQR, setSelectedQR] = useState<string | null>(null);
   const [stats, setStats] = useState<ScanStats | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [plan, setPlan] = useState("free");
+  const [qrCount, setQrCount] = useState(0);
+  const [qrLimit, setQrLimit] = useState(FREE_MAX_QR);
+  const [statsBlocked, setStatsBlocked] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
     if (status !== "authenticated") return;
-    fetch("/api/qrcodes").then(r => r.json()).then(d => { setQrcodes(d); setLoading(false); });
+    fetch("/api/qrcodes").then(r => r.json()).then(d => {
+      setQrcodes(d.qrcodes || []);
+      setPlan(d.plan || "free");
+      setQrCount(d.qrCount || 0);
+      setQrLimit(d.qrLimit || FREE_MAX_QR);
+      setLoading(false);
+    });
   }, [status, router]);
 
   function confirmDelete(id: string) {
@@ -48,12 +59,15 @@ export default function Dashboard() {
     if (!deleteConfirm) return;
     await fetch(`/api/qrcodes/${deleteConfirm}`, { method: "DELETE" });
     setQrcodes(prev => prev.filter(q => q.id !== deleteConfirm));
+    setQrCount(prev => Math.max(0, prev - 1));
     if (selectedQR === deleteConfirm) { setSelectedQR(null); setStats(null); }
     setDeleteConfirm(null);
   }
 
   async function viewStats(id: string) {
     setSelectedQR(id);
+    if (plan !== "pro") { setStatsBlocked(true); setStats(null); return; }
+    setStatsBlocked(false);
     const r = await fetch(`/api/qrcodes/${id}/scans`);
     setStats(await r.json());
   }
@@ -119,9 +133,32 @@ export default function Dashboard() {
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
           <p className="text-sm text-gray-400">{t("dashboardPlan")}</p>
-          <p className="text-lg font-bold mt-1 text-purple-600">{t("dashboardFree")}</p>
+          <p className={`text-lg font-bold mt-1 ${plan === "pro" ? "text-purple-600" : "text-gray-600 dark:text-gray-300"}`}>
+            {plan === "pro" ? t("planPro") : t("dashboardFree")}
+          </p>
+          {plan === "free" && (
+            <p className="text-xs text-gray-400 mt-1">{t("qrUsed").replace("{count}", String(qrCount)).replace("{limit}", String(qrLimit))}</p>
+          )}
         </div>
       </div>
+
+      {plan === "free" && (
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 rounded-2xl border border-purple-200 dark:border-purple-800 p-5 flex items-center justify-between flex-wrap gap-3">
+          <div className="flex-1 min-w-[200px]">
+            <p className="text-sm font-medium text-purple-800 dark:text-purple-200">
+              {qrCount >= qrLimit
+                ? t("qrLimitReached")
+                : t("qrRemaining").replace("{n}", String(qrLimit - qrCount))}
+            </p>
+            <div className="mt-2 h-2 bg-purple-200 dark:bg-purple-800 rounded-full overflow-hidden max-w-xs">
+              <div className="h-full bg-purple-600 rounded-full transition-all" style={{ width: `${Math.min(100, (qrCount / qrLimit) * 100)}%` }} />
+            </div>
+          </div>
+          <a href="/pricing" className="shrink-0 px-5 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">
+            {t("upgradeToPro")}
+          </a>
+        </div>
+      )}
 
       {qrcodes.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-12 text-center">
@@ -164,6 +201,47 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+
+          {selectedQR && statsBlocked && (
+            <div className="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-5 overflow-hidden">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">{t("dashboardStats")}</h3>
+                <button onClick={() => { setSelectedQR(null); setStats(null); setStatsBlocked(false); }} className="text-gray-400 hover:text-gray-600 text-sm transition duration-75 active:scale-[0.85]">✕</button>
+              </div>
+              <div className="text-center opacity-40">
+                <p className="text-4xl font-bold text-purple-600">—</p>
+                <p className="text-sm text-gray-400">{t("dashboardTotalScans")}</p>
+              </div>
+              <div className="opacity-40">
+                <p className="text-sm font-medium mb-2">{t("dashboardLast30")}</p>
+                <div className="flex items-end gap-1 h-20">
+                  {[3,5,2,7,4,6,3,8,5,4,6,2,5,3].map((h,i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <span className="text-[10px] text-gray-400">{h}</span>
+                      <div className="w-full bg-purple-200 dark:bg-purple-900/40 rounded-t" style={{ height: `${(h/8)*64}px` }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="opacity-40">
+                <p className="text-sm font-medium mb-2">{t("dashboardRecent")}</p>
+                <div className="space-y-2 text-xs">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="flex items-center gap-2 text-gray-400 pb-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                      <span className="text-gray-300 w-16 flex-shrink-0">—</span>
+                      <span className="truncate flex-1">—</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <a href="/pricing" className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-[2px] rounded-2xl cursor-pointer group">
+                <span className="text-3xl mb-2">🔒</span>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200 group-hover:text-purple-600 transition-colors">{t("statsPro")}</p>
+                <p className="text-sm text-gray-500 mt-1">{t("statsProDesc")}</p>
+                <span className="mt-3 px-5 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium group-hover:bg-purple-700 transition-colors">{t("upgradeToPro")}</span>
+              </a>
+            </div>
+          )}
 
           {selectedQR && stats && (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-5">

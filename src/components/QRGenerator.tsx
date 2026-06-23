@@ -18,12 +18,14 @@ const QR_TYPES: { value: QrType; key: TranslationKey; icon: string }[] = [
 ];
 
 import type { TranslationKey } from "@/lib/i18n";
+import { FREE_MAX_QR } from "@/lib/constants";
 
 export default function QRGenerator() {
   const { t } = useLang();
   const { data: session } = useSession();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [qrType, setQrType] = useState<QrType>("url");
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
@@ -150,7 +152,7 @@ export default function QRGenerator() {
       if (!data.url) throw new Error("No URL returned");
       setImageUploadedUrl(data.url);
     } catch (err) {
-      setImageError(err instanceof Error ? err.message : "Error al subir");
+      setImageError(err instanceof Error ? err.message : t("imageUploadError"));
     } finally {
       setImageUploading(false);
     }
@@ -206,8 +208,9 @@ export default function QRGenerator() {
   const saveQR = async () => {
     if (!session?.user) return;
     setSaving(true);
+    setSaveError("");
     try {
-      await fetch("/api/qrcodes", {
+      const r = await fetch("/api/qrcodes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -218,6 +221,10 @@ export default function QRGenerator() {
           config: { fgColor, bgColor, size, logo },
         }),
       });
+      if (r.status === 402) {
+        setSaveError("limit");
+        return;
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } finally {
@@ -356,12 +363,12 @@ export default function QRGenerator() {
               {trialEnd ? (
                 <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-lg text-xs font-medium">
                   <span>🕐</span>
-                  <span>Prueba gratis — quedan <strong>{trialTimeLeft}</strong></span>
+                  <span>{t("trialActive")} <strong>{trialTimeLeft}</strong></span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium">
                   <span>🎁</span>
-                  <span>Prueba gratis de <strong>24 horas</strong>. Al subir tu primera imagen, comienza el plazo.</span>
+                  <span>{t("trialPrompt")}</span>
                 </div>
               )}
 
@@ -382,14 +389,14 @@ export default function QRGenerator() {
                   {imageUploadedUrl ? (
                     <div className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-green-300 dark:border-green-700 rounded-xl bg-white dark:bg-gray-800">
                       <img src={imageUploadedUrl} alt="Uploaded preview" className="h-24 w-auto rounded-lg object-contain" />
-                      <span className="text-xs text-green-600 font-medium mt-1">¡Imagen subida!</span>
+                      <span className="text-xs text-green-600 font-medium mt-1">{t("imageUploaded")}</span>
                     </div>
                   ) : (
                     <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl cursor-pointer hover:border-purple-400 transition-colors bg-white dark:bg-gray-800">
                       {imageUploading ? (
                         <div className="flex flex-col items-center gap-2">
                           <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-                          <span className="text-sm text-gray-500">Subiendo...</span>
+                          <span className="text-sm text-gray-500">{t("uploading")}</span>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-2 text-gray-400">
@@ -405,7 +412,7 @@ export default function QRGenerator() {
                   {imageError && <p className="text-xs text-red-500">{imageError}</p>}
                   {imageUploadedUrl && (
                     <button onClick={() => { setImageUploadedUrl(""); setImageError(""); }} className="text-xs text-red-500 hover:text-red-600">
-                      Quitar imagen
+                      {t("removeImage")}
                     </button>
                   )}
                 </>
@@ -414,9 +421,9 @@ export default function QRGenerator() {
               {trialEnd === null && (
                 <div className="text-center py-6 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
                   <span className="text-2xl">🔒</span>
-                  <p className="text-sm text-gray-500 mt-2 mb-3">Sube imágenes en QR por tiempo limitado</p>
+                  <p className="text-sm text-gray-500 mt-2 mb-3">{t("imageTrialDesc")}</p>
                   <Link href="/pricing" className="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                    Ver planes
+                    {t("viewPlans")}
                   </Link>
                 </div>
               )}
@@ -569,6 +576,19 @@ export default function QRGenerator() {
                 >
                   {saving ? t("saving") : saved ? t("saved") : t("save")}
                 </button>
+              )}
+              {saveError === "limit" && (
+                <div className="w-full bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-xl p-4 text-center">
+                  <p className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                      {t("saveLimitTitle")} <strong>{FREE_MAX_QR} {t("saveLimitQr")}</strong>
+                  </p>
+                  <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                    {t("saveLimitDesc")}
+                  </p>
+                  <a href="/pricing" className="inline-block mt-3 px-5 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors active:scale-[0.95]">
+                    {t("upgradeToPro")} →
+                  </a>
+                </div>
               )}
             </div>
           )}

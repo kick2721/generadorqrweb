@@ -1,10 +1,13 @@
 import { auth } from "@/lib/auth";
 import { query } from "@/lib/db";
+import { getUserPlan } from "@/lib/plan";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { plan, qrCount, qrLimit } = await getUserPlan();
 
   const rows = await query(
     `SELECT q.*, COALESCE(s.scan_count, 0) AS scan_count
@@ -15,7 +18,7 @@ export async function GET() {
     [session.user.id]
   );
 
-  return NextResponse.json(rows);
+  return NextResponse.json({ qrcodes: rows, plan, qrCount, qrLimit });
 }
 
 export async function POST(req: Request) {
@@ -24,6 +27,11 @@ export async function POST(req: Request) {
 
   const { type, content, label, config, redirect_to } = await req.json();
   if (!type || !content) return NextResponse.json({ error: "type and content required" }, { status: 400 });
+
+  const { plan, qrCount, qrLimit } = await getUserPlan();
+  if (plan === "free" && qrCount >= qrLimit) {
+    return NextResponse.json({ error: "Plan limit reached", plan, qrCount, qrLimit }, { status: 402 });
+  }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
   const actualContent = redirect_to || content;
