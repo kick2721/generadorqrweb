@@ -133,7 +133,10 @@ export default function Dashboard() {
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
           <p className="text-sm text-gray-400">{t("dashboardScans")}</p>
-          <p className="text-3xl font-bold mt-1">{totalScans}</p>
+          <p className={`text-3xl font-bold mt-1 ${plan !== "pro" ? "text-gray-300 dark:text-gray-700" : ""}`}>
+            {plan === "pro" ? totalScans : "—"}
+          </p>
+          {plan !== "pro" && <p className="text-xs text-gray-400 mt-1">{t("statsPro")}</p>}
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
           <p className="text-sm text-gray-400">{t("dashboardPlan")}</p>
