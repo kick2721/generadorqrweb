@@ -131,12 +131,16 @@ export default function Dashboard() {
           <p className="text-sm text-gray-400">{t("dashboardCreated")}</p>
           <p className="text-3xl font-bold mt-1">{qrcodes.length}</p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+        <div className="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 overflow-hidden">
           <p className="text-sm text-gray-400">{t("dashboardScans")}</p>
-          <p className={`text-3xl font-bold mt-1 ${plan !== "pro" ? "text-gray-300 dark:text-gray-700" : ""}`}>
-            {plan === "pro" ? totalScans : "—"}
-          </p>
-          {plan !== "pro" && <p className="text-xs text-gray-400 mt-1">{t("statsPro")}</p>}
+          <p className="text-3xl font-bold mt-1">{plan === "pro" ? totalScans : "—"}</p>
+          {plan !== "pro" && (
+            <a href="/pricing" className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-[2px] rounded-2xl cursor-pointer group">
+              <span className="text-2xl mb-1">🔒</span>
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-purple-600 transition-colors">{t("statsPro")}</p>
+              <span className="mt-2 px-4 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium group-hover:bg-purple-700 transition-colors">{t("upgradeToPro")}</span>
+            </a>
+          )}
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
           <p className="text-sm text-gray-400">{t("dashboardPlan")}</p>
