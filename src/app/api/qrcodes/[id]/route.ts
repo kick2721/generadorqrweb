@@ -3,6 +3,8 @@ import { query } from "@/lib/db";
 import { getUserPlan } from "@/lib/plan";
 import { NextResponse } from "next/server";
 
+const VALID_TYPES = ["url", "text", "wifi", "vcard", "email", "image"];
+
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -26,6 +28,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { id } = await params;
   const { type, redirect_to, label, config } = await req.json();
+
+  if (type && !VALID_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+  if (label && label.length > 200) return NextResponse.json({ error: "Label too long" }, { status: 400 });
 
   const rows = await query(
     `UPDATE public.qrcodes SET type = $1, redirect_to = $2, label = $3, config = $4 WHERE id = $5 AND user_id = $6 RETURNING *`,

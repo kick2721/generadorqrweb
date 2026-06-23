@@ -1,7 +1,15 @@
 import { auth } from "@/lib/auth";
 import { query } from "@/lib/db";
+import { Pool } from "pg";
 import { getUserPlan } from "@/lib/plan";
 import { NextResponse } from "next/server";
+
+const VALID_TYPES = ["url", "text", "wifi", "vcard", "email", "image"];
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
 export async function GET() {
   const session = await auth();
@@ -27,6 +35,7 @@ export async function POST(req: Request) {
 
   const { type, content, label, config, redirect_to } = await req.json();
   if (!type || !content) return NextResponse.json({ error: "type and content required" }, { status: 400 });
+  if (!VALID_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
 
   const { plan, qrCount, qrLimit } = await getUserPlan();
   if (plan === "free" && qrCount >= qrLimit) {
@@ -35,19 +44,23 @@ export async function POST(req: Request) {
 
   const actualContent = redirect_to || content;
 
-  const rows = await query(
-    `INSERT INTO public.qrcodes (user_id, type, content, label, config, redirect_to) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [session.user.id, type, content, label || "", JSON.stringify(config || {}), actualContent]
-  );
-
-  const qr = rows[0];
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
-  const redirectUrl = `${baseUrl}/r/${qr.id}`;
-  await query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
-
-  if (plan === "pro") {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const rows = await client.query(
+      `INSERT INTO public.qrcodes (user_id, type, content, label, config, redirect_to) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [session.user.id, type, content, label || "", JSON.stringify(config || {}), actualContent]
+    );
+    const qr = rows.rows[0];
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
+    const redirectUrl = `${baseUrl}/r/${qr.id}`;
+    await client.query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
+    await client.query("COMMIT");
     return NextResponse.json({ ...qr, content: redirectUrl, redirect_to: actualContent }, { status: 201 });
+  } catch (e) {
+    await client.query("ROLLBACK");
+    return NextResponse.json({ error: "Failed to create QR" }, { status: 500 });
+  } finally {
+    client.release();
   }
-
-  return NextResponse.json({ ...qr, content: redirectUrl, redirect_to: actualContent }, { status: 201 });
 }
