@@ -40,10 +40,7 @@ export default function Home() {
                 <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 {t("featFree2")}
               </li>
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("feat3Desc")}
-              </li>
+
             </ul>
           </div>
           <div className="p-6 rounded-2xl border border-purple-500/40 bg-purple-50/50 dark:bg-purple-950/20 relative">

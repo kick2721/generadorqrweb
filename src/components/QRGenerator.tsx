@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import { useLang } from "@/context/LangContext";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import QRForm, { QRFormData } from "./QRForm";
 import { FREE_MAX_QR } from "@/lib/constants";
@@ -11,6 +12,7 @@ import { FREE_MAX_QR } from "@/lib/constants";
 export default function QRGenerator() {
   const { t } = useLang();
   const { data: session } = useSession();
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -18,8 +20,14 @@ export default function QRGenerator() {
   const [copied, setCopied] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
+  const requireAuth = () => {
+    if (!session?.user) { router.push("/auth/signin"); return false; }
+    return true;
+  };
+
   const saveQR = async (data: QRFormData) => {
-    if (!session?.user || !data.hasValues) return;
+    if (!session?.user) { router.push("/auth/signin"); return; }
+    if (!data.hasValues) return;
     setSaving(true);
     setSaveError("");
     try {
@@ -106,9 +114,9 @@ export default function QRGenerator() {
 
           {qrData?.hasValues && (
             <div className="flex flex-wrap gap-2 justify-center">
-              <button onClick={() => downloadQR("png")} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
-              <button onClick={() => downloadQR("svg")} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
-              <button onClick={copyToClipboard} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
+              <button onClick={() => { if (requireAuth()) downloadQR("png"); }} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
+              <button onClick={() => { if (requireAuth()) downloadQR("svg"); }} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
+              <button onClick={() => { if (requireAuth()) copyToClipboard(); }} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
               {saveError === "limit" && (
                 <div className="w-full bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-xl p-4 text-center">
                   <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t("saveLimitTitle")} <strong>{FREE_MAX_QR} {t("saveLimitQr")}</strong></p>
