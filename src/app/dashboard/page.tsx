@@ -47,8 +47,7 @@ export default function Dashboard() {
       setPlan(d.plan || "free");
       setQrCount(d.qrCount || 0);
       setQrLimit(d.qrLimit || FREE_MAX_QR);
-      setLoading(false);
-    });
+    }).catch(() => {}).finally(() => setLoading(false));
   }, [status, router]);
 
   function confirmDelete(id: string) {
