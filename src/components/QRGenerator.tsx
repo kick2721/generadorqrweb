@@ -59,7 +59,7 @@ export default function QRGenerator() {
         }),
       });
       if (r.status === 402) { setSaveError("limit"); return false; }
-      if (!r.ok) { setSaveError(`http-${r.status}`); return false; }
+      if (!r.ok) { setSaveError("error"); return false; }
       setSavedOk(true);
       setTimeout(() => setSavedOk(false), 2000);
       return true;
@@ -131,7 +131,7 @@ export default function QRGenerator() {
               <button onClick={() => withAuth(() => { saveToServer(); downloadQR("svg"); })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
               <button onClick={() => withAuth(() => { saveToServer(); copyToClipboard(); })} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
               {savedOk && <span className="text-xs text-green-600 font-medium">{t("saved")}</span>}
-              {saveError.startsWith("http-") && <span className="text-xs text-red-500 font-medium">Error saving (code {saveError.replace("http-", "")}). Check console for details.</span>}
+              {saveError === "error" && <span className="text-xs text-red-500 font-medium">{t("saveError")}</span>}
               {saveError === "limit" && (
                 <div className="w-full bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-xl p-4 text-center">
                   <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t("saveLimitTitle")} <strong>{FREE_MAX_QR} {t("saveLimitQr")}</strong></p>

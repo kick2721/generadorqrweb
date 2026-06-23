@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
   const rows = await query(
     `INSERT INTO public.qrcodes (user_id, type, content, label, config, redirect_to) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [session.user.id, type, content, label || "", JSON.stringify(config || {}), plan === "pro" ? actualContent : null]
+    [session.user.id, type, content, label || "", JSON.stringify(config || {}), plan === "pro" ? actualContent : ""]
   );
 
   const qr = rows[0];
