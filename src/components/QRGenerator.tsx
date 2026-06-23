@@ -13,10 +13,10 @@ export default function QRGenerator() {
   const { t } = useLang();
   const { data: session } = useSession();
   const [saveError, setSaveError] = useState("");
+  const [savedOk, setSavedOk] = useState(false);
   const [qrData, setQrData] = useState<QRFormData | null>(null);
   const [copied, setCopied] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   const [restoredForm, setRestoredForm] = useState<Record<string, any> | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -32,24 +32,20 @@ export default function QRGenerator() {
     } catch {}
   }, []);
 
-  const withAuth = (action: () => void) => {
-    if (session?.user) {
-      action();
-    } else {
-      setPendingAction(() => action);
-      setShowLoginPrompt(true);
-    }
+  const withAuth = (cb: () => void) => {
+    if (session?.user) { cb(); }
+    else { setShowLoginPrompt(true); }
   };
 
-  const handleSignIn = async () => {
-    try {
-      if (qrData) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(qrData));
-    } catch {}
+  const handleSignIn = () => {
+    try { if (qrData) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(qrData)); } catch {}
     window.location.href = "/auth/signin";
   };
 
-  const saveQRSilently = async () => {
-    if (!qrData?.hasValues) return;
+  const saveToServer = async () => {
+    if (!qrData?.hasValues) return false;
+    setSaveError("");
+    setSavedOk(false);
     try {
       const r = await fetch("/api/qrcodes", {
         method: "POST",
@@ -62,11 +58,12 @@ export default function QRGenerator() {
           config: qrData.config,
         }),
       });
-      if (r.status === 402) setSaveError("limit");
-      else if (!r.ok) setSaveError("error");
-    } catch {
-      setSaveError("error");
-    }
+      if (r.status === 402) { setSaveError("limit"); return false; }
+      if (!r.ok) { setSaveError("error"); return false; }
+      setSavedOk(true);
+      setTimeout(() => setSavedOk(false), 2000);
+      return true;
+    } catch { setSaveError("error"); return false; }
   };
 
   const downloadQR = (format: "png" | "svg") => {
@@ -130,9 +127,11 @@ export default function QRGenerator() {
 
           {qrData?.hasValues && (
             <div className="flex flex-wrap gap-2 justify-center">
-              <button onClick={() => withAuth(() => { saveQRSilently(); downloadQR("png"); })} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
-              <button onClick={() => withAuth(() => { saveQRSilently(); downloadQR("svg"); })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
-              <button onClick={() => withAuth(() => { saveQRSilently(); copyToClipboard(); })} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
+              <button onClick={() => withAuth(() => { saveToServer(); downloadQR("png"); })} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
+              <button onClick={() => withAuth(() => { saveToServer(); downloadQR("svg"); })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
+              <button onClick={() => withAuth(() => { saveToServer(); copyToClipboard(); })} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
+              {savedOk && <span className="text-xs text-green-600 font-medium">{t("saved")}</span>}
+              {saveError === "error" && <span className="text-xs text-red-500 font-medium">{t("saveError")}</span>}
               {saveError === "limit" && (
                 <div className="w-full bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-xl p-4 text-center">
                   <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t("saveLimitTitle")} <strong>{FREE_MAX_QR} {t("saveLimitQr")}</strong></p>
