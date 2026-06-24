@@ -286,15 +286,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             <label className="block text-xs text-gray-500 mb-1">{t("colorBg")}</label>
             <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="w-12 h-10 rounded cursor-pointer" />
           </div>
-          {(() => {
-            const ratio = contrastRatio(fgColor, bgColor);
-            if (ratio >= 3) return null;
-            return (
-              <div className="text-[10px] text-amber-600 dark:text-amber-400 flex items-center gap-1" style={{ marginTop: "-0.5rem", whiteSpace: "nowrap" }}>
-                ⚠️ {t("lowContrast").replace("{n}", ratio.toFixed(1))}
-              </div>
-            );
-          })()}
           <div>
             <label className="block text-xs text-gray-500 mb-1">{t("logo")} {plan !== "pro" && <span className="text-purple-500 font-medium">Pro</span>}</label>
             <p className="text-[10px] text-gray-400 mb-1 leading-tight">{t("logoHelp")}</p>
@@ -309,6 +300,13 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             )}
           </div>
         </div>
+        {(() => {
+          const ratio = contrastRatio(fgColor, bgColor);
+          if (ratio >= 3) return null;
+          return (
+            <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1">⚠️ {t("lowContrast").replace("{n}", ratio.toFixed(1))}</p>
+          );
+        })()}
       </details>
 
       <div className="flex gap-2">
