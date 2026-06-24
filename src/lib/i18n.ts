@@ -40,6 +40,18 @@ const t = {
     qrTypeVcard: "بطاقة (vCard)",
     qrTypeEmail: "بريد",
     qrTypeImage: "صورة",
+
+    typeUrlDesc: "رابط لصفحة ويب",
+
+    typeTextDesc: "نص يظهر عند المسح",
+
+    typeWifiDesc: "شارك شبكة WiFi الخاصة بك",
+
+    typeVcardDesc: "جهة اتصال تُحفظ في الهاتف",
+
+    typeEmailDesc: "إرسال بريد إلكتروني عند المسح",
+
+    typeImageDesc: "إظهار صورة عند المسح",
     placeUrl: "https://example.com",
     placeText: "اكتب نصك هنا...",
     placeWifiSsid: "اسم الشبكة (SSID)",
@@ -350,6 +362,18 @@ const t = {
     qrTypeVcard: "Visitenkarte (vCard)",
     qrTypeEmail: "E-Mail",
     qrTypeImage: "Bild",
+
+    typeUrlDesc: "Link zu einer Webseite",
+
+    typeTextDesc: "Text wird beim Scannen angezeigt",
+
+    typeWifiDesc: "Teile dein WiFi-Netzwerk",
+
+    typeVcardDesc: "Kontakt wird im Telefon gespeichert",
+
+    typeEmailDesc: "E-Mail beim Scannen senden",
+
+    typeImageDesc: "Bild beim Scannen anzeigen",
     placeUrl: "https://beispiel.de",
     placeText: "Schreibe deinen Text hier...",
     placeWifiSsid: "Netzwerkname (SSID)",
@@ -660,6 +684,18 @@ const t = {
     qrTypeVcard: "Επαγγελματική κάρτα (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Εικόνα",
+
+    typeUrlDesc: "Σύνδεσμος προς ιστοσελίδα",
+
+    typeTextDesc: "Κείμενο που εμφανίζεται κατά τη σάρωση",
+
+    typeWifiDesc: "Μοιραστείτε το WiFi σας",
+
+    typeVcardDesc: "Επαφή που αποθηκεύεται στο τηλέφωνο",
+
+    typeEmailDesc: "Αποστολή email κατά τη σάρωση",
+
+    typeImageDesc: "Εμφάνιση εικόνας κατά τη σάρωση",
     placeUrl: "https://παράδειγμα.gr",
     placeText: "Γράψτε το κείμενό σας εδώ...",
     placeWifiSsid: "Όνομα δικτύου (SSID)",
@@ -970,6 +1006,18 @@ const t = {
     qrTypeVcard: "vCard",
     qrTypeEmail: "Email",
     qrTypeImage: "Image",
+
+    typeUrlDesc: "Link to a webpage",
+
+    typeTextDesc: "Text displayed when scanned",
+
+    typeWifiDesc: "Share your WiFi network",
+
+    typeVcardDesc: "Contact saved to phone",
+
+    typeEmailDesc: "Send an email when scanned",
+
+    typeImageDesc: "Show an image when scanned",
     placeUrl: "https://example.com",
     placeText: "Type your text here...",
     placeWifiSsid: "Network name (SSID)",
@@ -1306,6 +1354,18 @@ const t = {
     qrTypeVcard: "Tarjeta (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Imagen",
+
+    typeUrlDesc: "Enlace a una página web",
+
+    typeTextDesc: "Texto que se muestra al escanear",
+
+    typeWifiDesc: "Comparte tu red WiFi",
+
+    typeVcardDesc: "Contacto guardado en el teléfono",
+
+    typeEmailDesc: "Enviar un email al escanear",
+
+    typeImageDesc: "Muestra una imagen al escanear",
     placeUrl: "https://ejemplo.com",
     placeText: "Escribe tu texto aquí...",
     placeWifiSsid: "Nombre de la red (SSID)",
@@ -1616,6 +1676,18 @@ const t = {
     qrTypeVcard: "Carte (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Image",
+
+    typeUrlDesc: "Lien vers une page web",
+
+    typeTextDesc: "Texte affiché lors du scan",
+
+    typeWifiDesc: "Partagez votre réseau WiFi",
+
+    typeVcardDesc: "Contact enregistré dans le téléphone",
+
+    typeEmailDesc: "Envoyer un email lors du scan",
+
+    typeImageDesc: "Afficher une image lors du scan",
     placeUrl: "https://exemple.fr",
     placeText: "Écrivez votre texte ici...",
     placeWifiSsid: "Nom du réseau (SSID)",
@@ -1926,6 +1998,18 @@ const t = {
     qrTypeVcard: "विज़िटिंग कार्ड (vCard)",
     qrTypeEmail: "ईमेल",
     qrTypeImage: "छवि",
+
+    typeUrlDesc: "वेबपेज का लिंक",
+
+    typeTextDesc: "स्कैन करने पर दिखाया गया टेक्स्ट",
+
+    typeWifiDesc: "अपना WiFi नेटवर्क साझा करें",
+
+    typeVcardDesc: "फ़ोन में सहेजा गया संपर्क",
+
+    typeEmailDesc: "स्कैन करने पर ईमेल भेजें",
+
+    typeImageDesc: "स्कैन करने पर छवि दिखाएं",
     placeUrl: "https://example.com",
     placeText: "अपना टेक्स्ट यहाँ लिखें...",
     placeWifiSsid: "नेटवर्क नाम (SSID)",
@@ -2236,6 +2320,18 @@ const t = {
     qrTypeVcard: "Kartu (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Gambar",
+
+    typeUrlDesc: "Tautan ke halaman web",
+
+    typeTextDesc: "Teks ditampilkan saat dipindai",
+
+    typeWifiDesc: "Bagikan jaringan WiFi Anda",
+
+    typeVcardDesc: "Kontak disimpan ke ponsel",
+
+    typeEmailDesc: "Kirim email saat dipindai",
+
+    typeImageDesc: "Tampilkan gambar saat dipindai",
     placeUrl: "https://contoh.com",
     placeText: "Tulis teks Anda di sini...",
     placeWifiSsid: "Nama jaringan (SSID)",
@@ -2546,6 +2642,18 @@ const t = {
     qrTypeVcard: "Biglietto da visita (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Immagine",
+
+    typeUrlDesc: "Collegamento a una pagina web",
+
+    typeTextDesc: "Testo visualizzato alla scansione",
+
+    typeWifiDesc: "Condividi la tua rete WiFi",
+
+    typeVcardDesc: "Contatto salvato sul telefono",
+
+    typeEmailDesc: "Invia un email alla scansione",
+
+    typeImageDesc: "Mostra un immagine alla scansione",
     placeUrl: "https://esempio.it",
     placeText: "Scrivi il tuo testo qui...",
     placeWifiSsid: "Nome rete (SSID)",
@@ -2856,6 +2964,18 @@ const t = {
     qrTypeVcard: "名刺 (vCard)",
     qrTypeEmail: "メール",
     qrTypeImage: "画像",
+
+    typeUrlDesc: "ウェブページへのリンク",
+
+    typeTextDesc: "スキャン時に表示されるテキスト",
+
+    typeWifiDesc: "WiFiネットワークを共有",
+
+    typeVcardDesc: "電話に保存される連絡先",
+
+    typeEmailDesc: "スキャン時にメールを送信",
+
+    typeImageDesc: "スキャン時に画像を表示",
     placeUrl: "https://example.com",
     placeText: "ここにテキストを入力...",
     placeWifiSsid: "ネットワーク名 (SSID)",
@@ -3166,6 +3286,18 @@ const t = {
     qrTypeVcard: "명함 (vCard)",
     qrTypeEmail: "이메일",
     qrTypeImage: "이미지",
+
+    typeUrlDesc: "웹페이지 링크",
+
+    typeTextDesc: "스캔 시 표시되는 텍스트",
+
+    typeWifiDesc: "WiFi 네트워크 공유",
+
+    typeVcardDesc: "전화에 저장되는 연락처",
+
+    typeEmailDesc: "스캔 시 이메일 보내기",
+
+    typeImageDesc: "스캔 시 이미지 표시",
     placeUrl: "https://example.com",
     placeText: "여기에 텍스트를 입력하세요...",
     placeWifiSsid: "네트워크 이름 (SSID)",
@@ -3476,6 +3608,18 @@ const t = {
     qrTypeVcard: "Visitekaartje (vCard)",
     qrTypeEmail: "E-mail",
     qrTypeImage: "Afbeelding",
+
+    typeUrlDesc: "Link naar een webpagina",
+
+    typeTextDesc: "Tekst getoond bij scannen",
+
+    typeWifiDesc: "Deel je WiFi-netwerk",
+
+    typeVcardDesc: "Contact opgeslagen op telefoon",
+
+    typeEmailDesc: "E-mail verzenden bij scannen",
+
+    typeImageDesc: "Afbeelding tonen bij scannen",
     placeUrl: "https://voorbeeld.nl",
     placeText: "Typ hier je tekst...",
     placeWifiSsid: "Netwerknaam (SSID)",
@@ -3786,6 +3930,18 @@ const t = {
     qrTypeVcard: "Wizytówka (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Obraz",
+
+    typeUrlDesc: "Link do strony internetowej",
+
+    typeTextDesc: "Tekst wyświetlany po skanowaniu",
+
+    typeWifiDesc: "Udostępnij swoją sieć WiFi",
+
+    typeVcardDesc: "Kontakt zapisany w telefonie",
+
+    typeEmailDesc: "Wyślij email po skanowaniu",
+
+    typeImageDesc: "Pokaż obraz po skanowaniu",
     placeUrl: "https://przyklad.pl",
     placeText: "Wpisz tutaj swój tekst...",
     placeWifiSsid: "Nazwa sieci (SSID)",
@@ -4096,6 +4252,18 @@ const t = {
     qrTypeVcard: "Cartão (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Imagem",
+
+    typeUrlDesc: "Link para uma página web",
+
+    typeTextDesc: "Texto exibido ao escanear",
+
+    typeWifiDesc: "Compartilhe sua rede WiFi",
+
+    typeVcardDesc: "Contato salvo no telefone",
+
+    typeEmailDesc: "Enviar um email ao escanear",
+
+    typeImageDesc: "Mostrar uma imagem ao escanear",
     placeUrl: "https://exemplo.com",
     placeText: "Escreva seu texto aqui...",
     placeWifiSsid: "Nome da rede (SSID)",
@@ -4406,6 +4574,18 @@ const t = {
     qrTypeVcard: "Carte de vizită (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Imagine",
+
+    typeUrlDesc: "Link către o pagină web",
+
+    typeTextDesc: "Text afișat la scanare",
+
+    typeWifiDesc: "Partajează rețeaua WiFi",
+
+    typeVcardDesc: "Contact salvat în telefon",
+
+    typeEmailDesc: "Trimite un email la scanare",
+
+    typeImageDesc: "Afișează o imagine la scanare",
     placeUrl: "https://exemplu.ro",
     placeText: "Scrie textul aici...",
     placeWifiSsid: "Nume rețea (SSID)",
@@ -4716,6 +4896,18 @@ const t = {
     qrTypeVcard: "Визитка (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Изображение",
+
+    typeUrlDesc: "Ссылка на веб-страницу",
+
+    typeTextDesc: "Текст отображается при сканировании",
+
+    typeWifiDesc: "Поделитесь своей сетью WiFi",
+
+    typeVcardDesc: "Контакт сохраняется в телефоне",
+
+    typeEmailDesc: "Отправить email при сканировании",
+
+    typeImageDesc: "Показать изображение при сканировании",
     placeUrl: "https://пример.рф",
     placeText: "Введите текст здесь...",
     placeWifiSsid: "Название сети (SSID)",
@@ -5026,6 +5218,18 @@ const t = {
     qrTypeVcard: "Visitkort (vCard)",
     qrTypeEmail: "E-post",
     qrTypeImage: "Bild",
+
+    typeUrlDesc: "Länk till en webbsida",
+
+    typeTextDesc: "Text som visas vid skanning",
+
+    typeWifiDesc: "Dela ditt WiFi-nätverk",
+
+    typeVcardDesc: "Kontakt sparas i telefonen",
+
+    typeEmailDesc: "Skicka e-post vid skanning",
+
+    typeImageDesc: "Visa en bild vid skanning",
     placeUrl: "https://exempel.se",
     placeText: "Skriv din text här...",
     placeWifiSsid: "Nätverksnamn (SSID)",
@@ -5336,6 +5540,18 @@ const t = {
     qrTypeVcard: "นามบัตร (vCard)",
     qrTypeEmail: "อีเมล",
     qrTypeImage: "รูปภาพ",
+
+    typeUrlDesc: "ลิงก์ไปยังเว็บเพจ",
+
+    typeTextDesc: "ข้อความแสดงเมื่อสแกน",
+
+    typeWifiDesc: "แชร์เครือข่าย WiFi ของคุณ",
+
+    typeVcardDesc: "ข้อมูลติดต่อบันทึกลงโทรศัพท์",
+
+    typeEmailDesc: "ส่งอีเมลเมื่อสแกน",
+
+    typeImageDesc: "แสดงรูปภาพเมื่อสแกน",
     placeUrl: "https://example.com",
     placeText: "พิมพ์ข้อความของคุณที่นี่...",
     placeWifiSsid: "ชื่อเครือข่าย (SSID)",
@@ -5646,6 +5862,18 @@ const t = {
     qrTypeVcard: "Kartvizit (vCard)",
     qrTypeEmail: "E-posta",
     qrTypeImage: "Görsel",
+
+    typeUrlDesc: "Bir web sayfasına bağlantı",
+
+    typeTextDesc: "Tarandığında görüntülenen metin",
+
+    typeWifiDesc: "WiFi ağınızı paylaşın",
+
+    typeVcardDesc: "Telefona kaydedilen kişi",
+
+    typeEmailDesc: "Tarandığında e-posta gönder",
+
+    typeImageDesc: "Tarandığında bir resim göster",
     placeUrl: "https://ornek.com",
     placeText: "Metninizi buraya yazın...",
     placeWifiSsid: "Ağ adı (SSID)",
@@ -5956,6 +6184,18 @@ const t = {
     qrTypeVcard: "Візитівка (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Зображення",
+
+    typeUrlDesc: "Посилання на веб-сторінку",
+
+    typeTextDesc: "Текст відображається під час сканування",
+
+    typeWifiDesc: "Поділіться своєю мережею WiFi",
+
+    typeVcardDesc: "Контакт зберігається в телефоні",
+
+    typeEmailDesc: "Надіслати email під час сканування",
+
+    typeImageDesc: "Показати зображення під час сканування",
     placeUrl: "https://приклад.ua",
     placeText: "Введіть текст тут...",
     placeWifiSsid: "Назва мережі (SSID)",
@@ -6266,6 +6506,18 @@ const t = {
     qrTypeVcard: "Danh thiếp (vCard)",
     qrTypeEmail: "Email",
     qrTypeImage: "Hình ảnh",
+
+    typeUrlDesc: "Liên kết đến trang web",
+
+    typeTextDesc: "Văn bản hiển thị khi quét",
+
+    typeWifiDesc: "Chia sẻ mạng WiFi của bạn",
+
+    typeVcardDesc: "Liên hệ được lưu vào điện thoại",
+
+    typeEmailDesc: "Gửi email khi quét",
+
+    typeImageDesc: "Hiển thị hình ảnh khi quét",
     placeUrl: "https://vidu.com",
     placeText: "Nhập văn bản của bạn ở đây...",
     placeWifiSsid: "Tên mạng (SSID)",
@@ -6576,6 +6828,18 @@ const t = {
     qrTypeVcard: "名片 (vCard)",
     qrTypeEmail: "电子邮件",
     qrTypeImage: "图片",
+
+    typeUrlDesc: "链接到网页",
+
+    typeTextDesc: "扫描时显示的文本",
+
+    typeWifiDesc: "分享您的WiFi网络",
+
+    typeVcardDesc: "保存到手机的联系人",
+
+    typeEmailDesc: "扫描时发送电子邮件",
+
+    typeImageDesc: "扫描时显示图片",
     placeUrl: "https://example.com",
     placeText: "在此输入文本...",
     placeWifiSsid: "网络名称 (SSID)",
@@ -6886,6 +7150,18 @@ const t = {
     qrTypeVcard: "名片 (vCard)",
     qrTypeEmail: "電郵",
     qrTypeImage: "圖片",
+
+    typeUrlDesc: "連結到網頁",
+
+    typeTextDesc: "掃描時顯示的文字",
+
+    typeWifiDesc: "分享您的WiFi網路",
+
+    typeVcardDesc: "儲存到手機的聯絡人",
+
+    typeEmailDesc: "掃描時發送電子郵件",
+
+    typeImageDesc: "掃描時顯示圖片",
     placeUrl: "https://example.com",
     placeText: "在此輸入文字...",
     placeWifiSsid: "網路名稱 (SSID)",
