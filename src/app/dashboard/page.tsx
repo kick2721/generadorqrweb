@@ -174,7 +174,7 @@ export default function Dashboard() {
 
       {qrcodes.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-12 text-center">
-          <p className="text-6xl mb-2">📦</p>
+          <p className="mb-4"><svg className="w-16 h-16 mx-auto" viewBox="0 0 40 40" fill="none"><path d="M6 28l-2-18a2 2 0 012-2h28a2 2 0 012 2l-2 18a2 2 0 01-2 2H8a2 2 0 01-2-2z" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1.2" strokeLinejoin="round" /><path d="M4 10h32" stroke="#9ca3af" strokeWidth="1.2" /><path d="M9 10l-2-4 4-2 2 4-4 2z" fill="#f3f4f6" stroke="#9ca3af" strokeWidth="1" strokeLinejoin="round" /><path d="M31 10l2-4-4-2-2 4 4 2z" fill="#f3f4f6" stroke="#9ca3af" strokeWidth="1" strokeLinejoin="round" /><path d="M6 10h28" stroke="#9ca3af" strokeWidth="0.8" opacity="0.5" /><path d="M8 14h24" stroke="#9ca3af" strokeWidth="0.8" opacity="0.3" strokeDasharray="2 2" /></svg></p>
           <h2 className="text-xl font-semibold mb-2">{t("dashboardEmpty")}</h2>
           <p className="text-gray-500 mb-6">{t("dashboardEmptyDesc")}</p>
           <Link href="/" className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("dashboardCreateFirst")}</Link>
