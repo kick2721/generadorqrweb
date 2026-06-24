@@ -158,6 +158,8 @@ const t = {
     logoHelp: "يظهر في وسط رمز الاستجابة السريعة. الخلفيات الشفافة تعمل بشكل أفضل.",
 
     selectImage: "اختيار صورة",
+
+    lowContrast: "تباين منخفض ({n}:1) — قد يصعب مسحه",
     saveLimitTitle: "تتضمن النسخة المجانية",
     saveLimitQr: "تم حفظ رمز الاستجابة السريعة",
     saveLimitDesc: "قم بالترقية إلى Pro للحفظ غير المحدود.",
@@ -466,6 +468,8 @@ const t = {
     logoHelp: "Erscheint in der Mitte Ihres QR. Transparente Hintergründe funktionieren am besten.",
 
     selectImage: "Bild auswählen",
+
+    lowContrast: "Niedriger Kontrast ({n}:1) — schwer lesbar",
     saveLimitTitle: "Die kostenlose Version beinhaltet",
     saveLimitQr: "QR gespeichert",
     saveLimitDesc: "Upgrade auf Pro für unbegrenztes Speichern.",
@@ -774,6 +778,8 @@ const t = {
     logoHelp: "Εμφανίζεται στο κέντρο του QR. Οι διάφανες φόντο λειτουργούν καλύτερα.",
 
     selectImage: "Επιλογή εικόνας",
+
+    lowContrast: "Χαμηλή αντίθεση ({n}:1) — δύσκολη σάρωση",
     saveLimitTitle: "Η δωρεάν έκδοση περιλαμβάνει",
     saveLimitQr: "αποθηκευμένο QR",
     saveLimitDesc: "Αναβαθμίστε σε Pro για απεριόριστες αποθηκεύσεις.",
@@ -1082,6 +1088,8 @@ const t = {
     logoHelp: "Appears in the center of your QR. Transparent backgrounds work best.",
 
     selectImage: "Select image",
+
+    lowContrast: "Low contrast ({n}:1) — may be hard to scan",
     saveLimitTitle: "The free version includes",
     saveLimitQr: "saved QR",
     saveLimitDesc: "Upgrade to Pro for unlimited saves.",
@@ -1416,6 +1424,8 @@ const t = {
     logoHelp: "Aparece en el centro de tu QR. Los fondos transparentes funcionan mejor.",
 
     selectImage: "Seleccionar imagen",
+
+    lowContrast: "Bajo contraste ({n}:1) — puede ser difícil de escanear",
     saveLimitTitle: "La versión gratuita incluye",
     saveLimitQr: "QR guardados",
     saveLimitDesc: "Actualiza a Pro para guardar sin límite.",
@@ -1724,6 +1734,8 @@ const t = {
     logoHelp: "Apparaît au centre de votre QR. Les fonds transparents fonctionnent mieux.",
 
     selectImage: "Sélectionner une image",
+
+    lowContrast: "Faible contraste ({n}:1) — difficile à scanner",
     saveLimitTitle: "La version gratuite inclut",
     saveLimitQr: "QR enregistré",
     saveLimitDesc: "Passez à Pro pour des sauvegardes illimitées.",
@@ -2032,6 +2044,8 @@ const t = {
     logoHelp: "आपके QR के केंद्र में दिखाई देता है। पारदर्शी पृष्ठभूमि सबसे अच्छा काम करती है।",
 
     selectImage: "छवि चुनें",
+
+    lowContrast: "कम कंट्रास्ट ({n}:1) — स्कैन करना मुश्किल हो सकता है",
     saveLimitTitle: "मुफ्त संस्करण में शामिल है",
     saveLimitQr: "सहेजा गया QR",
     saveLimitDesc: "असीमित बचत के लिए प्रो में अपग्रेड करें।",
@@ -2340,6 +2354,8 @@ const t = {
     logoHelp: "Muncul di tengah QR Anda. Latar belakang transparan bekerja paling baik.",
 
     selectImage: "Pilih gambar",
+
+    lowContrast: "Kontras rendah ({n}:1) — mungkin sulit dipindai",
     saveLimitTitle: "Versi gratis mencakup",
     saveLimitQr: "QR disimpan",
     saveLimitDesc: "Tingkatkan ke Pro untuk penyimpanan tak terbatas.",
@@ -2648,6 +2664,8 @@ const t = {
     logoHelp: "Appare al centro del tuo QR. Gli sfondi trasparenti funzionano meglio.",
 
     selectImage: "Seleziona immagine",
+
+    lowContrast: "Basso contrasto ({n}:1) — difficile da scansionare",
     saveLimitTitle: "La versione gratuita include",
     saveLimitQr: "QR salvato",
     saveLimitDesc: "Passa a Pro per salvataggi illimitati.",
@@ -2956,6 +2974,8 @@ const t = {
     logoHelp: "QRの中央に表示されます。透明な背景が最適です。",
 
     selectImage: "画像を選択",
+
+    lowContrast: "コントラスト低 ({n}:1) — スキャン困難かも",
     saveLimitTitle: "無料版には以下が含まれます",
     saveLimitQr: "保存されたQR",
     saveLimitDesc: "無制限の保存にはProにアップグレード。",
@@ -3264,6 +3284,8 @@ const t = {
     logoHelp: "QR 중앙에 표시됩니다. 투명 배경이 가장 잘 작동합니다.",
 
     selectImage: "이미지 선택",
+
+    lowContrast: "낮은 대비 ({n}:1) — 스캔이 어려울 수 있음",
     saveLimitTitle: "무료 버전에는 다음이 포함됩니다",
     saveLimitQr: "저장된 QR",
     saveLimitDesc: "무제한 저장을 위해 프로로 업그레이드하세요.",
@@ -3572,6 +3594,8 @@ const t = {
     logoHelp: "Verschijnt in het midden van uw QR. Transparante achtergronden werken het beste.",
 
     selectImage: "Afbeelding selecteren",
+
+    lowContrast: "Laag contrast ({n}:1) — moeilijk te scannen",
     saveLimitTitle: "De gratis versie bevat",
     saveLimitQr: "QR opgeslagen",
     saveLimitDesc: "Upgrade naar Pro voor onbeperkt opslaan.",
@@ -3880,6 +3904,8 @@ const t = {
     logoHelp: "Pojawia się na środku QR. Przezroczyste tła działają najlepiej.",
 
     selectImage: "Wybierz obraz",
+
+    lowContrast: "Niski kontrast ({n}:1) — trudny do skanowania",
     saveLimitTitle: "Darmowa wersja zawiera",
     saveLimitQr: "zapisany QR",
     saveLimitDesc: "Uaktualnij do Pro, aby uzyskać nieograniczone zapisywanie.",
@@ -4188,6 +4214,8 @@ const t = {
     logoHelp: "Aparece no centro do seu QR. Fundos transparentes funcionam melhor.",
 
     selectImage: "Selecionar imagem",
+
+    lowContrast: "Baixo contraste ({n}:1) — difícil de escanear",
     saveLimitTitle: "A versão gratuita inclui",
     saveLimitQr: "QR salvo",
     saveLimitDesc: "Atualize para Pro para salvamentos ilimitados.",
@@ -4496,6 +4524,8 @@ const t = {
     logoHelp: "Apare în centrul QR-ului. Fundalurile transparente funcționează cel mai bine.",
 
     selectImage: "Selectați imaginea",
+
+    lowContrast: "Contrast scăzut ({n}:1) — dificil de scanat",
     saveLimitTitle: "Versiunea gratuită include",
     saveLimitQr: "QR salvat",
     saveLimitDesc: "Faceți upgrade la Pro pentru salvări nelimitate.",
@@ -4804,6 +4834,8 @@ const t = {
     logoHelp: "Появляется в центре QR. Прозрачный фон работает лучше всего.",
 
     selectImage: "Выберите изображение",
+
+    lowContrast: "Низкий контраст ({n}:1) — сложно сканировать",
     saveLimitTitle: "Бесплатная версия включает",
     saveLimitQr: "сохраненный QR",
     saveLimitDesc: "Обновитесь до Pro для неограниченного сохранения.",
@@ -5112,6 +5144,8 @@ const t = {
     logoHelp: "Visas i mitten av din QR. Transparenta bakgrunder fungerar bäst.",
 
     selectImage: "Välj bild",
+
+    lowContrast: "Låg kontrast ({n}:1) — svår att skanna",
     saveLimitTitle: "Den kostnadsfria versionen innehåller",
     saveLimitQr: "sparad QR",
     saveLimitDesc: "Uppgradera till Pro för obegränsad lagring.",
@@ -5420,6 +5454,8 @@ const t = {
     logoHelp: "ปรากฏที่กึ่งกลาง QR ของคุณ พื้นหลังโปร่งใสใช้งานได้ดีที่สุด",
 
     selectImage: "เลือกรูปภาพ",
+
+    lowContrast: "คอนทราสต์ต่ำ ({n}:1) — อาจสแกนยาก",
     saveLimitTitle: "เวอร์ชันฟรีประกอบด้วย",
     saveLimitQr: "บันทึก QR แล้ว",
     saveLimitDesc: "อัปเกรดเป็น Pro เพื่อบันทึกไม่จำกัด",
@@ -5728,6 +5764,8 @@ const t = {
     logoHelp: "QR'ınızın ortasında görünür. Şeffaf arka planlar en iyi şekilde çalışır.",
 
     selectImage: "Resim seç",
+
+    lowContrast: "Düşük kontrast ({n}:1) — taranması zor olabilir",
     saveLimitTitle: "Ücretsiz sürüm şunları içerir",
     saveLimitQr: "kaydedilen QR",
     saveLimitDesc: "Sınırsız kaydetme için Pro'ya yükseltin.",
@@ -6036,6 +6074,8 @@ const t = {
     logoHelp: "З'являється в центрі QR. Прозорий фон працює найкраще.",
 
     selectImage: "Виберіть зображення",
+
+    lowContrast: "Низька контрастність ({n}:1) — важко сканувати",
     saveLimitTitle: "Безкоштовна версія включає",
     saveLimitQr: "збережений QR",
     saveLimitDesc: "Оновіться до Pro для необмеженого збереження.",
@@ -6344,6 +6384,8 @@ const t = {
     logoHelp: "Xuất hiện ở trung tâm QR của bạn. Nền trong suốt hoạt động tốt nhất.",
 
     selectImage: "Chọn hình ảnh",
+
+    lowContrast: "Độ tương phản thấp ({n}:1) — khó quét",
     saveLimitTitle: "Phiên bản miễn phí bao gồm",
     saveLimitQr: "QR đã lưu",
     saveLimitDesc: "Nâng cấp lên Pro để lưu không giới hạn.",
@@ -6652,6 +6694,8 @@ const t = {
     logoHelp: "出现在二维码中心。透明背景效果最佳。",
 
     selectImage: "选择图片",
+
+    lowContrast: "对比度低 ({n}:1) — 可能难以扫描",
     saveLimitTitle: "免费版本包含",
     saveLimitQr: "已保存的二维码",
     saveLimitDesc: "升级到专业版以无限制保存。",
@@ -6960,6 +7004,8 @@ const t = {
     logoHelp: "出現在二維碼中心。透明背景效果最佳。",
 
     selectImage: "選擇圖片",
+
+    lowContrast: "對比度低 ({n}:1) — 可能難以掃描",
     saveLimitTitle: "免費版本包含",
     saveLimitQr: "已儲存的二維碼",
     saveLimitDesc: "升級到專業版以無限制儲存。",

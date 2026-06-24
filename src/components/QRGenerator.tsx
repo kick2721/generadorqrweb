@@ -6,6 +6,7 @@ import { useLang } from "@/context/LangContext";
 import { useSession } from "next-auth/react";
 import QRForm, { type QRFormData } from "./QRForm";
 import { FREE_MAX_QR } from "@/lib/constants";
+import { contrastRatio } from "@/lib/color";
 
 const STORAGE_KEY = "qrwing_last_qr";
 
@@ -145,7 +146,15 @@ export default function QRGenerator() {
           </div>
 
           {qrData?.hasValues && (
-            <div className="flex flex-wrap gap-2 justify-center">
+            <>
+              {(() => {
+                const ratio = contrastRatio(qrData.config.fgColor, qrData.config.bgColor);
+                if (ratio >= 3) return null;
+                return (
+                  <p className="text-[11px] text-amber-600 dark:text-amber-400 text-center">⚠️ {t("lowContrast").replace("{n}", ratio.toFixed(1))}</p>
+                );
+              })()}
+              <div className="flex flex-wrap gap-2 justify-center">
               <button onClick={() => withAuth(() => withPro(() => { saveToServer(); downloadQR("png"); }))} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
               <button onClick={() => withAuth(() => withPro(() => { saveToServer(); downloadQR("svg"); }))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
               <button onClick={() => withAuth(() => withPro(() => { saveToServer(); copyToClipboard(); }))} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
@@ -170,6 +179,7 @@ export default function QRGenerator() {
                 </div>
               )}
             </div>
+            </>
           )}
 
           <p className="text-xs text-gray-400 text-center max-w-xs">{t("staticFree")}</p>
