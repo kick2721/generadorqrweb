@@ -81,7 +81,7 @@ export default function Dashboard() {
       const url = await QRCode.toDataURL(qr.content, {
         width: 512,
         margin: 2,
-        color: { dark: "#111827", light: "#ffffff" },
+        color: { dark: qr.config?.fgColor || "#111827", light: qr.config?.bgColor || "#ffffff" },
       });
       const link = document.createElement("a");
       link.download = `qrwing-${qr.label || "qr"}.png`;
@@ -188,7 +188,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 flex-shrink-0 bg-white rounded-xl p-1 border border-gray-100 dark:border-gray-700">
                     <div id={`svg-container-${qr.id}`} style={{ width: "100%", height: "100%" }}>
-                      <QRCodeSVG value={qr.content} size={48} level="L" fgColor="#111827" style={{ width: "100%", height: "100%" }} />
+                      <QRCodeSVG value={qr.content} size={48} level="L" fgColor={qr.config?.fgColor || "#111827"} bgColor={qr.config?.bgColor || "#ffffff"} style={{ width: "100%", height: "100%" }} />
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
