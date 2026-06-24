@@ -80,6 +80,8 @@ export default function QRGenerator() {
         return false;
       }
       if (!r.ok) { setSaveError("error"); return false; }
+      const result = await r.json();
+      setQrData(prev => prev ? { ...prev, content: result.content } : null);
       setSavedOk(true);
       setTimeout(() => setSavedOk(false), 2000);
       return true;
