@@ -134,15 +134,24 @@ export default function QRGenerator() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <div ref={canvasRef} className="p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
+          <div ref={canvasRef} className="p-6 bg-white rounded-2xl shadow-lg border border-gray-200 relative">
             {qrData?.hasValues ? (
               <>
-                <QRCodeCanvas value={qrData.content} size={qrData.config.size} fgColor={qrData.config.fgColor} bgColor={qrData.config.bgColor} level="H" includeMargin
-                  imageSettings={qrData.config.logo ? { src: qrData.config.logo, height: qrData.config.size * 0.25, width: qrData.config.size * 0.25, excavate: true } : undefined} />
+                <div className={`${plan !== "pro" ? "blur-sm" : ""}`}>
+                  <QRCodeCanvas value={qrData.content} size={qrData.config.size} fgColor={qrData.config.fgColor} bgColor={qrData.config.bgColor} level="H" includeMargin
+                    imageSettings={qrData.config.logo ? { src: qrData.config.logo, height: qrData.config.size * 0.25, width: qrData.config.size * 0.25, excavate: true } : undefined} />
+                </div>
                 <div id="qr-svg-download" style={{ display: "none" }}>
                   <QRCodeSVG value={qrData.content} size={qrData.config.size} fgColor={qrData.config.fgColor} bgColor={qrData.config.bgColor} level="H" includeMargin
                     imageSettings={qrData.config.logo ? { src: qrData.config.logo, height: qrData.config.size * 0.25, width: qrData.config.size * 0.25, excavate: true } : undefined} />
                 </div>
+                {plan !== "pro" && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg border border-purple-200 dark:border-purple-800">
+                      <span className="text-purple-600 font-bold text-sm">⭐ {t("upgradeToPro")}</span>
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <div className="flex items-center justify-center text-gray-400" style={{ width: 256, height: 256 }}>
