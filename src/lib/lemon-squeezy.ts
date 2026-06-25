@@ -100,6 +100,11 @@ export async function cancelSubscription(subscriptionId: string): Promise<{ ok: 
 }
 
 export async function getCustomerPortalUrl(customerId: string): Promise<string | null> {
+  const cid = parseInt(customerId, 10);
+  if (isNaN(cid)) {
+    console.error("LS portal error: invalid customer_id", customerId);
+    return null;
+  }
   const res = await fetch(`${API_BASE}/customer-portal`, {
     method: "POST",
     headers: {
@@ -111,7 +116,7 @@ export async function getCustomerPortalUrl(customerId: string): Promise<string |
       data: {
         type: "customer-portals",
         attributes: {
-          customer_id: parseInt(customerId, 10),
+          customer_id: cid,
         },
       },
     }),
