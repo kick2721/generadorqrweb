@@ -113,7 +113,14 @@ export default function Dashboard() {
       if (r.ok) {
         setSubscription((prev: any) => ({ ...prev, status: "cancelled" }));
         setShowCancelConfirm(false);
+      } else {
+        const err = await r.json();
+        alert(err.error || "Error cancelling subscription");
+        setShowCancelConfirm(false);
       }
+    } catch {
+      alert("Network error");
+      setShowCancelConfirm(false);
     } finally {
       setCancelling(false);
     }
