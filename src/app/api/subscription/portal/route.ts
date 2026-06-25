@@ -8,11 +8,11 @@ export async function GET() {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const sub = await getFullSubscription(session.user.id);
-  if (!sub?.lemon_squeezy_customer_id) {
-    return NextResponse.json({ error: "No customer found" }, { status: 404 });
+  if (!sub?.lemon_squeezy_subscription_id) {
+    return NextResponse.json({ error: "No subscription found" }, { status: 404 });
   }
 
-  const url = await getCustomerPortalUrl(sub.lemon_squeezy_customer_id);
+  const url = await getCustomerPortalUrl(sub.lemon_squeezy_subscription_id);
   if (!url) {
     return NextResponse.json({ error: "Failed to generate portal URL" }, { status: 500 });
   }

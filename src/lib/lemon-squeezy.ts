@@ -99,35 +99,18 @@ export async function cancelSubscription(subscriptionId: string): Promise<{ ok: 
   return { ok: true };
 }
 
-export async function getCustomerPortalUrl(customerId: string): Promise<string | null> {
-  const cid = parseInt(customerId, 10);
-  if (isNaN(cid)) {
-    console.error("LS portal error: invalid customer_id", customerId);
-    return null;
-  }
-  const res = await fetch(`${API_BASE}/customer-portal`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${getKey()}`,
-      "Content-Type": "application/vnd.api+json",
-      Accept: "application/vnd.api+json",
-    },
-    body: JSON.stringify({
-      data: {
-        type: "customer-portals",
-        attributes: {
-          customer_id: cid,
-        },
-      },
-    }),
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    console.error("LS portal error:", res.status, body);
+export async function getCustomerPortalUrl(subscriptionId: string): Promise<string | null> {
+  const sub = await getSubscription(subscriptionId);
+  if (!sub) {
+    console.error("LS portal: subscription not found", subscriptionId);
     return null;
   }
 
-  const json = await res.json();
-  return json.data?.attributes?.url || null;
+  const url = sub.data?.attributes?.urls?.customer_portal;
+  if (!url) {
+    console.error("LS portal: no customer_portal URL in subscription", subscriptionId);
+    return null;
+  }
+
+  return url;
 }
