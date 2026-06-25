@@ -2,7 +2,7 @@ import { auth } from "./auth";
 import { query } from "./db";
 import { FREE_MAX_QR } from "./constants";
 
-const ACTIVE_STATUSES = ["active", "on_trial", "paused"];
+const ACTIVE_STATUSES = ["active", "on_trial", "paused", "cancelled"];
 
 export async function getUserPlan(): Promise<{ plan: string; qrCount: number; qrLimit: number }> {
   const session = await auth();
@@ -14,7 +14,7 @@ export async function getUserPlan(): Promise<{ plan: string; qrCount: number; qr
       `SELECT plan, status, expires_at FROM public.subscriptions WHERE user_id = $1`,
       [session.user.id]
     );
-    if (sub && ACTIVE_STATUSES.includes(sub.status)) {
+    if (sub && ACTIVE_STATUSES.includes(sub.status) && sub.status !== "expired") {
       if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
         plan = "free";
       } else {

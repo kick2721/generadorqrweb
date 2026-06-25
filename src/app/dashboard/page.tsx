@@ -244,14 +244,16 @@ export default function Dashboard() {
                   {t("proCancelled").replace("{date}", formatDate(subscription.expires_at))}
                 </span>
               )}
-              {(subscription.status === "active" || subscription.status === "on_trial") && (
+              {(subscription.status === "active" || subscription.status === "on_trial" || subscription.status === "cancelled") && (
                 <div className="flex gap-2 mt-2 justify-end">
                   <button onClick={openPortal} disabled={loadingPortal} className="px-3 py-1.5 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95] disabled:opacity-50">
                     {loadingPortal ? t("loading") : t("proManage")}
                   </button>
-                  <button onClick={() => setShowCancelConfirm(true)} className="px-3 py-1.5 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl text-xs font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition duration-75 active:scale-[0.95]">
-                    {t("proCancel")}
-                  </button>
+                  {subscription.status !== "cancelled" && (
+                    <button onClick={() => setShowCancelConfirm(true)} className="px-3 py-1.5 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl text-xs font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition duration-75 active:scale-[0.95]">
+                      {t("proCancel")}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
