@@ -71,7 +71,7 @@ export async function getSubscription(subscriptionId: string) {
   return res.json();
 }
 
-export async function cancelSubscription(subscriptionId: string): Promise<boolean> {
+export async function cancelSubscription(subscriptionId: string): Promise<{ ok: boolean; error?: string }> {
   const res = await fetch(`${API_BASE}/subscriptions/${subscriptionId}`, {
     method: "PATCH",
     headers: {
@@ -82,6 +82,7 @@ export async function cancelSubscription(subscriptionId: string): Promise<boolea
     body: JSON.stringify({
       data: {
         type: "subscriptions",
+        id: subscriptionId,
         attributes: {
           cancelled: true,
         },
@@ -89,5 +90,11 @@ export async function cancelSubscription(subscriptionId: string): Promise<boolea
     }),
   });
 
-  return res.ok;
+  if (!res.ok) {
+    const body = await res.text();
+    console.error("LS cancel error:", res.status, body);
+    return { ok: false, error: `LS API error ${res.status}: ${body}` };
+  }
+
+  return { ok: true };
 }

@@ -12,9 +12,9 @@ export async function POST() {
     return NextResponse.json({ error: "No active subscription found" }, { status: 404 });
   }
 
-  const ok = await cancelSubscription(sub.lemon_squeezy_subscription_id);
-  if (!ok) {
-    return NextResponse.json({ error: "Failed to cancel subscription" }, { status: 500 });
+  const result = await cancelSubscription(sub.lemon_squeezy_subscription_id);
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error || "Failed to cancel subscription" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });
