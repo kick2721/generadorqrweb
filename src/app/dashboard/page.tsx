@@ -194,7 +194,8 @@ export default function Dashboard() {
              (qr.content && qr.content.toLowerCase().includes(s));
     })
     .sort((a, b) => {
-      switch (sortBy) {
+      const s = plan !== "pro" && sortBy === "scans" ? "newest" : sortBy;
+      switch (s) {
         case "newest": return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         case "oldest": return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         case "scans": return b.scan_count - a.scan_count;
@@ -324,7 +325,7 @@ export default function Dashboard() {
             >
               <option value="newest">{t("dashboardSortNewest")}</option>
               <option value="oldest">{t("dashboardSortOldest")}</option>
-              <option value="scans">{t("dashboardSortMostScans")}</option>
+              {plan === "pro" && <option value="scans">{t("dashboardSortMostScans")}</option>}
               <option value="alpha">{t("dashboardSortAZ")}</option>
             </select>
             <button onClick={() => setShowFilters(!showFilters)} className={`px-3 py-2 text-sm rounded-xl border transition ${typeFilter ? 'bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500'}`}>
