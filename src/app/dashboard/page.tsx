@@ -472,7 +472,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-2 gap-1.5">
                 {(["timeline","countries","devices","activity"] as const).map(tab => (
                   <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-3 py-2 text-sm font-medium rounded-lg border transition active:scale-[0.95] ${analyticsTab === tab ? "bg-purple-600 text-white border-purple-600 shadow-sm" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400"}`}>
-                    <span className="block leading-tight">{tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "⏰"}<br/>{t("analyticsActivity")}</span>
+                    <span className="block leading-tight">{tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "⏰"}<br/>{tab === "activity" ? t("analyticsActivity") : t("analytics" + tab.charAt(0).toUpperCase() + tab.slice(1) as any)}</span>
                   </button>
                 ))}
               </div>
@@ -482,14 +482,15 @@ export default function Dashboard() {
                   {stats.daily.length > 0 ? (
                     <div>
                       <p className="text-sm font-medium mb-2">{t("dashboardLast30").replace("30", "10")}</p>
-                      <div className="flex items-end gap-1 h-20">
+                      <div className="flex items-end gap-1 flex-wrap">
                         {stats.daily.slice(0, 10).reverse().map(d => {
                           const max = Math.max(...stats.daily.map(x => x.count), 1);
                           const h = Math.max(4, (d.count / max) * 64);
-                          const date = new Date(d.date + "T00:00:00");
+                          const date = new Date(d.date + "T12:00:00");
+                          if (isNaN(date.getTime())) return null;
                           const label = date.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
                           return (
-                            <div key={d.date} className="flex-1 flex flex-col items-center gap-0.5" title={label}>
+                            <div key={d.date} className="flex flex-col items-center gap-0.5 w-8" title={label}>
                               <span className="text-[10px] text-gray-400">{d.count}</span>
                               <div className="w-full bg-purple-200 dark:bg-purple-900/40 rounded-t" style={{ height: `${h}px` }} />
                               <span className="text-[8px] text-gray-400 leading-tight text-center whitespace-nowrap">{date.toLocaleDateString(undefined, { day: "numeric", month: "short" })}</span>
@@ -588,20 +589,16 @@ export default function Dashboard() {
                     const diffMs = now.getTime() - lastScan.getTime();
                     const diffH = Math.floor(diffMs / 3600000);
                     const diffD = Math.floor(diffMs / 86400000);
-                    const lastLabel = diffH < 1 ? "<1h" : diffH < 24 ? t("analyticsHoursAgo").replace("{n}", String(diffH)) : t("analyticsDaysAgo").replace("{n}", String(diffD));
+                    const lastLabel = diffH < 1 ? `<1h` : diffH < 24 ? t("analyticsHoursAgo").replace("{n}", String(diffH)) : t("analyticsDaysAgo").replace("{n}", String(diffD));
                     
                     const days = stats.daily.length || 1;
                     const avg = (stats.total / days).toFixed(1);
                     
-                    const bestDay = stats.daily.reduce((best, d) => d.count > (best?.count || 0) ? d : best, stats.daily[0]);
-                    const bestDate = bestDay ? new Date(bestDay.date + "T00:00:00").toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }) : "";
-                    
-                    const hourRanges = [
-                      { label: "0-5", start: 0, end: 5 },
-                      { label: "6-11", start: 6, end: 11 },
-                      { label: "12-17", start: 12, end: 17 },
-                      { label: "18-23", start: 18, end: 23 },
-                    ];
+                    const bestDay = [...stats.daily].sort((a, b) => b.count - a.count)[0];
+                    const bestDate = bestDay ? new Date(bestDay.date + "T12:00:00") : null;
+                    const bestLabel = bestDate && !isNaN(bestDate.getTime()) ? bestDate.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }) : "—";
+
+                    const topHours = hourCounts.map((c, h) => ({ hour: h, count: c })).sort((a, b) => b.count - a.count).slice(0, 5);
                     
                     return (
                       <div className="space-y-4">
@@ -615,7 +612,7 @@ export default function Dashboard() {
                             <p className="text-xs text-gray-400">{t("analyticsAvgDaily")}</p>
                           </div>
                           <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                            <p className="text-sm font-bold text-purple-600 truncate">{bestDate || "—"}</p>
+                            <p className="text-sm font-bold text-purple-600 truncate">{bestLabel}</p>
                             <p className="text-xs text-gray-400">{t("analyticsBestDay")}</p>
                           </div>
                           <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
@@ -623,25 +620,26 @@ export default function Dashboard() {
                             <p className="text-xs text-gray-400">{t("analyticsLastScan")}</p>
                           </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-medium text-gray-500 mb-1.5">{t("analyticsHourDistribution")}</p>
-                          <div className="space-y-1">
-                            {hourRanges.map(range => (
-                              <div key={range.label} className="flex items-center gap-1.5">
-                                <span className="text-[10px] text-gray-400 w-12 text-right">{range.label}</span>
-                                <div className="flex gap-0.5 flex-1">
-                                  {Array.from({ length: range.end - range.start + 1 }, (_, i) => {
-                                    const h = range.start + i;
-                                    const intensity = hourCounts[h] / maxHour;
-                                    return (
-                                      <div key={h} className="flex-1 h-4 rounded-sm" style={{ backgroundColor: intensity > 0 ? `rgba(147, 51, 234, ${0.15 + intensity * 0.85})` : "#f3f4f6" }} title={`${h}:00 — ${hourCounts[h]} scans`} />
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            ))}
+                        {topHours.length > 1 && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1.5">{t("analyticsHourDistribution")}</p>
+                            <div className="space-y-1">
+                              {topHours.map(({ hour, count }) => {
+                                const hLabel = hour < 12 ? `${hour}:00 AM` : hour === 12 ? `12:00 PM` : `${hour-12}:00 PM`;
+                                const pct = count / maxHour;
+                                return (
+                                  <div key={hour} className="flex items-center gap-2 text-sm">
+                                    <span className="text-gray-500 w-16 text-right text-xs">{hLabel}</span>
+                                    <div className="flex-1 h-5 bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
+                                      <div className="h-full bg-purple-500 rounded" style={{ width: `${pct * 100}%` }} />
+                                    </div>
+                                    <span className="text-gray-400 text-xs w-6 text-right">{count}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     );
                   })()}

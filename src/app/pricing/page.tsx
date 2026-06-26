@@ -48,7 +48,7 @@ export default function Pricing() {
       price: t("pricePro"),
       period: t("perMonth"),
       desc: t("planProDesc"),
-      features: [t("featPro1"), t("featPro2"), t("featPro3"), t("featPro4"), t("featPro5"), t("featPro6"), t("featPro7")],
+      features: [t("featPro1"), t("featPro2"), t("featPro3"), t("featPro4"), t("featPro5"), t("featPro6")],
       cta: t("ctaPro"),
       featured: true,
       action: handleProCheckout,
