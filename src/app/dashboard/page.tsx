@@ -268,8 +268,9 @@ export default function Dashboard() {
                   <span className={`inline-block mt-1 text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColor(subscription.status)}`}>
                     {t("planPro")}
                   </span>
-                )}
-              </div>
+          )}
+          </div>
+        </div>
             </div>
             <div className="text-right text-sm text-gray-500">
               {subscription.status === "on_trial" && subscription.trial_ends_at && new Date(subscription.trial_ends_at) > new Date() && (
@@ -406,6 +407,7 @@ export default function Dashboard() {
             ))}
           </div>
 
+          <div className="lg:sticky lg:top-4 lg:self-start">
           {statsBlocked ? (
             <div className="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-5 overflow-hidden">
               <div className="flex items-center justify-between">
