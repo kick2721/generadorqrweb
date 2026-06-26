@@ -117,28 +117,27 @@ export default function Pricing() {
         <p className="text-sm text-gray-500 mb-8 max-w-md mx-auto">{t("featPro6")}</p>
 
         <div className="max-w-sm mx-auto bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-lg text-left">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-sm">{t("dashboardStats")}</h3>
-          </div>
           <div className="text-center mb-4">
             <p className="text-4xl font-bold text-purple-600">248</p>
             <p className="text-xs text-gray-400">{t("dashboardTotalScans")}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-1.5 mb-4">
-            {[
-              { emoji: "📈", label: t("analyticsTimeline") },
-              { emoji: "🌍", label: t("analyticsCountries") },
-              { emoji: "📱", label: t("analyticsDevices") },
-              { emoji: "⏰", label: t("analyticsActivity") },
-            ].map(tab => (
-              <div key={tab.label} className="px-3 py-2 text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 text-center">
-                <span className="block leading-tight">{tab.emoji}<br/>{tab.label}</span>
-              </div>
-            ))}
+            <div className="px-3 py-2 text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 text-center">
+              <span className="block leading-tight">📈<br/>{t("analyticsTimeline")}</span>
+            </div>
+            <div className="px-3 py-2 text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 text-center">
+              <span className="block leading-tight">🌍<br/>{t("analyticsCountries")}</span>
+            </div>
+            <div className="px-3 py-2 text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 text-center">
+              <span className="block leading-tight">📱<br/>{t("analyticsDevices")}</span>
+            </div>
+            <div className="px-3 py-2 text-xs font-medium rounded-lg border border-purple-600 bg-purple-600 text-white text-center shadow-sm">
+              <span className="block leading-tight">⏰<br/>{t("analyticsActivity")}</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 mb-4">
             <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
               <p className="text-sm font-bold text-purple-600">2:00 PM</p>
               <p className="text-[10px] text-gray-400">{t("analyticsPeakHour")}</p>
@@ -146,6 +145,35 @@ export default function Pricing() {
             <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
               <p className="text-sm font-bold text-purple-600">8.3</p>
               <p className="text-[10px] text-gray-400">{t("analyticsAvgDaily")}</p>
+            </div>
+            <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+              <p className="text-sm font-bold text-purple-600 truncate">Mon 26 Jun</p>
+              <p className="text-[10px] text-gray-400">{t("analyticsBestDay")}</p>
+            </div>
+            <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+              <p className="text-sm font-bold text-purple-600">2h ago</p>
+              <p className="text-[10px] text-gray-400">{t("analyticsLastScan")}</p>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs font-medium text-gray-500 mb-1.5">{t("analyticsHourDistribution")}</p>
+            <div className="space-y-1">
+              {[
+                { h: "2:00 PM", pct: 100, c: 12 },
+                { h: "3:00 PM", pct: 67, c: 8 },
+                { h: "1:00 PM", pct: 42, c: 5 },
+                { h: "11:00 AM", pct: 33, c: 4 },
+                { h: "4:00 PM", pct: 25, c: 3 },
+              ].map(({ h, pct, c }) => (
+                <div key={h} className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-500 w-16 text-right text-xs">{h}</span>
+                  <div className="flex-1 h-5 bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
+                    <div className="h-full bg-purple-500 rounded" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="text-gray-400 text-xs w-6 text-right">{c}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
