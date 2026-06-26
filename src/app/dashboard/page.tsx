@@ -443,9 +443,9 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-400">{t("dashboardTotalScans")}</p>
               </div>
 
-              <div className="flex flex-wrap gap-1 border-b border-gray-200 dark:border-gray-700 pb-1">
+              <div className="flex flex-wrap gap-1.5">
                 {(["timeline","countries","devices","referrers"] as const).map(tab => (
-                  <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-2 py-1.5 text-[11px] font-medium rounded-t-lg transition ${analyticsTab === tab ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}>
+                  <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition active:scale-[0.95] ${analyticsTab === tab ? "bg-purple-600 text-white border-purple-600 shadow-sm" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400"}`}>
                     {tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "🔗"} {t("analytics" + tab.charAt(0).toUpperCase() + tab.slice(1) as any)}
                   </button>
                 ))}
