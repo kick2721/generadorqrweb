@@ -45,6 +45,10 @@ export default function Dashboard() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "scans" | "alpha">("newest");
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -180,6 +184,27 @@ export default function Dashboard() {
 
   const totalScans = qrcodes.reduce((a, b) => a + b.scan_count, 0);
 
+  const filteredQrs = qrcodes
+    .filter(qr => {
+      if (typeFilter && qr.type !== typeFilter) return false;
+      if (!search) return true;
+      const s = search.toLowerCase();
+      return (qr.label && qr.label.toLowerCase().includes(s)) ||
+             (qr.redirect_to && qr.redirect_to.toLowerCase().includes(s)) ||
+             (qr.content && qr.content.toLowerCase().includes(s));
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "newest": return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case "oldest": return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case "scans": return b.scan_count - a.scan_count;
+        case "alpha": return (a.label || a.redirect_to || "").localeCompare(b.label || b.redirect_to || "");
+        default: return 0;
+      }
+    });
+
+  const types = [...new Set(qrcodes.map(q => q.type))];
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
       <div className="flex items-center justify-between">
@@ -279,17 +304,63 @@ export default function Dashboard() {
         </div>
       )}
 
+      {qrcodes.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-4 flex-wrap">
+            <div className="relative flex-1 min-w-[180px] max-w-sm">
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder={t("dashboardSearch")}
+                className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-600 transition"
+              />
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as any)}
+              className="px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+            >
+              <option value="newest">{t("dashboardSortNewest")}</option>
+              <option value="oldest">{t("dashboardSortOldest")}</option>
+              <option value="scans">{t("dashboardSortMostScans")}</option>
+              <option value="alpha">{t("dashboardSortAZ")}</option>
+            </select>
+            <button onClick={() => setShowFilters(!showFilters)} className={`px-3 py-2 text-sm rounded-xl border transition ${typeFilter ? 'bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500'}`}>
+              <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+              {t("dashboardFilterAll")}{typeFilter ? `: ${typeLabel(typeFilter)}` : ""}
+            </button>
+          </div>
+          {showFilters && (
+            <div className="flex gap-2 mb-4 flex-wrap">
+              <button onClick={() => setTypeFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border transition ${!typeFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>{t("dashboardFilterAll")}</button>
+              {types.map(tp => (
+                <button key={tp} onClick={() => setTypeFilter(typeFilter === tp ? null : tp)} className={`px-3 py-1.5 text-xs rounded-full border transition ${typeFilter === tp ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>
+                  {typeIcon(tp)} {typeLabel(tp)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {qrcodes.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-12 text-center">
           <h2 className="text-xl font-semibold mb-2">{t("dashboardEmpty")}</h2>
           <p className="text-gray-500 mb-6">{t("dashboardEmptyDesc")}</p>
           <Link href="/" className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("dashboardCreateFirst")}</Link>
         </div>
+      ) : filteredQrs.length === 0 ? (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-12 text-center">
+          <h2 className="text-xl font-semibold mb-2">{t("dashboardMyQRs")}</h2>
+          <p className="text-gray-500">{t("dashboardSearch")} — 0 {t("dashboardCreated").toLowerCase()}</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-semibold">{t("dashboardMyQRs")}</h2>
-            {qrcodes.map(qr => (
+            {filteredQrs.map(qr => (
               <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => viewStats(qr.id)}>
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 flex-shrink-0 bg-white rounded-xl p-1 border border-gray-100 dark:border-gray-700">
