@@ -2,6 +2,18 @@ import { query } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
+async function getCountry(ip: string): Promise<string> {
+  if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("172.16.")) return "";
+  try {
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=country`, { signal: AbortSignal.timeout(1000) });
+    if (res.ok) {
+      const data = await res.json();
+      return data.country || "";
+    }
+  } catch {}
+  return "";
+}
+
 function parseVCard(text: string) {
   const get = (k: string) => {
     const m = text.match(new RegExp(`${k}:(.+)`));
@@ -17,15 +29,19 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
 
   const qr = rows[0];
   const h = await headers();
+  const ip = h.get("x-forwarded-for") || h.get("x-real-ip") || "";
 
   try {
+    const countryPromise = getCountry(ip);
+    const country = await countryPromise;
     await query(
-      `INSERT INTO public.scans (qr_id, ip, user_agent, referrer) VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO public.scans (qr_id, ip, user_agent, referrer, country) VALUES ($1, $2, $3, $4, $5)`,
       [
         id,
-        h.get("x-forwarded-for") || h.get("x-real-ip") || "",
+        ip,
         h.get("user-agent") || "",
         h.get("referer") || "",
+        country,
       ]
     );
   } catch {}

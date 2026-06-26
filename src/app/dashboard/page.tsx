@@ -8,6 +8,7 @@ import { QRCodeSVG } from "qrcode.react";
 import QRCode from "qrcode";
 import { useLang } from "@/context/LangContext";
 import { FREE_MAX_QR } from "@/lib/constants";
+import { parseUA } from "@/lib/ua";
 import EditModal from "@/components/EditModal";
 
 interface QRCodeData {
@@ -49,6 +50,7 @@ export default function Dashboard() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "scans" | "alpha">("newest");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "referrers">("timeline");
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -432,7 +434,7 @@ export default function Dashboard() {
               </a>
             </div>
           ) : selectedQR && stats ? (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-5">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">{t("dashboardStats")}</h3>
               </div>
@@ -440,34 +442,116 @@ export default function Dashboard() {
                 <p className="text-4xl font-bold text-purple-600">{stats.total}</p>
                 <p className="text-sm text-gray-400">{t("dashboardTotalScans")}</p>
               </div>
-              {stats.daily.length > 0 && (
+
+              <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700 pb-1">
+                {(["timeline","countries","devices","referrers"] as const).map(tab => (
+                  <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-3 py-1.5 text-xs font-medium rounded-t-lg transition ${analyticsTab === tab ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}>
+                    {tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "🔗"} {t("analytics" + tab.charAt(0).toUpperCase() + tab.slice(1) as any)}
+                  </button>
+                ))}
+              </div>
+
+              {analyticsTab === "timeline" && (
                 <div>
-                  <p className="text-sm font-medium mb-2">{t("dashboardLast30")}</p>
-                  <div className="flex items-end gap-1 h-20">
-                    {stats.daily.slice(0, 14).reverse().map(d => {
-                      const max = Math.max(...stats.daily.map(x => x.count), 1);
-                      const h = Math.max(4, (d.count / max) * 64);
-                      return (
-                        <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
-                          <span className="text-[10px] text-gray-400">{d.count}</span>
-                          <div className="w-full bg-purple-200 dark:bg-purple-900/40 rounded-t" style={{ height: `${h}px` }} />
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {stats.daily.length > 0 ? (
+                    <div>
+                      <p className="text-sm font-medium mb-2">{t("dashboardLast30")}</p>
+                      <div className="flex items-end gap-1 h-20">
+                        {stats.daily.slice(0, 14).reverse().map(d => {
+                          const max = Math.max(...stats.daily.map(x => x.count), 1);
+                          const h = Math.max(4, (d.count / max) * 64);
+                          return (
+                            <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+                              <span className="text-[10px] text-gray-400">{d.count}</span>
+                              <div className="w-full bg-purple-200 dark:bg-purple-900/40 rounded-t" style={{ height: `${h}px` }} />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>
+                  )}
                 </div>
               )}
-              {stats.recent.length > 0 && (
+
+              {analyticsTab === "countries" && (
                 <div>
-                  <p className="text-sm font-medium mb-2">{t("dashboardRecent")}</p>
-                  <div className="space-y-2 max-h-48 overflow-y-auto text-xs">
-                    {stats.recent.map((s, i) => (
-                      <div key={i} className="flex items-center gap-2 text-gray-400 pb-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
-                        <span className="text-gray-600 dark:text-gray-300 w-16 flex-shrink-0">{new Date(s.scanned_at).toLocaleDateString()}</span>
-                        <span className="truncate flex-1">{s.referrer ? new URL(s.referrer).hostname : t("dashboardDirect")}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {stats.recent.length > 0 ? (
+                    <div className="space-y-1 max-h-48 overflow-y-auto">
+                      {Object.entries(
+                        stats.recent.reduce((acc: Record<string, number>, s: any) => {
+                          const c = s.country || "Unknown";
+                          acc[c] = (acc[c] || 0) + 1;
+                          return acc;
+                        }, {})
+                      ).sort((a, b) => b[1] - a[1]).map(([country, count]) => (
+                        <div key={country} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-300 truncate">{country || "—"}</span>
+                          <span className="text-gray-400 ml-2">{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>
+                  )}
+                </div>
+              )}
+
+              {analyticsTab === "devices" && (
+                <div>
+                  {stats.recent.length > 0 ? (
+                    <div className="space-y-3">
+                      {(["browser","os","device"] as const).map(cat => {
+                        const items = stats.recent.reduce((acc: Record<string, number>, s: any) => {
+                          const p = parseUA(s.user_agent || "");
+                          const key = p[cat];
+                          acc[key] = (acc[key] || 0) + 1;
+                          return acc;
+                        }, {});
+                        const sorted = Object.entries(items).sort((a, b) => b[1] - a[1]);
+                        return (
+                          <div key={cat}>
+                            <p className="text-xs font-medium text-gray-500 mb-1 uppercase">{cat === "browser" ? t("analyticsBrowser") : cat === "os" ? t("analyticsOS") : t("analyticsDevice")}</p>
+                            <div className="space-y-0.5">
+                              {sorted.map(([k, v]) => (
+                                <div key={k} className="flex items-center justify-between text-sm">
+                                  <span className="text-gray-600 dark:text-gray-300">{k}</span>
+                                  <span className="text-gray-400 text-xs">{v}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>
+                  )}
+                </div>
+              )}
+
+              {analyticsTab === "referrers" && (
+                <div>
+                  {stats.recent.length > 0 ? (
+                    <div className="space-y-1 max-h-48 overflow-y-auto">
+                      {Object.entries(
+                        stats.recent.reduce((acc: Record<string, number>, s: any) => {
+                          let r = s.referrer || "Direct";
+                          try { r = new URL(r).hostname; } catch { r = r || "Direct"; }
+                          acc[r] = (acc[r] || 0) + 1;
+                          return acc;
+                        }, {})
+                      ).sort((a, b) => b[1] - a[1]).map(([ref, count]) => (
+                        <div key={ref} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-300 truncate">{ref}</span>
+                          <span className="text-gray-400 ml-2">{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>
+                  )}
                 </div>
               )}
             </div>
