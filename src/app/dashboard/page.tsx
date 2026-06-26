@@ -483,13 +483,16 @@ export default function Dashboard() {
                     <div>
                       <p className="text-sm font-medium mb-2">{t("dashboardLast30")}</p>
                       <div className="flex items-end gap-1 h-20">
-                        {stats.daily.slice(0, 14).reverse().map(d => {
+                        {stats.daily.slice(0, 10).reverse().map(d => {
                           const max = Math.max(...stats.daily.map(x => x.count), 1);
                           const h = Math.max(4, (d.count / max) * 64);
+                          const date = new Date(d.date + "T00:00:00");
+                          const label = date.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
                           return (
-                            <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+                            <div key={d.date} className="flex-1 flex flex-col items-center gap-0.5" title={label}>
                               <span className="text-[10px] text-gray-400">{d.count}</span>
                               <div className="w-full bg-purple-200 dark:bg-purple-900/40 rounded-t" style={{ height: `${h}px` }} />
+                              <span className="text-[8px] text-gray-400 leading-tight text-center whitespace-nowrap">{date.toLocaleDateString(undefined, { day: "numeric", month: "short" })}</span>
                             </div>
                           );
                         })}
@@ -564,19 +567,39 @@ export default function Dashboard() {
                 <div>
                   {stats.recent.length > 0 ? (
                     <div className="space-y-1 max-h-48 overflow-y-auto">
-                      {Object.entries(
-                        stats.recent.reduce((acc: Record<string, number>, s: any) => {
-                          let r = s.referrer || "Direct";
-                          try { r = new URL(r).hostname; } catch { r = r || "Direct"; }
-                          acc[r] = (acc[r] || 0) + 1;
+                      {(() => {
+                        const refs = stats.recent.reduce((acc: Record<string, {count:number,url?:string}>, s: any) => {
+                          if (!s.referrer) {
+                            acc["_direct"] = acc["_direct"] || { count: 0 };
+                            acc["_direct"].count++;
+                          } else {
+                            try {
+                              const u = new URL(s.referrer);
+                              const key = u.hostname;
+                              if (!acc[key]) acc[key] = { count: 0, url: s.referrer };
+                              acc[key].count++;
+                            } catch {
+                              const key = s.referrer;
+                              if (!acc[key]) acc[key] = { count: 0 };
+                              acc[key].count++;
+                            }
+                          }
                           return acc;
-                        }, {})
-                      ).sort((a, b) => b[1] - a[1]).map(([ref, count]) => (
-                        <div key={ref} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-300 truncate">{ref === "Direct" ? t("dashboardDirect") : ref}</span>
-                          <span className="text-gray-400 ml-2">{count}</span>
-                        </div>
-                      ))}
+                        }, {});
+                        const sorted = Object.entries(refs).sort((a, b) => b[1].count - a[1].count);
+                        return sorted.length > 0 ? sorted.map(([key, val]) => (
+                          <div key={key} className="flex items-center justify-between text-sm">
+                            {key === "_direct" ? (
+                              <span className="text-gray-400 text-xs italic">{t("dashboardDirect")}</span>
+                            ) : val.url ? (
+                              <a href={val.url} target="_blank" rel="noopener noreferrer" className="text-purple-600 dark:text-purple-400 hover:underline truncate">{key}</a>
+                            ) : (
+                              <span className="text-gray-600 dark:text-gray-300 truncate">{key}</span>
+                            )}
+                            <span className="text-gray-400 ml-2 text-xs">{val.count}</span>
+                          </div>
+                        )) : <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>;
+                      })()}
                     </div>
                   ) : (
                     <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>

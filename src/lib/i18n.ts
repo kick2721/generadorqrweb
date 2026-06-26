@@ -1593,7 +1593,7 @@ const t = {
     analyticsTimeline: "Línea de tiempo",
     analyticsCountries: "Países",
     analyticsDevices: "Dispositivos",
-    analyticsReferrers: "Referentes",
+    analyticsReferrers: "Fuentes",
     analyticsUnknown: "Desconocido",
     analyticsNoData: "Sin datos aún",
     analyticsBrowser: "Navegador",
