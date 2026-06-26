@@ -270,7 +270,6 @@ export default function Dashboard() {
                   </span>
           )}
           </div>
-        </div>
             </div>
             <div className="text-right text-sm text-gray-500">
               {subscription.status === "on_trial" && subscription.trial_ends_at && new Date(subscription.trial_ends_at) > new Date() && (
@@ -652,6 +651,7 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+      </div>
       )}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
