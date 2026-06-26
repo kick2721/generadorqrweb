@@ -443,10 +443,10 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-400">{t("dashboardTotalScans")}</p>
               </div>
 
-              <div className="flex flex-wrap gap-1.5">
+              <div className="grid grid-cols-2 gap-1.5">
                 {(["timeline","countries","devices","referrers"] as const).map(tab => (
-                  <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition active:scale-[0.95] ${analyticsTab === tab ? "bg-purple-600 text-white border-purple-600 shadow-sm" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400"}`}>
-                    {tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "🔗"} {t("analytics" + tab.charAt(0).toUpperCase() + tab.slice(1) as any)}
+                  <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-3 py-2 text-sm font-medium rounded-lg border transition active:scale-[0.95] ${analyticsTab === tab ? "bg-purple-600 text-white border-purple-600 shadow-sm" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400"}`}>
+                    <span className="block leading-tight">{tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "🔗"}<br/>{t("analytics" + tab.charAt(0).toUpperCase() + tab.slice(1) as any)}</span>
                   </button>
                 ))}
               </div>
