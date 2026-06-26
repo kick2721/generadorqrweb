@@ -486,7 +486,7 @@ export default function Dashboard() {
                         {stats.daily.slice(0, 10).reverse().map(d => {
                           const max = Math.max(...stats.daily.map(x => x.count), 1);
                           const h = Math.max(4, (d.count / max) * 64);
-                          const date = new Date(d.date + "T12:00:00");
+                          const date = new Date(d.date);
                           const label = date.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
                           return (
                             <div key={d.date} className="flex flex-col items-center gap-0.5 w-8" title={label}>
@@ -594,7 +594,7 @@ export default function Dashboard() {
                     const avg = (stats.total / days).toFixed(1);
                     
                     const bestDay = [...stats.daily].sort((a, b) => b.count - a.count)[0];
-                    const bestDate = bestDay ? new Date(bestDay.date + "T12:00:00") : null;
+                    const bestDate = bestDay ? new Date(bestDay.date) : null;
                     const bestLabel = bestDate ? bestDate.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }) : "—";
 
                     const topHours = hourCounts.map((c, h) => ({ hour: h, count: c })).sort((a, b) => b.count - a.count).slice(0, 5);
