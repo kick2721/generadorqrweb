@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
@@ -35,7 +35,10 @@ export default function Dashboard() {
   const [qrcodes, setQrcodes] = useState<QRCodeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedQR, setSelectedQR] = useState<string | null>(null);
+  const selectedRef = useRef<string | null>(null);
   const [stats, setStats] = useState<ScanStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const statsCache = useRef<Record<string, ScanStats>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [plan, setPlan] = useState("free");
   const [qrCount, setQrCount] = useState(0);
@@ -82,11 +85,19 @@ export default function Dashboard() {
   }
 
   async function viewStats(id: string) {
+    selectedRef.current = id;
     setSelectedQR(id);
     if (plan !== "pro") { setStatsBlocked(true); setStats(null); return; }
     setStatsBlocked(false);
+    setStats(null);
+    if (statsCache.current[id]) { setStats(statsCache.current[id]); return; }
+    setLoadingStats(true);
     const r = await fetch(`/api/qrcodes/${id}/scans`);
-    setStats(await r.json());
+    if (selectedRef.current !== id) return;
+    const data = await r.json();
+    statsCache.current[id] = data;
+    setStats(data);
+    setLoadingStats(false);
   }
 
   async function downloadQR(qr: QRCodeData, format: "png" | "svg") {
@@ -432,6 +443,21 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-500 mt-1">{t("statsProDesc")}</p>
                 <span className="mt-3 px-5 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium group-hover:bg-purple-700 transition-colors">{t("upgradeToPro")}</span>
               </a>
+            </div>
+          ) : selectedQR && loadingStats ? (
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">{t("dashboardStats")}</h3>
+              </div>
+              <div className="animate-pulse space-y-3">
+                <div className="flex justify-center">
+                  <div className="h-10 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[1,2,3,4].map(i => <div key={i} className="h-14 bg-gray-200 dark:bg-gray-700 rounded-lg" />)}
+                </div>
+                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+              </div>
             </div>
           ) : selectedQR && stats ? (
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-4">
