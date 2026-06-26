@@ -66,53 +66,7 @@ export default function Pricing() {
         </p>
       </section>
 
-      <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-        {plans.map((plan) => (
-          <div
-            key={plan.name}
-            className={`rounded-2xl p-6 border flex flex-col ${
-              plan.featured
-                ? "border-purple-500 bg-purple-50 dark:bg-purple-950/30 shadow-lg"
-                : "border-gray-200 dark:border-gray-800"
-            }`}
-          >
-            <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
-            <p className="text-sm text-gray-500 mb-4">{plan.desc}</p>
-            <div className="mb-6">
-              <span className="text-3xl font-bold">{plan.price}</span>
-              {plan.period && (
-                <span className="text-gray-500 text-sm">{plan.period}</span>
-              )}
-              {plan.featured && (
-                <p className="text-xs text-gray-400 mt-1">{t("pricingQarNote")}</p>
-              )}
-            </div>
-            <ul className="space-y-2 mb-6 flex-1">
-              {plan.features.map((f) => (
-                <li key={f} className="text-sm flex items-center gap-2">
-                  <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={plan.action}
-              disabled={loading}
-              className={`w-full py-2.5 rounded-xl font-medium transition duration-75 active:scale-[0.97] disabled:opacity-50 ${
-                plan.featured
-                  ? "bg-purple-600 text-white hover:bg-purple-700"
-                  : "border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
-              }`}
-            >
-              {plan.featured && loading ? t("loading") : plan.cta}
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <section className="mt-16 text-center">
+      <section className="mb-12 text-center">
         <h2 className="text-2xl font-bold mb-2">{t("featPro3")}</h2>
         <p className="text-sm text-gray-500 mb-8 max-w-md mx-auto">{t("featPro6")}</p>
 
@@ -178,6 +132,52 @@ export default function Pricing() {
           </div>
         </div>
       </section>
+
+      <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        {plans.map((plan) => (
+          <div
+            key={plan.name}
+            className={`rounded-2xl p-6 border flex flex-col ${
+              plan.featured
+                ? "border-purple-500 bg-purple-50 dark:bg-purple-950/30 shadow-lg"
+                : "border-gray-200 dark:border-gray-800"
+            }`}
+          >
+            <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
+            <p className="text-sm text-gray-500 mb-4">{plan.desc}</p>
+            <div className="mb-6">
+              <span className="text-3xl font-bold">{plan.price}</span>
+              {plan.period && (
+                <span className="text-gray-500 text-sm">{plan.period}</span>
+              )}
+              {plan.featured && (
+                <p className="text-xs text-gray-400 mt-1">{t("pricingQarNote")}</p>
+              )}
+            </div>
+            <ul className="space-y-2 mb-6 flex-1">
+              {plan.features.map((f) => (
+                <li key={f} className="text-sm flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={plan.action}
+              disabled={loading}
+              className={`w-full py-2.5 rounded-xl font-medium transition duration-75 active:scale-[0.97] disabled:opacity-50 ${
+                plan.featured
+                  ? "bg-purple-600 text-white hover:bg-purple-700"
+                  : "border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
+              }`}
+            >
+              {plan.featured && loading ? t("loading") : plan.cta}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

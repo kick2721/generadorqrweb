@@ -25,6 +25,63 @@ export default function Home() {
         <QRGenerator />
       </section>
 
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-center mb-8">{t("vsTitle")}</h2>
+        <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800">
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t("planFree")}</span>
+            <h3 className="font-semibold text-lg mt-1 mb-3">{t("feat1Title")}</h3>
+            <ul className="space-y-2 text-sm text-gray-500">
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("featFree1")}
+              </li>
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("featFree2")}
+              </li>
+
+            </ul>
+          </div>
+          <div className="p-6 rounded-2xl border border-purple-500/40 bg-purple-50/50 dark:bg-purple-950/20 relative">
+            <span className="absolute -top-2.5 right-4 bg-purple-600 text-white text-xs px-3 py-0.5 rounded-full font-medium">{t("planPro")}</span>
+            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">{t("pricePro")}{t("perMonth")}</span>
+            <h3 className="font-semibold text-lg mt-1 mb-3">{t("vsProTitle")}</h3>
+            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("featPro2")}
+              </li>
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("featPro3")}
+              </li>
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("featPro4")}
+              </li>
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("vsProDashboard")}
+              </li>
+              <li className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                {t("featPro5")}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="text-center mt-8">
+          <a
+            href="/pricing"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.97]"
+          >
+            {t("viewPlans")}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+          </a>
+        </div>
+      </section>
+
       <section className="mb-16 text-center">
         <h2 className="text-2xl font-bold mb-2">{t("featPro3")}</h2>
         <p className="text-sm text-gray-500 mb-8 max-w-md mx-auto">{t("featPro6")}</p>
@@ -89,63 +146,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-center mb-8">{t("vsTitle")}</h2>
-        <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-          <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800">
-                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t("planFree")}</span>
-            <h3 className="font-semibold text-lg mt-1 mb-3">{t("feat1Title")}</h3>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("featFree1")}
-              </li>
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("featFree2")}
-              </li>
-
-            </ul>
-          </div>
-          <div className="p-6 rounded-2xl border border-purple-500/40 bg-purple-50/50 dark:bg-purple-950/20 relative">
-            <span className="absolute -top-2.5 right-4 bg-purple-600 text-white text-xs px-3 py-0.5 rounded-full font-medium">{t("planPro")}</span>
-            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">{t("pricePro")}{t("perMonth")}</span>
-            <h3 className="font-semibold text-lg mt-1 mb-3">{t("vsProTitle")}</h3>
-            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("featPro2")}
-              </li>
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("featPro3")}
-              </li>
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("featPro4")}
-              </li>
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("vsProDashboard")}
-              </li>
-              <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                {t("featPro5")}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="text-center mt-8">
-          <a
-            href="/pricing"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.97]"
-          >
-            {t("viewPlans")}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-          </a>
         </div>
       </section>
     </div>

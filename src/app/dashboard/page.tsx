@@ -373,6 +373,37 @@ export default function Dashboard() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
+            {selectedQR && stats && (() => {
+              const hourCounts: number[] = Array(24).fill(0);
+              stats.recent.forEach(s => {
+                try { const h = new Date(s.scanned_at).getHours(); hourCounts[h]++; } catch {}
+              });
+              const peakH = hourCounts.indexOf(Math.max(...hourCounts));
+              const peakLabel = peakH < 12 ? `${peakH}:00 AM` : peakH === 12 ? `12:00 PM` : `${peakH-12}:00 PM`;
+              const days = stats.daily.length || 1;
+              const avg = (stats.total / days);
+              const best = [...stats.daily].sort((a, b) => b.count - a.count)[0];
+              return (
+              <div className="grid grid-cols-4 gap-2">
+                <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                  <p className="text-lg font-bold text-purple-600">{stats.total}</p>
+                  <p className="text-[10px] text-gray-400">{t("dashboardTotalScans")}</p>
+                </div>
+                <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                  <p className="text-lg font-bold text-purple-600">{peakLabel}</p>
+                  <p className="text-[10px] text-gray-400">{t("analyticsPeakHour")}</p>
+                </div>
+                <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                  <p className="text-lg font-bold text-purple-600">{avg.toFixed(1)}</p>
+                  <p className="text-[10px] text-gray-400">{t("analyticsAvgDaily")}</p>
+                </div>
+                <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                  <p className="text-lg font-bold text-purple-600 truncate">{best ? new Date(best.date).toLocaleDateString() : "—"}</p>
+                  <p className="text-[10px] text-gray-400">{t("analyticsBestDay")}</p>
+                </div>
+              </div>
+              );
+            })()}
             <h2 className="text-lg font-semibold">{t("dashboardMyQRs")}</h2>
             {filteredQrs.map(qr => (
               <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => viewStats(qr.id)}>
