@@ -29,7 +29,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
 
   const qr = rows[0];
   const h = await headers();
-  const ip = h.get("x-forwarded-for") || h.get("x-real-ip") || "";
+  const ip = (h.get("x-forwarded-for") || "").split(",")[0]?.trim() || h.get("x-real-ip") || "";
 
   try {
     const countryPromise = getCountry(ip);
