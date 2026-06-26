@@ -48,7 +48,7 @@ export default function Pricing() {
       price: t("pricePro"),
       period: t("perMonth"),
       desc: t("planProDesc"),
-      features: [t("featPro1"), t("featPro2"), t("featPro3"), t("featPro4"), t("featPro5")],
+      features: [t("featPro1"), t("featPro2"), t("featPro3"), t("featPro4"), t("featPro5"), t("featPro6"), t("featPro7")],
       cta: t("ctaPro"),
       featured: true,
       action: handleProCheckout,
@@ -111,6 +111,45 @@ export default function Pricing() {
           </div>
         ))}
       </div>
+
+      <section className="mt-16 text-center">
+        <h2 className="text-2xl font-bold mb-2">{t("featPro3")}</h2>
+        <p className="text-sm text-gray-500 mb-8 max-w-md mx-auto">{t("featPro6")}</p>
+
+        <div className="max-w-sm mx-auto bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-lg text-left">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-sm">{t("dashboardStats")}</h3>
+          </div>
+          <div className="text-center mb-4">
+            <p className="text-4xl font-bold text-purple-600">248</p>
+            <p className="text-xs text-gray-400">{t("dashboardTotalScans")}</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1.5 mb-4">
+            {[
+              { emoji: "📈", label: t("analyticsTimeline") },
+              { emoji: "🌍", label: t("analyticsCountries") },
+              { emoji: "📱", label: t("analyticsDevices") },
+              { emoji: "⏰", label: t("analyticsActivity") },
+            ].map(tab => (
+              <div key={tab.label} className="px-3 py-2 text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 text-center">
+                <span className="block leading-tight">{tab.emoji}<br/>{tab.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+              <p className="text-sm font-bold text-purple-600">2:00 PM</p>
+              <p className="text-[10px] text-gray-400">{t("analyticsPeakHour")}</p>
+            </div>
+            <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+              <p className="text-sm font-bold text-purple-600">8.3</p>
+              <p className="text-[10px] text-gray-400">{t("analyticsAvgDaily")}</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

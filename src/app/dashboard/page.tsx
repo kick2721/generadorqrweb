@@ -53,7 +53,7 @@ export default function Dashboard() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "scans" | "alpha">("newest");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "referrers">("timeline");
+  const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "activity">("timeline");
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -470,9 +470,9 @@ export default function Dashboard() {
               </div>
 
               <div className="grid grid-cols-2 gap-1.5">
-                {(["timeline","countries","devices","referrers"] as const).map(tab => (
+                {(["timeline","countries","devices","activity"] as const).map(tab => (
                   <button key={tab} onClick={() => setAnalyticsTab(tab)} className={`px-3 py-2 text-sm font-medium rounded-lg border transition active:scale-[0.95] ${analyticsTab === tab ? "bg-purple-600 text-white border-purple-600 shadow-sm" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400"}`}>
-                    <span className="block leading-tight">{tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "🔗"}<br/>{t("analytics" + tab.charAt(0).toUpperCase() + tab.slice(1) as any)}</span>
+                    <span className="block leading-tight">{tab === "timeline" ? "📈" : tab === "countries" ? "🌍" : tab === "devices" ? "📱" : "⏰"}<br/>{t("analyticsActivity")}</span>
                   </button>
                 ))}
               </div>
@@ -481,7 +481,7 @@ export default function Dashboard() {
                 <div>
                   {stats.daily.length > 0 ? (
                     <div>
-                      <p className="text-sm font-medium mb-2">{t("dashboardLast30")}</p>
+                      <p className="text-sm font-medium mb-2">{t("dashboardLast30").replace("30", "10")}</p>
                       <div className="flex items-end gap-1 h-20">
                         {stats.daily.slice(0, 10).reverse().map(d => {
                           const max = Math.max(...stats.daily.map(x => x.count), 1);
@@ -563,47 +563,88 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {analyticsTab === "referrers" && (
+              {analyticsTab === "activity" && (
                 <div>
-                  {stats.recent.length > 0 ? (
-                    <div className="space-y-1 max-h-48 overflow-y-auto">
-                      {(() => {
-                        const refs = stats.recent.reduce((acc: Record<string, {count:number,url?:string}>, s: any) => {
-                          if (!s.referrer) {
-                            acc["_direct"] = acc["_direct"] || { count: 0 };
-                            acc["_direct"].count++;
-                          } else {
-                            try {
-                              const u = new URL(s.referrer);
-                              const key = u.hostname;
-                              if (!acc[key]) acc[key] = { count: 0, url: s.referrer };
-                              acc[key].count++;
-                            } catch {
-                              const key = s.referrer;
-                              if (!acc[key]) acc[key] = { count: 0 };
-                              acc[key].count++;
-                            }
-                          }
-                          return acc;
-                        }, {});
-                        const sorted = Object.entries(refs).sort((a, b) => b[1].count - a[1].count);
-                        return sorted.length > 0 ? sorted.map(([key, val]) => (
-                          <div key={key} className="flex items-center justify-between text-sm">
-                            {key === "_direct" ? (
-                              <span className="text-gray-400 text-xs italic">{t("dashboardDirect")}</span>
-                            ) : val.url ? (
-                              <a href={val.url} target="_blank" rel="noopener noreferrer" className="text-purple-600 dark:text-purple-400 hover:underline truncate">{key}</a>
-                            ) : (
-                              <span className="text-gray-600 dark:text-gray-300 truncate">{key}</span>
-                            )}
-                            <span className="text-gray-400 ml-2 text-xs">{val.count}</span>
+                  {(() => {
+                    const hours = stats.recent.reduce((acc: number[], s: any) => {
+                      if (s.scanned_at) {
+                        try {
+                          const h = new Date(s.scanned_at).getHours();
+                          acc.push(h);
+                        } catch {}
+                      }
+                      return acc;
+                    }, []);
+                    if (hours.length === 0) return <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>;
+                    
+                    const hourCounts: number[] = Array(24).fill(0);
+                    hours.forEach(h => hourCounts[h]++);
+                    const maxHour = Math.max(...hourCounts, 1);
+                    const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+                    const peakLabel = peakHour < 12 ? `${peakHour}:00 AM` : peakHour === 12 ? `12:00 PM` : `${peakHour-12}:00 PM`;
+                    
+                    const lastScan = new Date(stats.recent[0].scanned_at);
+                    const now = new Date();
+                    const diffMs = now.getTime() - lastScan.getTime();
+                    const diffH = Math.floor(diffMs / 3600000);
+                    const diffD = Math.floor(diffMs / 86400000);
+                    const lastLabel = diffH < 1 ? "<1h" : diffH < 24 ? t("analyticsHoursAgo").replace("{n}", String(diffH)) : t("analyticsDaysAgo").replace("{n}", String(diffD));
+                    
+                    const days = stats.daily.length || 1;
+                    const avg = (stats.total / days).toFixed(1);
+                    
+                    const bestDay = stats.daily.reduce((best, d) => d.count > (best?.count || 0) ? d : best, stats.daily[0]);
+                    const bestDate = bestDay ? new Date(bestDay.date + "T00:00:00").toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }) : "";
+                    
+                    const hourRanges = [
+                      { label: "0-5", start: 0, end: 5 },
+                      { label: "6-11", start: 6, end: 11 },
+                      { label: "12-17", start: 12, end: 17 },
+                      { label: "18-23", start: 18, end: 23 },
+                    ];
+                    
+                    return (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <p className="text-lg font-bold text-purple-600">{peakLabel}</p>
+                            <p className="text-xs text-gray-400">{t("analyticsPeakHour")}</p>
                           </div>
-                        )) : <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>;
-                      })()}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-400 text-center py-4">{t("analyticsNoData")}</p>
-                  )}
+                          <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <p className="text-lg font-bold text-purple-600">{avg}</p>
+                            <p className="text-xs text-gray-400">{t("analyticsAvgDaily")}</p>
+                          </div>
+                          <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <p className="text-sm font-bold text-purple-600 truncate">{bestDate || "—"}</p>
+                            <p className="text-xs text-gray-400">{t("analyticsBestDay")}</p>
+                          </div>
+                          <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <p className="text-lg font-bold text-purple-600">{lastLabel}</p>
+                            <p className="text-xs text-gray-400">{t("analyticsLastScan")}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-gray-500 mb-1.5">{t("analyticsHourDistribution")}</p>
+                          <div className="space-y-1">
+                            {hourRanges.map(range => (
+                              <div key={range.label} className="flex items-center gap-1.5">
+                                <span className="text-[10px] text-gray-400 w-12 text-right">{range.label}</span>
+                                <div className="flex gap-0.5 flex-1">
+                                  {Array.from({ length: range.end - range.start + 1 }, (_, i) => {
+                                    const h = range.start + i;
+                                    const intensity = hourCounts[h] / maxHour;
+                                    return (
+                                      <div key={h} className="flex-1 h-4 rounded-sm" style={{ backgroundColor: intensity > 0 ? `rgba(147, 51, 234, ${0.15 + intensity * 0.85})` : "#f3f4f6" }} title={`${h}:00 — ${hourCounts[h]} scans`} />
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
