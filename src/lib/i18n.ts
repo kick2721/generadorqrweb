@@ -389,6 +389,7 @@ const t = {
     imprintSec4Title: "العلامات التجارية",
     imprintSec4Content: "QR Code هي علامة تجارية مسجلة لشركة Denso Wave Incorporated. QRWing ليس تابعًا أو معتمدًا أو مدعومًا من قبل Denso Wave.",
     signOut: "تسجيل الخروج",
+    viewPricing: "عرض الأسعار",
   },
   de: {
     navHome: "Start",
@@ -752,6 +753,7 @@ const t = {
     imprintSec4Title: "Marken",
     imprintSec4Content: "QR Code ist eine eingetragene Marke von Denso Wave Incorporated. QRWing ist nicht mit Denso Wave verbunden, wird von Denso Wave nicht unterstützt oder gesponsert.",
     signOut: "Abmelden",
+    viewPricing: "Preise anzeigen",
   },
   el: {
     navHome: "Αρχική",
@@ -1115,6 +1117,7 @@ const t = {
     imprintSec4Title: "Εμπορικά σήματα",
     imprintSec4Content: "Το QR Code είναι σήμα κατατεθέν της Denso Wave Incorporated. Το QRWing δεν συνδέεται, δεν υποστηρίζεται ή δεν χορηγείται από την Denso Wave.",
     signOut: "Αποσύνδεση",
+    viewPricing: "Προβολή τιμών",
   },
   en: {
     navHome: "Home",
@@ -1504,6 +1507,7 @@ const t = {
     imprintSec3Content: "The information provided on this website is for general informational purposes only. While we strive to keep the information accurate, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, or availability of the information.",
     imprintSec4Title: "Trademarks",
     imprintSec4Content: "QR Code is a registered trademark of Denso Wave Incorporated. QRWing is not affiliated with, endorsed by, or sponsored by Denso Wave.",
+    viewPricing: "View pricing",
   },
   es: {
     navHome: "Inicio",
@@ -1867,6 +1871,7 @@ const t = {
     imprintSec4Title: "Marcas registradas",
     imprintSec4Content: "Código QR es una marca registrada de Denso Wave Incorporated. QRWing no está afiliado, respaldado ni patrocinado por Denso Wave.",
     signOut: "Cerrar sesión",
+    viewPricing: "Ver precios",
   },
   fr: {
     navHome: "Accueil",
@@ -2230,6 +2235,7 @@ const t = {
     imprintSec4Title: "Marques déposées",
     imprintSec4Content: "QR Code est une marque déposée de Denso Wave Incorporated. QRWing n'est pas affilié, approuvé ou sponsorisé par Denso Wave.",
     signOut: "Déconnexion",
+    viewPricing: "Voir les tarifs",
   },
   hi: {
     navHome: "होम",
@@ -2593,6 +2599,7 @@ const t = {
     imprintSec4Title: "ट्रेडमार्क",
     imprintSec4Content: "क्यूआर कोड डेंसो वेव इनकॉर्पोरेटेड का एक पंजीकृत ट्रेडमार्क है। QRWing डेंसो वेव से संबद्ध, समर्थित या प्रायोजित नहीं है।",
     signOut: "साइन आउट",
+    viewPricing: "मूल्य देखें",
   },
   id: {
     navHome: "Beranda",
@@ -2956,6 +2963,7 @@ const t = {
     imprintSec4Title: "Merek Dagang",
     imprintSec4Content: "Kode QR adalah merek dagang terdaftar dari Denso Wave Incorporated. QRWing tidak berafiliasi dengan, didukung oleh, atau disponsori oleh Denso Wave.",
     signOut: "Keluar",
+    viewPricing: "Lihat harga",
   },
   it: {
     navHome: "Home",
@@ -3319,6 +3327,7 @@ const t = {
     imprintSec4Title: "Marchi",
     imprintSec4Content: "Il codice QR è un marchio registrato di Denso Wave Incorporated. QRWing non è affiliato, approvato o sponsorizzato da Denso Wave.",
     signOut: "Esci",
+    viewPricing: "Vedi prezzi",
   },
   ja: {
     navHome: "ホーム",
@@ -3682,6 +3691,7 @@ const t = {
     imprintSec4Title: "商標",
     imprintSec4Content: "QRコードは株式会社デンソーウェーブの登録商標です。 QRWing は、デンソーウェーブと提携、承認、後援するものではありません。",
     signOut: "ログアウト",
+    viewPricing: "料金を見る",
   },
   ko: {
     navHome: "홈",
@@ -4045,6 +4055,7 @@ const t = {
     imprintSec4Title: "상표",
     imprintSec4Content: "QR 코드는 Denso Wave Incorporated의 등록 상표입니다. QRWing은 Denso Wave와 제휴, 보증 또는 후원을 받지 않습니다.",
     signOut: "로그아웃",
+    viewPricing: "가격 보기",
   },
   nl: {
     navHome: "Home",
@@ -4408,6 +4419,7 @@ const t = {
     imprintSec4Title: "Handelsmerken",
     imprintSec4Content: "QR-code is een geregistreerd handelsmerk van Denso Wave Incorporated. QRWing is niet aangesloten bij, onderschreven door of gesponsord door Denso Wave.",
     signOut: "Uitloggen",
+    viewPricing: "Bekijk prijzen",
   },
   pl: {
     navHome: "Strona główna",
@@ -4771,6 +4783,7 @@ const t = {
     imprintSec4Title: "Znaki towarowe",
     imprintSec4Content: "Kod QR jest zastrzeżonym znakiem towarowym firmy Denso Wave Incorporated. QRWing nie jest powiązany, wspierany ani sponsorowany przez Denso Wave.",
     signOut: "Wyloguj",
+    viewPricing: "Zobacz cennik",
   },
   pt: {
     navHome: "Início",
@@ -5134,6 +5147,7 @@ const t = {
     imprintSec4Title: "Marcas registradas",
     imprintSec4Content: "QR Code é uma marca registrada da Denso Wave Incorporated. QRWing não é afiliado, endossado ou patrocinado pela Denso Wave.",
     signOut: "Sair",
+    viewPricing: "Ver preços",
   },
   ro: {
     navHome: "Acasă",
@@ -5497,6 +5511,7 @@ const t = {
     imprintSec4Title: "Mărci comerciale",
     imprintSec4Content: "QR Code este o marcă înregistrată a Denso Wave Incorporated. QRWing nu este afiliat, susținut de sau sponsorizat de Denso Wave.",
     signOut: "Deconectare",
+    viewPricing: "Vezi prețurile",
   },
   ru: {
     navHome: "Главная",
@@ -5860,6 +5875,7 @@ const t = {
     imprintSec4Title: "Товарные знаки",
     imprintSec4Content: "QR Code является зарегистрированной торговой маркой Denso Wave Incorporated. QRWing не связан, не одобрен и не спонсируется Denso Wave.",
     signOut: "Выйти",
+    viewPricing: "Посмотреть цены",
   },
   sv: {
     navHome: "Hem",
@@ -6223,6 +6239,7 @@ const t = {
     imprintSec4Title: "Varumärken",
     imprintSec4Content: "QR Code är ett registrerat varumärke som tillhör Denso Wave Incorporated. QRWing är inte anslutet till, stöds av eller sponsras av Denso Wave.",
     signOut: "Logga ut",
+    viewPricing: "Visa priser",
   },
   th: {
     navHome: "หน้าแรก",
@@ -6586,6 +6603,7 @@ const t = {
     imprintSec4Title: "เครื่องหมายการค้า",
     imprintSec4Content: "QR Code เป็นเครื่องหมายการค้าจดทะเบียนของ Denso Wave Incorporated QRWing ไม่มีส่วนเกี่ยวข้อง รับรอง หรือสนับสนุนโดย Denso Wave",
     signOut: "ออกจากระบบ",
+    viewPricing: "ดูราคา",
   },
   tr: {
     navHome: "Ana Sayfa",
@@ -6949,6 +6967,7 @@ const t = {
     imprintSec4Title: "Ticari markalar",
     imprintSec4Content: "QR Code, Denso Wave Incorporated'ın tescilli ticari markasıdır. QRWing, Denso Wave'e bağlı değildir, Denso Wave tarafından desteklenmez veya desteklenmez.",
     signOut: "Çıkış yap",
+    viewPricing: "Fiyatları gör",
   },
   uk: {
     navHome: "Головна",
@@ -7312,6 +7331,7 @@ const t = {
     imprintSec4Title: "Торгові марки",
     imprintSec4Content: "QR Code є зареєстрованою торговою маркою Denso Wave Incorporated. QRWing не є філією, не підтримується та не спонсорується Denso Wave.",
     signOut: "Вийти",
+    viewPricing: "Переглянути ціни",
   },
   vi: {
     navHome: "Trang chủ",
@@ -7675,6 +7695,7 @@ const t = {
     imprintSec4Title: "Nhãn hiệu",
     imprintSec4Content: "Mã QR là nhãn hiệu đã đăng ký của Denso Wave Incorporated. QRWing không được liên kết, xác nhận hoặc tài trợ bởi Denso Wave.",
     signOut: "Đăng xuất",
+    viewPricing: "Xem giá",
   },
   "zh-CN": {
     navHome: "首页",
@@ -8038,7 +8059,8 @@ const t = {
     imprintSec4Title: "商标",
     imprintSec4Content: "QR 码是 Denso Wave Incorporated 的注册商标。 QRWing 不隶属于 Denso Wave，也不受其认可或赞助。",
     signOut: "退出登录",
-  },
+  
+    viewPricing: "查看价格",},
   "zh-TW": {
     navHome: "首頁",
     navPricing: "價格",
@@ -8401,7 +8423,8 @@ const t = {
     imprintSec4Title: "商標",
     imprintSec4Content: "QR 碼是 Denso Wave Incorporated 的註冊商標。 QRWing 不隸屬於 Denso Wave，也不受其認可或贊助。",
     signOut: "登出",
-  },
+  
+    viewPricing: "查看價格",},
 };
 
 export type TranslationKey = keyof (typeof t)[Lang];

@@ -121,6 +121,12 @@ export default function Home() {
           </div>
 
         </div>
+        <div className="text-center mt-8">
+          <a href="/pricing" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium bg-purple-600 text-white hover:bg-purple-700 transition duration-75 active:scale-[0.97]">
+            {t("viewPricing")}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </a>
+        </div>
       </section>
     </div>
   );
