@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QRGeneradorWeb — Professional QR Code Generator",
+  title: "QRWing — Professional QR Code Generator",
   description:
     "Create free QR codes with custom colors and logo. Dynamic QR codes with analytics for professionals.",
 };

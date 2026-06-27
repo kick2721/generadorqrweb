@@ -17,7 +17,7 @@ export default function ImprintPage() {
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{t("imprintSec1Title")}</h2>
           <p>{t("imprintSec1Desc")}</p>
           <ul className="list-none mt-2 space-y-1">
-            <li><strong>{t("imprintName")}</strong> QRGeneradorWeb</li>
+            <li><strong>{t("imprintName")}</strong> QRWing</li>
             <li><strong>{t("imprintContact")}</strong> <a href="mailto:qrwing.app@gmail.com" className="text-purple-600 hover:underline">qrwing.app@gmail.com</a></li>
             <li><strong>{t("imprintJurisdiction")}</strong> {t("imprintJurisdictionValue")}</li>
           </ul>

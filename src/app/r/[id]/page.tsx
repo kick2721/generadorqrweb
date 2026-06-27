@@ -50,7 +50,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="max-w-lg w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 text-center shadow-lg">
-          <p className="text-sm font-semibold text-purple-600 mb-4">QRGeneradorWeb</p>
+          <p className="text-sm font-semibold text-purple-600 mb-4">QRWing</p>
           <p className="text-lg text-gray-700 dark:text-gray-200 whitespace-pre-wrap">{qr.redirect_to}</p>
         </div>
       </div>
@@ -62,7 +62,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="max-w-sm w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 shadow-lg">
-          <p className="text-sm font-semibold text-purple-600 mb-4">QRGeneradorWeb — Contacto</p>
+          <p className="text-sm font-semibold text-purple-600 mb-4">QRWing — Contacto</p>
           <p className="text-xl font-bold mb-1">{v.name}</p>
           {v.phone && <p className="text-gray-500">📞 {v.phone}</p>}
           {v.email && <p className="text-gray-500">✉️ {v.email}</p>}
@@ -75,7 +75,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="max-w-sm w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 text-center shadow-lg">
-          <p className="text-sm font-semibold text-purple-600 mb-4">QRGeneradorWeb — WiFi</p>
+          <p className="text-sm font-semibold text-purple-600 mb-4">QRWing — WiFi</p>
           <p className="text-gray-500">Escanea este QR con la cámara de tu teléfono para conectarte a la red WiFi.</p>
         </div>
       </div>
