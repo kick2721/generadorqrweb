@@ -22,17 +22,17 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
 
   useEffect(() => {
-    const saved = localStorage.getItem("qrwing-lang") as Lang | null;
+    const saved = localStorage.getItem("generadorqr-lang") as Lang | null;
     if (saved && LANGUAGES.some((l) => l.code === saved)) {
       setLangState(saved);
-      document.cookie = `qrwing-lang=${saved};path=/;max-age=31536000;SameSite=Lax`;
+      document.cookie = `generadorqr-lang=${saved};path=/;max-age=31536000;SameSite=Lax`;
     } else {
-      const match = document.cookie.match(/(?:^|;\s*)qrwing-lang=([^;]*)/);
+      const match = document.cookie.match(/(?:^|;\s*)generadorqr-lang=([^;]*)/);
       if (match) {
         const cookieLang = match[1] as Lang;
         if (LANGUAGES.some((l) => l.code === cookieLang)) {
           setLangState(cookieLang);
-          localStorage.setItem("qrwing-lang", cookieLang);
+          localStorage.setItem("generadorqr-lang", cookieLang);
         }
       }
     }
@@ -46,8 +46,8 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    localStorage.setItem("qrwing-lang", l);
-    document.cookie = `qrwing-lang=${l};path=/;max-age=31536000;SameSite=Lax`;
+    localStorage.setItem("generadorqr-lang", l);
+    document.cookie = `generadorqr-lang=${l};path=/;max-age=31536000;SameSite=Lax`;
     fetch("/api/user/lang", { method: "PATCH", body: JSON.stringify({ lang }) }).catch(() => {});
   }, []);
 

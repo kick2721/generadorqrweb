@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       [session.user.id, type, content, label || "", JSON.stringify(config || {}), actualContent]
     );
     const qr = rows.rows[0];
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://generadorqrweb.vercel.app";
     const redirectUrl = `${baseUrl}/r/${qr.id}`;
     await client.query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
     await client.query("COMMIT");

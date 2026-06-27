@@ -38,10 +38,10 @@ export default function Logo() {
 
   return (
     <svg viewBox="0 0 240 64" role="img" aria-labelledby="title desc" className="h-12 w-auto">
-      <title id="title">QRWing</title>
-      <desc id="desc">A scannable QR code for https://qrwing.vercel.app/ beside the QRWing wordmark.</desc>
+      <title id="title">GeneradorQR</title>
+      <desc id="desc">A scannable QR code for https://generadorqrweb.vercel.app/ beside the GeneradorQR wordmark.</desc>
       <defs>
-        <linearGradient id="qrwingAccent" x1="82" y1="12" x2="216" y2="46" gradientUnits="userSpaceOnUse">
+        <linearGradient id="generadorqrAccent" x1="82" y1="12" x2="216" y2="46" gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor="#4c1d95"/>
           <stop offset="0.55" stopColor="#7c3aed"/>
           <stop offset="1" stopColor="#a78bfa"/>
@@ -59,8 +59,8 @@ export default function Logo() {
       </g>
 
       <g fontFamily="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
-        <text x="76" y="42" fill={wordColor} fontSize="38" fontWeight="950" paintOrder="stroke" stroke={isDark ? "#111827" : "#ffffff"} strokeWidth="0.65">QR</text>
-        <text x="130" y="42" fill="url(#qrwingAccent)" fontSize="38" fontWeight="820">Wing</text>
+        <text x="76" y="42" fill={wordColor} fontSize="38" fontWeight="950" paintOrder="stroke" stroke={isDark ? "#111827" : "#ffffff"} strokeWidth="0.65">Generador</text>
+        <text x="184" y="42" fill="url(#generadorqrAccent)" fontSize="38" fontWeight="820">QR</text>
       </g>
       <path d="M131 51h66" stroke="#7c3aed" strokeWidth="3" strokeLinecap="round" opacity="0.24"/>
     </svg>

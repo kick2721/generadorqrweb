@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{t("privacyTitle")}</h1>
       <p className="text-sm text-gray-500 mb-2">{t("privacyUpdated")}</p>
       <p className="text-sm text-gray-500 mb-8">
-        {t("privacyScope")} <strong>qrwing.vercel.app</strong> {t("privacyScopeSuffix")}
+        {t("privacyScope")} <strong>generadorqrweb.vercel.app</strong> {t("privacyScopeSuffix")}
       </p>
 
       <section className="space-y-6">
@@ -63,17 +63,17 @@ export default function PrivacyPage() {
                   <td className="py-2 pr-4">{t("privacyCookieSessDur")}</td>
                 </tr>
                 <tr className="border-b border-gray-200 dark:border-gray-800">
-                  <td className="py-2 pr-4 font-mono text-xs">qrwing-lang</td>
+                  <td className="py-2 pr-4 font-mono text-xs">generadorqr-lang</td>
                   <td className="py-2 pr-4">{t("privacyCookieLang")}</td>
                   <td className="py-2 pr-4">{t("privacyCookieLangDur")}</td>
                 </tr>
                 <tr className="border-b border-gray-200 dark:border-gray-800">
-                  <td className="py-2 pr-4 font-mono text-xs">qrwing-theme</td>
+                  <td className="py-2 pr-4 font-mono text-xs">generadorqr-theme</td>
                   <td className="py-2 pr-4">{t("privacyCookieTheme")}</td>
                   <td className="py-2 pr-4">{t("privacyCookieThemeDur")}</td>
                 </tr>
                 <tr className="border-b border-gray-200 dark:border-gray-800">
-                  <td className="py-2 pr-4 font-mono text-xs">qrwing-cookie-consent</td>
+                  <td className="py-2 pr-4 font-mono text-xs">generadorqr-cookie-consent</td>
                   <td className="py-2 pr-4">{t("privacyCookieConsent")}</td>
                   <td className="py-2 pr-4">{t("privacyCookieConsentDur")}</td>
                 </tr>

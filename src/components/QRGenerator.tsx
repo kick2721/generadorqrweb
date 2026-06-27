@@ -9,7 +9,7 @@ import { FREE_MAX_QR } from "@/lib/constants";
 import { contrastRatio } from "@/lib/color";
 import QRCode from "qrcode";
 
-const STORAGE_KEY = "qrwing_last_qr";
+const STORAGE_KEY = "generadorqr_last_qr";
 
 export default function QRGenerator() {
   const { t } = useLang();
@@ -98,14 +98,14 @@ export default function QRGenerator() {
     if (format === "png") {
       const url = await QRCode.toDataURL(content, { width: size * 2, margin: 2, color: { dark: fg, light: bg } });
       const link = document.createElement("a");
-      link.download = `qrwing-${Date.now()}.png`;
+      link.download = `generadorqr-${Date.now()}.png`;
       link.href = url;
       link.click();
     } else {
       const svg = await QRCode.toString(content, { type: "svg", width: size * 2, margin: 2, color: { dark: fg, light: bg } });
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const link = document.createElement("a");
-      link.download = `qrwing-${Date.now()}.svg`;
+      link.download = `generadorqr-${Date.now()}.svg`;
       link.href = URL.createObjectURL(blob);
       link.click();
     }

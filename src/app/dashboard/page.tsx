@@ -108,7 +108,7 @@ export default function Dashboard() {
         color: { dark: qr.config?.fgColor || "#111827", light: qr.config?.bgColor || "#ffffff" },
       });
       const link = document.createElement("a");
-      link.download = `qrwing-${qr.label || "qr"}.png`;
+      link.download = `generadorqr-${qr.label || "qr"}.png`;
       link.href = url;
       link.click();
     } else {
@@ -118,7 +118,7 @@ export default function Dashboard() {
       clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
       const blob = new Blob([clone.outerHTML], { type: "image/svg+xml" });
       const link = document.createElement("a");
-      link.download = `qrwing-${qr.label || "qr"}.svg`;
+      link.download = `generadorqr-${qr.label || "qr"}.svg`;
       link.href = URL.createObjectURL(blob);
       link.click();
     }

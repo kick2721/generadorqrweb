@@ -16,7 +16,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("qrwing-theme") as Theme | null;
+    const stored = localStorage.getItem("generadorqr-theme") as Theme | null;
     if (stored) setTheme(stored);
     setMounted(true);
   }, []);
@@ -25,7 +25,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     if (!mounted) return;
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.classList.toggle("light", theme === "light");
-    localStorage.setItem("qrwing-theme", theme);
+    localStorage.setItem("generadorqr-theme", theme);
   }, [theme, mounted]);
 
   const toggle = () => setTheme((t) => (t === "dark" ? "light" : "dark"));

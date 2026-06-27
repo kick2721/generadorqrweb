@@ -32,7 +32,7 @@ Current code (lines 36-49) always overwrites content with `/r/[id]`. Change to:
   const qr = rows[0];
 
   if (plan === "pro") {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://qrwing.vercel.app";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://generadorqrweb.vercel.app";
     const redirectUrl = `${baseUrl}/r/${qr.id}`;
     await query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
     return NextResponse.json({ ...qr, content: redirectUrl, redirect_to: actualContent }, { status: 201 });

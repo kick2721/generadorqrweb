@@ -25,19 +25,19 @@ const providerList = [
     ? [
         Nodemailer({
           server: process.env.EMAIL_SERVER,
-          from: process.env.EMAIL_FROM || "noreply@qrwing.vercel.app",
+          from: process.env.EMAIL_FROM || "noreply@generadorqrweb.vercel.app",
           async sendVerificationRequest({ identifier: email, url }) {
             let lang: Lang = "en";
             try {
               const { cookies } = await import("next/headers");
               const cookieStore = await cookies();
-              const v = cookieStore.get("qrwing-lang")?.value as Lang;
+              const v = cookieStore.get("generadorqr-lang")?.value as Lang;
               if (v) lang = v;
             } catch {}
             const { subject, html } = getEmailTemplate(lang, url);
             const nodemailer = await import("nodemailer");
             const transport = nodemailer.createTransport(process.env.EMAIL_SERVER);
-            await transport.sendMail({ to: email, from: process.env.EMAIL_FROM || "noreply@qrwing.vercel.app", subject, html });
+            await transport.sendMail({ to: email, from: process.env.EMAIL_FROM || "noreply@generadorqrweb.vercel.app", subject, html });
           },
         }),
       ]

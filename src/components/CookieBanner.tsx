@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-const CONSENT_KEY = "qrwing-cookie-consent";
+const CONSENT_KEY = "generadorqr-cookie-consent";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);

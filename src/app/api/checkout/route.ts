@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const origin = request.headers.get("origin") || request.headers.get("referer") || "https://qrwing.vercel.app";
+  const origin = request.headers.get("origin") || request.headers.get("referer") || "https://generadorqrweb.vercel.app";
 
   try {
     const url = await createCheckoutUrl(VARIANT_ID, session.user.email, session.user.id, origin);
