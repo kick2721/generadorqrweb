@@ -12,13 +12,13 @@ export default function TosPage() {
       <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{t('tosTitle')}</h1>
       <p className="text-sm text-gray-500 mb-2">{t('tosUpdated')}</p>
       <p className="text-sm text-gray-500 mb-8">
-        {t('tosIntro1')} GeneradorQR {t('tosIntro2')}
+        {t('tosIntro1')} QRGeneradorWeb {t('tosIntro2')}
       </p>
 
       <section className="space-y-6">
         <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{t('tosSec1Title')}</h2>
-          <p>GeneradorQR{t('tosSec1Content')}</p>
+          <p>QRGeneradorWeb{t('tosSec1Content')}</p>
         </div>
 
         <div>
@@ -39,7 +39,7 @@ export default function TosPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{t('tosSec4Title')}</h2>
-          <p>{t('tosSec4Intro1')} GeneradorQR {t('tosSec4Intro2')}</p>
+          <p>{t('tosSec4Intro1')} QRGeneradorWeb {t('tosSec4Intro2')}</p>
           <ul className="list-disc pl-5 mt-2 space-y-1">
             <li>{t('tosSec4Item1')}</li>
             <li>{t('tosSec4Item2')}</li>
@@ -63,16 +63,16 @@ export default function TosPage() {
         <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{t('tosSec6Title')}</h2>
           <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li>{t('tosSec6Item1a')} GeneradorQR {t('tosSec6Item1b')}</li>
-            <li>{t('tosSec6Item2a')} GeneradorQR {t('tosSec6Item2b')}</li>
+            <li>{t('tosSec6Item1a')} QRGeneradorWeb {t('tosSec6Item1b')}</li>
+            <li>{t('tosSec6Item2a')} QRGeneradorWeb {t('tosSec6Item2b')}</li>
             <li>{t('tosSec6Item3')}</li>
           </ul>
         </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{t('tosSec7Title')}</h2>
-          <p>GeneradorQR{t('tosSec7Desc1')}</p>
-          <p className="mt-2">{t('tosSec7Desc2a')} GeneradorQR {t('tosSec7Desc2b')}</p>
+          <p>QRGeneradorWeb{t('tosSec7Desc1')}</p>
+          <p className="mt-2">{t('tosSec7Desc2a')} QRGeneradorWeb {t('tosSec7Desc2b')}</p>
           <p className="mt-2">{t('tosSec7Desc3')}</p>
         </div>
 

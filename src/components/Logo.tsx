@@ -38,8 +38,8 @@ export default function Logo() {
 
   return (
     <svg viewBox="0 0 240 64" role="img" aria-labelledby="title desc" className="h-12 w-auto">
-      <title id="title">GeneradorQR</title>
-      <desc id="desc">A scannable QR code for https://generadorqrweb.vercel.app/ beside the GeneradorQR wordmark.</desc>
+      <title id="title">QRGeneradorWeb</title>
+      <desc id="desc">A scannable QR code for https://generadorqrweb.vercel.app/ beside the QRGeneradorWeb wordmark.</desc>
       <defs>
         <linearGradient id="generadorqrAccent" x1="82" y1="12" x2="216" y2="46" gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor="#4c1d95"/>
