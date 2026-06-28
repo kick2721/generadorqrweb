@@ -78,6 +78,7 @@ interface Props {
   submitLabel?: string;
   saving?: boolean;
   plan?: string;
+  preview?: React.ReactNode;
 }
 
 const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
@@ -101,7 +102,7 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
   { value: "image", key: "qrTypeImage", icon: "🖼️" },
 ];
 
-export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free" }: Props) {
+export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", preview }: Props) {
   const { t } = useLang();
   const [qrType, setQrType] = useState<QrType>(initialValues?.type || "url");
   const [url, setUrl] = useState(initialValues?.url || "");
@@ -315,6 +316,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       </div>
 
       <p className="text-xs text-gray-400 -mt-2">{t(`type${qrType.charAt(0).toUpperCase() + qrType.slice(1)}Desc` as any)}</p>
+
+      <div className="md:hidden flex justify-center">{preview}</div>
 
       {qrType === "url" && (
         <input type="url" placeholder={t("placeUrl")} value={url} onChange={(e) => setUrl(e.target.value)}
