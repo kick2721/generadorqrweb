@@ -94,11 +94,16 @@ export default function QRGenerator() {
       return;
     }
 
-    if (!qrRef.current) {
-      qrRef.current = new QRCodeStyling(buildQrOptions(qrData));
-      qrRef.current.append(canvasRef.current);
-    } else {
-      qrRef.current.update(buildQrOptions(qrData));
+    try {
+      if (!qrRef.current) {
+        qrRef.current = new QRCodeStyling(buildQrOptions(qrData));
+        qrRef.current.append(canvasRef.current);
+      } else {
+        qrRef.current.update(buildQrOptions(qrData));
+      }
+    } catch {
+      if (canvasRef.current) canvasRef.current.innerHTML = "";
+      qrRef.current = null;
     }
   }, [qrData]);
 
