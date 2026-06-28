@@ -53,20 +53,109 @@ export function buildQrOptions(data: QRFormData) {
   };
 }
 
+function QRPreview({ qrData, frameClass, isLogoBlocked, withPro, withAuth }: { qrData: QRFormData | null; frameClass: (id: string) => string; isLogoBlocked: boolean; withPro: (cb: () => void) => void; withAuth: (cb: () => void) => void }) {
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const qrRef = useRef<any>(null);
+  const { t } = useLang();
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!qrData?.hasValues || !canvasRef.current) {
+      if (qrRef.current && canvasRef.current) {
+        canvasRef.current.innerHTML = "";
+        qrRef.current = null;
+      }
+      return;
+    }
+    try {
+      if (!qrRef.current) {
+        qrRef.current = new QRCodeStyling(buildQrOptions(qrData));
+        qrRef.current.append(canvasRef.current);
+      } else {
+        qrRef.current.update(buildQrOptions(qrData));
+      }
+    } catch {
+      if (canvasRef.current) canvasRef.current.innerHTML = "";
+      qrRef.current = null;
+    }
+  }, [qrData]);
+
+  const downloadQR = async (format: string) => {
+    if (!qrRef.current) return;
+    if (format === "svg") {
+      const blob = await qrRef.current.getRawData("svg");
+      const a = document.createElement("a");
+      a.download = `qrwing-${Date.now()}.svg`;
+      a.href = URL.createObjectURL(blob);
+      a.click();
+    } else if (format === "jpg") {
+      const pngBlob = await qrRef.current.getRawData("png");
+      const img = new Image();
+      const url = URL.createObjectURL(pngBlob);
+      await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
+      URL.revokeObjectURL(url);
+      const c = document.createElement("canvas");
+      c.width = img.width; c.height = img.height;
+      const ctx = c.getContext("2d")!;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0);
+      c.toBlob((b) => {
+        if (!b) return;
+        const a = document.createElement("a");
+        a.download = `qrwing-${Date.now()}.jpg`;
+        a.href = URL.createObjectURL(b);
+        a.click();
+      }, "image/jpeg", 0.92);
+    } else {
+      qrRef.current.download({ name: `qrwing-${Date.now()}`, extension: "png" });
+    }
+  };
+
+  const copyToClipboard = async () => {
+    if (!qrRef.current) return;
+    try {
+      const blob = await qrRef.current.getRawData("png");
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      qrRef.current.download({ name: `qrwing-${Date.now()}`, extension: "png" });
+    }
+  };
+
+  return (
+    <>
+      <div ref={canvasRef} className={`${frameClass(qrData?.config?.frame || "none")}`} style={{ minWidth: 256, minHeight: 256 }}>
+        {!qrData?.hasValues && (
+          <div className="flex items-center justify-center text-gray-400" style={{ width: 256, height: 256 }}>
+            <p className="text-sm text-center px-4">{t("placeholderQr")}</p>
+          </div>
+        )}
+      </div>
+      {qrData?.hasValues && (
+        <div className="flex flex-wrap gap-2 justify-center">
+          <button onClick={() => withPro(() => downloadQR("png"))} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
+          <button onClick={() => withPro(() => downloadQR("jpg"))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">JPG</button>
+          <button onClick={() => withPro(() => downloadQR("svg"))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
+          <button onClick={() => withAuth(() => copyToClipboard())} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function QRGenerator() {
   const { t } = useLang();
   const { data: session } = useSession();
   const [saveError, setSaveError] = useState("");
   const [savedOk, setSavedOk] = useState(false);
   const [qrData, setQrData] = useState<QRFormData | null>(null);
-  const [copied, setCopied] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [restoredForm, setRestoredForm] = useState<Record<string, any> | null>(null);
   const [plan, setPlan] = useState("free");
   const [showLogoProModal, setShowLogoProModal] = useState(false);
   const [saving, setSaving] = useState(false);
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const qrRef = useRef<any>(null);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -84,28 +173,6 @@ export default function QRGenerator() {
       }
     } catch {}
   }, []);
-
-  useEffect(() => {
-    if (!qrData?.hasValues || !canvasRef.current) {
-      if (qrRef.current && canvasRef.current) {
-        canvasRef.current.innerHTML = "";
-        qrRef.current = null;
-      }
-      return;
-    }
-
-    try {
-      if (!qrRef.current) {
-        qrRef.current = new QRCodeStyling(buildQrOptions(qrData));
-        qrRef.current.append(canvasRef.current);
-      } else {
-        qrRef.current.update(buildQrOptions(qrData));
-      }
-    } catch {
-      if (canvasRef.current) canvasRef.current.innerHTML = "";
-      qrRef.current = null;
-    }
-  }, [qrData]);
 
   const hasLogo = qrData?.config?.logo != null;
   const isLogoBlocked = hasLogo && plan !== "pro";
@@ -166,50 +233,6 @@ export default function QRGenerator() {
     await saveToServer();
   };
 
-  const downloadQR = async (format: "png" | "svg" | "jpg") => {
-    if (!qrRef.current) return;
-    if (format === "svg") {
-      const blob = await qrRef.current.getRawData("svg");
-      const link = document.createElement("a");
-      link.download = `qrwing-${Date.now()}.svg`;
-      link.href = URL.createObjectURL(blob);
-      link.click();
-    } else if (format === "jpg") {
-      const pngBlob = await qrRef.current.getRawData("png");
-      const img = new Image();
-      const url = URL.createObjectURL(pngBlob);
-      await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
-      URL.revokeObjectURL(url);
-      const c = document.createElement("canvas");
-      c.width = img.width; c.height = img.height;
-      const ctx = c.getContext("2d")!;
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, c.width, c.height);
-      ctx.drawImage(img, 0, 0);
-      c.toBlob((b) => {
-        if (!b) return;
-        const link = document.createElement("a");
-        link.download = `qrwing-${Date.now()}.jpg`;
-        link.href = URL.createObjectURL(b);
-        link.click();
-      }, "image/jpeg", 0.92);
-    } else {
-      qrRef.current.download({ name: `qrwing-${Date.now()}`, extension: "png" });
-    }
-  };
-
-  const copyToClipboard = async () => {
-    if (!qrRef.current) return;
-    try {
-      const blob = await qrRef.current.getRawData("png");
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      qrRef.current.download({ name: `qrwing-${Date.now()}`, extension: "png" });
-    }
-  };
-
   return (
     <div className="max-w-4xl mx-auto">
       <div className="grid md:grid-cols-2 gap-8">
@@ -218,13 +241,7 @@ export default function QRGenerator() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <div ref={canvasRef} className={`${frameClass(qrData?.config?.frame || "none")}`} style={{ minWidth: 256, minHeight: 256 }}>
-            {!qrData?.hasValues && (
-              <div className="flex items-center justify-center text-gray-400" style={{ width: 256, height: 256 }}>
-                <p className="text-sm text-center px-4">{t("placeholderQr")}</p>
-              </div>
-            )}
-          </div>
+          <QRPreview key={qrData?.type || "empty"} qrData={qrData} frameClass={frameClass} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} />
 
           {qrData?.hasValues && (
             <>
@@ -235,11 +252,6 @@ export default function QRGenerator() {
                   <p className="text-[11px] text-amber-600 dark:text-amber-400 text-center">⚠️ {t("lowContrast").replace("{n}", ratio.toFixed(1))}</p>
                 );
               })()}
-              <div className="flex flex-wrap gap-2 justify-center">
-              <button onClick={() => withPro(() => downloadQR("png"))} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
-              <button onClick={() => withPro(() => downloadQR("jpg"))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">JPG</button>
-              <button onClick={() => withPro(() => downloadQR("svg"))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
-              <button onClick={() => withPro(() => copyToClipboard())} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
               {savedOk && (
                 <a href="/dashboard" className="text-xs text-green-600 font-medium hover:underline">
                   {t("saved")} — {t("viewDashboard")}
@@ -260,7 +272,6 @@ export default function QRGenerator() {
                   <a href="/pricing" className="inline-block mt-3 px-5 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors active:scale-[0.95]">{t("upgradeToPro")} →</a>
                 </div>
               )}
-            </div>
             </>
           )}
 
