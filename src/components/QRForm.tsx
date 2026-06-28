@@ -225,7 +225,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "vcard": return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
       case "business-card": return `BEGIN:VCARD\nVERSION:3.0\nFN:${bcName}\nORG:${bcCompany}\nTITLE:${bcTitle}\nTEL:${bcPhone}\nEMAIL:${bcEmail}\nURL:${bcWebsite}\nADR:;;${bcAddress};;;\nEND:VCARD`;
       case "email": return `https://generadorqrweb.vercel.app/mail?to=${encodeURIComponent(emailAddr)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-      case "image": return imageUploadedUrl;
+      case "image": return imageUploadedUrl || "qrwing — Imagen";
       case "whatsapp": return `https://wa.me/${whatsappPhone.replace(/[^0-9]/g, "")}${whatsappMsg ? "?text=" + encodeURIComponent(whatsappMsg) : ""}`;
       case "phone": return `tel:${phoneNumber}`;
       case "sms": return `smsto:${smsPhone}:${smsMsg}`;
@@ -233,9 +233,9 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "calendar": return `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${calendarTitle}\nDTSTART:${calendarDate ? calendarDate.replace(/[\s:-]/g, "").padEnd(15, "0") : ""}\nLOCATION:${calendarLocation}\nDESCRIPTION:${calendarDesc}\nEND:VEVENT\nEND:VCALENDAR`;
       case "youtube": return youtubeUrl;
       case "appstore": return appstoreUrl;
-      case "google-review": return googlePlaceId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}` : "";
-      case "password": return passwordContent || "";
-      case "multi-link": return multiLinks.map(m => m.url).filter(Boolean).join(",") || "";
+      case "google-review": return googlePlaceId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}` : "qrwing — Reseña Google";
+      case "password": return passwordContent || "qrwing — Contenido protegido";
+      case "multi-link": return multiLinks.map(m => m.url).filter(Boolean).join(",") || "qrwing — Múltiples enlaces";
       case "telegram": return `https://t.me/${telegramUser.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
       default: return "";
     }
