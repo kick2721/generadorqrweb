@@ -223,8 +223,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
   const qrValue = useCallback(() => {
     switch (qrType) {
-      case "url": return url;
-      case "text": return text;
+      case "url": return url || "qrwing — URL";
+      case "text": return text || "qrwing — Texto";
       case "wifi": return wifiPass ? `WIFI:T:${wifiEnc};S:${wifiSsid};P:${wifiPass};;` : `WIFI:T:nopass;S:${wifiSsid};;`;
       case "vcard": return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
       case "business-card": return `BEGIN:VCARD\nVERSION:3.0\nFN:${bcName}\nORG:${bcCompany}\nTITLE:${bcTitle}\nTEL:${bcPhone}\nEMAIL:${bcEmail}\nURL:${bcWebsite}\nADR:;;${bcAddress};;;\nEND:VCARD`;
@@ -235,8 +235,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "sms": return `smsto:${smsPhone}:${smsMsg}`;
       case "location": return `https://maps.google.com/maps?q=${encodeURIComponent(locationQuery)}`;
       case "calendar": return `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${calendarTitle}\nDTSTART:${calendarDate ? calendarDate.replace(/[\s:-]/g, "").padEnd(15, "0") : ""}\nLOCATION:${calendarLocation}\nDESCRIPTION:${calendarDesc}\nEND:VEVENT\nEND:VCALENDAR`;
-      case "youtube": return youtubeUrl;
-      case "appstore": return appstoreUrl;
+      case "youtube": return youtubeUrl || "qrwing — YouTube";
+      case "appstore": return appstoreUrl || "qrwing — App Store";
       case "google-review": return googlePlaceId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}` : "qrwing — Reseña Google";
       case "password": return passwordContent || "qrwing — Contenido protegido";
       case "multi-link": return multiLinks.map(m => m.url).filter(Boolean).join(",") || "qrwing — Múltiples enlaces";
