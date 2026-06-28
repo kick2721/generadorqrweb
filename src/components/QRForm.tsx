@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useLang } from "@/context/LangContext";
 import { contrastRatio } from "@/lib/color";
 import { FRAMES } from "@/lib/frames";
 import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from "@/lib/templates";
+import QRPreview from "./QRPreview";
 
 type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram" | "google-review" | "password" | "multi-link" | "business-card";
 
@@ -78,7 +79,10 @@ interface Props {
   submitLabel?: string;
   saving?: boolean;
   plan?: string;
-  preview?: React.ReactNode;
+  qrData?: QRFormData | null;
+  isLogoBlocked?: boolean;
+  withPro?: (cb: () => void) => void;
+  withAuth?: (cb: () => void) => void;
 }
 
 const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
@@ -102,7 +106,7 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
   { value: "image", key: "qrTypeImage", icon: "🖼️" },
 ];
 
-export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", preview }: Props) {
+export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", qrData, isLogoBlocked, withPro, withAuth }: Props) {
   const { t } = useLang();
   const [qrType, setQrType] = useState<QrType>(initialValues?.type || "url");
   const [url, setUrl] = useState(initialValues?.url || "");
@@ -239,7 +243,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "telegram": return `https://t.me/${telegramUser.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
       default: return "";
     }
-  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, bcName, bcCompany, bcTitle, bcPhone, bcEmail, bcWebsite, bcAddress, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg]);
+  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, bcName, bcCompany, bcTitle, bcPhone, bcEmail, bcWebsite, bcAddress, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
 
   const getData = useCallback((): QRFormData => {
     const val = qrValue();
@@ -251,7 +255,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, folder, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined) },
       hasValues: val.length > 0,
     };
-  }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType]);
+  }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, passwordHint, folder, expiresAt, multiLinks]);
 
   useEffect(() => {
     if (onChange) onChange(getData());
@@ -317,7 +321,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
       <p className="text-xs text-gray-400 -mt-2">{t(`type${qrType.charAt(0).toUpperCase() + qrType.slice(1)}Desc` as any)}</p>
 
-      <div className="md:hidden flex justify-center">{preview}</div>
+      <div className="md:hidden flex justify-center" key={qrData?.type || "empty"}><QRPreview qrData={qrData} isLogoBlocked={isLogoBlocked ?? false} withPro={withPro ?? (() => {})} withAuth={withAuth ?? (() => {})} /></div>
 
       {qrType === "url" && (
         <input type="url" placeholder={t("placeUrl")} value={url} onChange={(e) => setUrl(e.target.value)}
