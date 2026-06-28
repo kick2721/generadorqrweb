@@ -1,6 +1,9 @@
 import { query } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import ChatAssistant from "@/components/ChatAssistant";
+import PasswordGate from "@/components/PasswordGate";
+import BusinessCardScan from "@/components/BusinessCardScan";
 
 async function getCountry(ip: string): Promise<string> {
   if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("172.16.")) return "";
@@ -59,7 +62,7 @@ function LandingLayout({ children }: { children: React.ReactNode }) {
 
 export default async function RedirectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const rows = await query(`SELECT redirect_to, type FROM public.qrcodes WHERE id = $1`, [id]);
+  const rows = await query(`SELECT redirect_to, type, config FROM public.qrcodes WHERE id = $1`, [id]);
   if (rows.length === 0) redirect("/");
 
   const qr = rows[0];
@@ -97,6 +100,16 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
         <p className="text-xl font-bold mb-1">{v.name}</p>
         {v.phone && <p className="text-gray-500">📞 {v.phone}</p>}
         {v.email && <p className="text-gray-500">✉️ {v.email}</p>}
+      </LandingLayout>
+    );
+  }
+
+  if (qr.type === "business-card") {
+    const cfg = qr.config || {};
+    return (
+      <LandingLayout>
+        <p className="text-sm font-semibold text-purple-600 mb-2 text-center">Tarjeta Digital</p>
+        <BusinessCardScan name={cfg.bcName || ""} company={cfg.bcCompany || ""} title={cfg.bcTitle || ""} phone={cfg.bcPhone || ""} email={cfg.bcEmail || ""} website={cfg.bcWebsite || ""} address={cfg.bcAddress || ""} />
       </LandingLayout>
     );
   }
@@ -165,6 +178,60 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
     );
   }
 
+  const config = typeof qr.config === "string" ? JSON.parse(qr.config) : (qr.config || {});
+
+  if (config?.expiresAt && new Date(config.expiresAt) < new Date()) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <div className="max-w-sm w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 text-center shadow-lg">
+          <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <p className="text-lg font-semibold mb-1">Este QR ha expirado</p>
+          <p className="text-sm text-gray-500">El contenido ya no está disponible.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (qr.type === "password") {
+    return <PasswordGate config={config} redirectTo={qr.redirect_to} />;
+  }
+
+  if (qr.type === "multi-link") {
+    const links: { url: string; day?: string; hour?: string }[] = config?.multiLinks || [];
+    if (links.length > 0) {
+      const now = new Date();
+      const days = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+      const currentDay = days[now.getDay()];
+      const currentHour = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+      const match = links.find(l => {
+        if (l.day && l.day !== currentDay) return false;
+        if (l.hour && l.hour > currentHour) return false;
+        return true;
+      });
+      if (match) {
+        const u = match.url.startsWith("http") ? match.url : `https://${match.url}`;
+        redirect(u);
+      }
+    }
+  }
+
   const dest = qr.redirect_to;
-  redirect(dest.startsWith("http") ? dest : `https://${dest}`);
+  const cleanUrl = dest.startsWith("http") ? dest : `https://${dest}`;
+
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <div className="max-w-sm w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 text-center shadow-lg">
+        <p className="text-sm font-semibold text-purple-600 mb-4">QRWing</p>
+        <p className="text-sm text-gray-400 mb-2">Redirigiendo a</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 break-all mb-6">{cleanUrl}</p>
+        <a href={cleanUrl} className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors mb-3">
+          Ir al sitio →
+        </a>
+        <p className="text-xs text-gray-400">¿Preguntas? Usa el chat en la esquina inferior derecha.</p>
+      </div>
+      <ChatAssistant url={cleanUrl} title={qr.type} />
+    </div>
+  );
 }

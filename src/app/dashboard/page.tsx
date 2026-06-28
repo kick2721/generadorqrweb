@@ -88,6 +88,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "scans" | "alpha">("newest");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [folderFilter, setFolderFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "activity">("timeline");
 
@@ -215,12 +216,12 @@ export default function Dashboard() {
   }
 
   function typeIcon(type: string) {
-    const icons: Record<string, string> = { url: "🔗", text: "📝", wifi: "📶", vcard: "👤", email: "📧", image: "🖼️", whatsapp: "💬", phone: "📞", sms: "💬", location: "📍", calendar: "📅", youtube: "▶️", appstore: "📱", telegram: "✈️" };
+    const icons: Record<string, string> = { url: "🔗", text: "📝", wifi: "📶", vcard: "👤", email: "📧", image: "🖼️", whatsapp: "💬", phone: "📞", sms: "💬", location: "📍", calendar: "📅", youtube: "▶️", appstore: "📱", telegram: "✈️", "google-review": "⭐", password: "🔒", "multi-link": "🔀", "business-card": "💳" };
     return icons[type] || "📄";
   }
 
   function typeLabel(type: string) {
-    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", youtube: "YouTube", appstore: "App Store", telegram: "Telegram" };
+    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", youtube: "YouTube", appstore: "App Store", telegram: "Telegram", "google-review": "Google Review", password: "Protegido", "multi-link": "Multi-enlace", "business-card": "Tarjeta" };
     return labels[type] || type;
   }
 
@@ -230,8 +231,10 @@ export default function Dashboard() {
 
   const totalScans = qrcodes.reduce((a, b) => a + b.scan_count, 0);
 
+  const folders = [...new Set(qrcodes.map(q => q.config?.folder).filter(Boolean))] as string[];
   const filteredQrs = qrcodes
     .filter(qr => {
+      if (folderFilter && qr.config?.folder !== folderFilter) return false;
       if (typeFilter && qr.type !== typeFilter) return false;
       if (!search) return true;
       const s = search.toLowerCase();
@@ -380,7 +383,8 @@ export default function Dashboard() {
             </button>
           </div>
           {showFilters && (
-            <div className="flex gap-2 mb-4 flex-wrap">
+            <>
+            <div className="flex gap-2 mb-2 flex-wrap">
               <button onClick={() => setTypeFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border transition ${!typeFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>{t("dashboardFilterAll")}</button>
               {types.map(tp => (
                 <button key={tp} onClick={() => setTypeFilter(typeFilter === tp ? null : tp)} className={`px-3 py-1.5 text-xs rounded-full border transition ${typeFilter === tp ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>
@@ -388,6 +392,17 @@ export default function Dashboard() {
                 </button>
               ))}
             </div>
+            {folders.length > 0 && (
+            <div className="flex gap-2 mb-4 flex-wrap">
+              <button onClick={() => setFolderFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border transition ${!folderFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>Todas las carpetas</button>
+              {folders.map(f => (
+                <button key={f} onClick={() => setFolderFilter(folderFilter === f ? null : f)} className={`px-3 py-1.5 text-xs rounded-full border transition ${folderFilter === f ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-emerald-300'}`}>
+                  📁 {f}
+                </button>
+              ))}
+            </div>
+            )}
+            </>
           )}
         </div>
       )}

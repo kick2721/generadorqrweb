@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import QRForm, { type QRFormData } from "./QRForm";
 import { FREE_MAX_QR } from "@/lib/constants";
 import { contrastRatio } from "@/lib/color";
+import { frameClass } from "@/lib/frames";
 
 const STORAGE_KEY = "generadorqr_last_qr";
 
@@ -160,7 +161,7 @@ export default function QRGenerator() {
     await saveToServer();
   };
 
-  const downloadQR = async (format: "png" | "svg") => {
+  const downloadQR = async (format: "png" | "svg" | "jpg") => {
     if (!qrRef.current) return;
     if (format === "svg") {
       const blob = await qrRef.current.getRawData("svg");
@@ -168,6 +169,25 @@ export default function QRGenerator() {
       link.download = `qrwing-${Date.now()}.svg`;
       link.href = URL.createObjectURL(blob);
       link.click();
+    } else if (format === "jpg") {
+      const pngBlob = await qrRef.current.getRawData("png");
+      const img = new Image();
+      const url = URL.createObjectURL(pngBlob);
+      await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
+      URL.revokeObjectURL(url);
+      const c = document.createElement("canvas");
+      c.width = img.width; c.height = img.height;
+      const ctx = c.getContext("2d")!;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0);
+      c.toBlob((b) => {
+        if (!b) return;
+        const link = document.createElement("a");
+        link.download = `qrwing-${Date.now()}.jpg`;
+        link.href = URL.createObjectURL(b);
+        link.click();
+      }, "image/jpeg", 0.92);
     } else {
       qrRef.current.download({ name: `qrwing-${Date.now()}`, extension: "png" });
     }
@@ -193,7 +213,7 @@ export default function QRGenerator() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <div ref={canvasRef} className="p-6 bg-white rounded-2xl shadow-lg border border-gray-200" style={{ minWidth: 256, minHeight: 256 }}>
+          <div ref={canvasRef} className={`${frameClass(qrData?.config?.frame || "none")}`} style={{ minWidth: 256, minHeight: 256 }}>
             {!qrData?.hasValues && (
               <div className="flex items-center justify-center text-gray-400" style={{ width: 256, height: 256 }}>
                 <p className="text-sm text-center px-4">{t("placeholderQr")}</p>
@@ -212,6 +232,7 @@ export default function QRGenerator() {
               })()}
               <div className="flex flex-wrap gap-2 justify-center">
               <button onClick={() => withPro(() => downloadQR("png"))} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
+              <button onClick={() => withPro(() => downloadQR("jpg"))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">JPG</button>
               <button onClick={() => withPro(() => downloadQR("svg"))} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
               <button onClick={() => withPro(() => copyToClipboard())} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
               {savedOk && (

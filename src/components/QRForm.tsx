@@ -3,8 +3,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { useLang } from "@/context/LangContext";
 import { contrastRatio } from "@/lib/color";
+import { FRAMES } from "@/lib/frames";
+import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from "@/lib/templates";
 
-type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram";
+type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram" | "google-review" | "password" | "multi-link" | "business-card";
 
 interface QRFormInitialValues {
   type?: QrType;
@@ -34,6 +36,19 @@ interface QRFormInitialValues {
   appstoreUrl?: string;
   telegramUser?: string;
   telegramMsg?: string;
+  googlePlaceId?: string;
+  passwordContent?: string;
+  multiLinks?: { url: string; day?: string; hour?: string }[];
+  passwordHint?: string;
+  folder?: string;
+  expiresAt?: string;
+  bcName?: string;
+  bcCompany?: string;
+  bcTitle?: string;
+  bcPhone?: string;
+  bcEmail?: string;
+  bcWebsite?: string;
+  bcAddress?: string;
   fgColor?: string;
   bgColor?: string;
   size?: number;
@@ -44,6 +59,7 @@ interface QRFormInitialValues {
   dotsType?: string;
   cornersSquareType?: string;
   cornersDotType?: string;
+  frame?: string;
 }
 
 export interface QRFormData {
@@ -69,6 +85,7 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
   { value: "text", key: "qrTypeText", icon: "📝" },
   { value: "wifi", key: "qrTypeWifi", icon: "📶" },
   { value: "vcard", key: "qrTypeVcard", icon: "👤" },
+  { value: "business-card", key: "qrTypeBusinessCard", icon: "💳" },
   { value: "email", key: "qrTypeEmail", icon: "✉️" },
   { value: "whatsapp", key: "qrTypeWhatsapp", icon: "💬" },
   { value: "phone", key: "qrTypePhone", icon: "📞" },
@@ -78,6 +95,9 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
   { value: "youtube", key: "qrTypeYoutube", icon: "▶️" },
   { value: "appstore", key: "qrTypeAppstore", icon: "📱" },
   { value: "telegram", key: "qrTypeTelegram", icon: "✈️" },
+  { value: "google-review", key: "qrTypeGoogleReview", icon: "⭐" },
+  { value: "password", key: "qrTypePassword", icon: "🔒" },
+  { value: "multi-link", key: "qrTypeMultiLink", icon: "🔀" },
   { value: "image", key: "qrTypeImage", icon: "🖼️" },
 ];
 
@@ -92,6 +112,13 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [vcardName, setVcardName] = useState(initialValues?.vcardName || "");
   const [vcardPhone, setVcardPhone] = useState(initialValues?.vcardPhone || "");
   const [vcardEmail, setVcardEmail] = useState(initialValues?.vcardEmail || "");
+  const [bcName, setBcName] = useState(initialValues?.bcName || "");
+  const [bcCompany, setBcCompany] = useState(initialValues?.bcCompany || "");
+  const [bcTitle, setBcTitle] = useState(initialValues?.bcTitle || "");
+  const [bcPhone, setBcPhone] = useState(initialValues?.bcPhone || "");
+  const [bcEmail, setBcEmail] = useState(initialValues?.bcEmail || "");
+  const [bcWebsite, setBcWebsite] = useState(initialValues?.bcWebsite || "");
+  const [bcAddress, setBcAddress] = useState(initialValues?.bcAddress || "");
   const [emailAddr, setEmailAddr] = useState(initialValues?.emailAddr || "");
   const [emailSubject, setEmailSubject] = useState(initialValues?.emailSubject || "");
   const [emailBody, setEmailBody] = useState(initialValues?.emailBody || "");
@@ -122,6 +149,24 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [dotsType, setDotsType] = useState(initialValues?.dotsType || "square");
   const [cornersSquareType, setCornersSquareType] = useState(initialValues?.cornersSquareType || "square");
   const [cornersDotType, setCornersDotType] = useState(initialValues?.cornersDotType || "square");
+  const [googlePlaceId, setGooglePlaceId] = useState(initialValues?.googlePlaceId || "");
+  const [passwordContent, setPasswordContent] = useState(initialValues?.passwordContent || "");
+  const [passwordHint, setPasswordHint] = useState(initialValues?.passwordHint || "");
+  const [multiLinks, setMultiLinks] = useState<{ url: string; day?: string; hour?: string }[]>(initialValues?.multiLinks || [{ url: "" }]);
+  const [folder, setFolder] = useState(initialValues?.folder || "");
+  const [expiresAt, setExpiresAt] = useState(initialValues?.expiresAt || "");
+  const [frame, setFrame] = useState(initialValues?.frame || "none");
+  const [templates, setTemplates] = useState<DesignTemplate[]>([]);
+  const [templateName, setTemplateName] = useState("");
+
+  useEffect(() => { setTemplates(loadTemplates()); }, []);
+
+  const applyTemplate = (t: DesignTemplate) => {
+    setFgColor(t.fgColor); setBgColor(t.bgColor);
+    setDotsType(t.dotsType); setCornersSquareType(t.cornersSquareType); setCornersDotType(t.cornersDotType);
+    setGradientType(t.gradientType); setGradientColor1(t.gradientColor1); setGradientColor2(t.gradientColor2);
+    setFrame(t.frame);
+  };
 
   useEffect(() => {
     if (!initialValues) return;
@@ -134,6 +179,13 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.vcardName !== undefined) setVcardName(initialValues.vcardName);
     if (initialValues.vcardPhone !== undefined) setVcardPhone(initialValues.vcardPhone);
     if (initialValues.vcardEmail !== undefined) setVcardEmail(initialValues.vcardEmail);
+    if (initialValues.bcName !== undefined) setBcName(initialValues.bcName);
+    if (initialValues.bcCompany !== undefined) setBcCompany(initialValues.bcCompany);
+    if (initialValues.bcTitle !== undefined) setBcTitle(initialValues.bcTitle);
+    if (initialValues.bcPhone !== undefined) setBcPhone(initialValues.bcPhone);
+    if (initialValues.bcEmail !== undefined) setBcEmail(initialValues.bcEmail);
+    if (initialValues.bcWebsite !== undefined) setBcWebsite(initialValues.bcWebsite);
+    if (initialValues.bcAddress !== undefined) setBcAddress(initialValues.bcAddress);
     if (initialValues.emailAddr !== undefined) setEmailAddr(initialValues.emailAddr);
     if (initialValues.emailSubject !== undefined) setEmailSubject(initialValues.emailSubject);
     if (initialValues.emailBody !== undefined) setEmailBody(initialValues.emailBody);
@@ -161,6 +213,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.dotsType !== undefined) setDotsType(initialValues.dotsType);
     if (initialValues.cornersSquareType !== undefined) setCornersSquareType(initialValues.cornersSquareType);
     if (initialValues.cornersDotType !== undefined) setCornersDotType(initialValues.cornersDotType);
+    if (initialValues.frame !== undefined) setFrame(initialValues.frame);
   }, [initialValues]);
 
   const qrValue = useCallback(() => {
@@ -169,6 +222,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "text": return text;
       case "wifi": return wifiPass ? `WIFI:T:${wifiEnc};S:${wifiSsid};P:${wifiPass};;` : `WIFI:T:nopass;S:${wifiSsid};;`;
       case "vcard": return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
+      case "business-card": return `BEGIN:VCARD\nVERSION:3.0\nFN:${bcName}\nORG:${bcCompany}\nTITLE:${bcTitle}\nTEL:${bcPhone}\nEMAIL:${bcEmail}\nURL:${bcWebsite}\nADR:;;${bcAddress};;;\nEND:VCARD`;
       case "email": return `https://generadorqrweb.vercel.app/mail?to=${encodeURIComponent(emailAddr)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       case "image": return imageUploadedUrl;
       case "whatsapp": return `https://wa.me/${whatsappPhone.replace(/[^0-9]/g, "")}${whatsappMsg ? "?text=" + encodeURIComponent(whatsappMsg) : ""}`;
@@ -178,10 +232,13 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "calendar": return `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${calendarTitle}\nDTSTART:${calendarDate ? calendarDate.replace(/[\s:-]/g, "").padEnd(15, "0") : ""}\nLOCATION:${calendarLocation}\nDESCRIPTION:${calendarDesc}\nEND:VEVENT\nEND:VCALENDAR`;
       case "youtube": return youtubeUrl;
       case "appstore": return appstoreUrl;
+      case "google-review": return googlePlaceId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}` : "";
+      case "password": return passwordContent || "";
+      case "multi-link": return multiLinks.map(m => m.url).filter(Boolean).join(",") || "";
       case "telegram": return `https://t.me/${telegramUser.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
       default: return "";
     }
-  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg]);
+  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, bcName, bcCompany, bcTitle, bcPhone, bcEmail, bcWebsite, bcAddress, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg]);
 
   const getData = useCallback((): QRFormData => {
     const val = qrValue();
@@ -190,7 +247,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       content: val,
       redirect_to: val,
       label: val.slice(0, 60),
-      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType },
+      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, folder, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined) },
       hasValues: val.length > 0,
     };
   }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType]);
@@ -294,6 +351,25 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
           <input type="tel" placeholder={t("placeVcardPhone")} value={vcardPhone} onChange={(e) => setVcardPhone(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           <input type="email" placeholder={t("placeVcardEmail")} value={vcardEmail} onChange={(e) => setVcardEmail(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+        </div>
+      )}
+
+      {qrType === "business-card" && (
+        <div className="space-y-3">
+          <input type="text" placeholder="Nombre completo" value={bcName} onChange={(e) => setBcName(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <input type="text" placeholder="Empresa" value={bcCompany} onChange={(e) => setBcCompany(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <input type="text" placeholder="Cargo" value={bcTitle} onChange={(e) => setBcTitle(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <input type="tel" placeholder="Teléfono" value={bcPhone} onChange={(e) => setBcPhone(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <input type="email" placeholder="Email" value={bcEmail} onChange={(e) => setBcEmail(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <input type="url" placeholder="Sitio web" value={bcWebsite} onChange={(e) => setBcWebsite(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <input type="text" placeholder="Dirección" value={bcAddress} onChange={(e) => setBcAddress(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
         </div>
       )}
@@ -413,6 +489,60 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         </div>
       )}
 
+      {qrType === "google-review" && (
+        <div className="space-y-3">
+          <input type="text" placeholder="ID de Google Place (ej. ChIJ..." value={googlePlaceId} onChange={(e) => setGooglePlaceId(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <p className="text-xs text-gray-400">Encuentra tu Place ID en <a href="https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline">Google Place ID Finder</a></p>
+        </div>
+      )}
+
+      {qrType === "password" && (
+        <div className="space-y-3">
+          <textarea placeholder="Contenido protegido (texto o URL)" value={passwordContent} onChange={(e) => setPasswordContent(e.target.value)} rows={3}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none resize-none" />
+          <input type="text" placeholder="Pista opcional para la contraseña" value={passwordHint} onChange={(e) => setPasswordHint(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+        </div>
+      )}
+
+      {qrType === "multi-link" && (
+        <div className="space-y-2">
+          {multiLinks.map((ml, i) => (
+            <div key={i} className="flex gap-2 items-start">
+              <div className="flex-1 space-y-1.5">
+                <input type="url" placeholder={`URL ${i + 1}`} value={ml.url} onChange={(e) => {
+                  const copy = [...multiLinks];
+                  copy[i] = { ...copy[i], url: e.target.value };
+                  setMultiLinks(copy);
+                }} className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none text-sm" />
+                <div className="flex gap-2">
+                  <select value={ml.day || ""} onChange={(e) => {
+                    const copy = [...multiLinks];
+                    copy[i] = { ...copy[i], day: e.target.value };
+                    setMultiLinks(copy);
+                  }} className="flex-1 px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs">
+                    <option value="">Todos los días</option>
+                    {["lunes","martes","miércoles","jueves","viernes","sábado","domingo"].map(d => <option key={d} value={d}>{d.charAt(0).toUpperCase()+d.slice(1)}</option>)}
+                  </select>
+                  <input type="time" value={ml.hour || ""} onChange={(e) => {
+                    const copy = [...multiLinks];
+                    copy[i] = { ...copy[i], hour: e.target.value };
+                    setMultiLinks(copy);
+                  }} className="px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs w-28" />
+                </div>
+              </div>
+              {multiLinks.length > 1 && (
+                <button onClick={() => setMultiLinks(prev => prev.filter((_, j) => j !== i))} className="mt-2 text-red-400 hover:text-red-600 transition-colors">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              )}
+            </div>
+          ))}
+          <button onClick={() => setMultiLinks(prev => [...prev, { url: "" }])} className="text-xs text-purple-600 hover:text-purple-700 font-medium">+ Añadir otra URL</button>
+        </div>
+      )}
+
       <details open className="text-sm">
         <summary className="cursor-pointer text-gray-500 hover:text-purple-600 font-medium">{t("customize")}</summary>
         <div className="mt-3 flex items-end gap-4">
@@ -489,6 +619,53 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
               <option value="square">{t("dotSquare")}</option>
               <option value="dot">{t("cornerDot")}</option>
             </select>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-xs text-gray-500 mb-1">Marco decorativo</label>
+          <select value={frame} onChange={(e) => setFrame(e.target.value)}
+            className="px-2 py-1.5 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-xs w-32">
+            {FRAMES.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+          </select>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">Carpeta</label>
+            <input type="text" value={folder} onChange={(e) => setFolder(e.target.value)} placeholder="Sin carpeta" maxLength={30}
+              className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">Expira el</label>
+            <input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)}
+              className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
+          </div>
+        </div>
+
+        <div className="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <label className="block text-xs text-gray-500 mb-2">Plantillas de diseño</label>
+          <div className="flex gap-2 mb-3">
+            <input type="text" value={templateName} onChange={(e) => setTemplateName(e.target.value)} placeholder="Nombre de la plantilla" maxLength={30}
+              className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
+            <button onClick={() => {
+              const n = templateName.trim();
+              if (!n) return;
+              setTemplates(saveTemplate({ name: n, fgColor, bgColor, dotsType, cornersSquareType, cornersDotType, gradientType, gradientColor1, gradientColor2, frame }));
+              setTemplateName("");
+            }} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium hover:bg-purple-700 transition">Guardar</button>
+          </div>
+          {templates.length === 0 && <p className="text-[10px] text-gray-400">No hay plantillas guardadas.</p>}
+          <div className="space-y-1.5 max-h-32 overflow-y-auto">
+            {templates.map(t => (
+              <div key={t.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2.5 py-1.5">
+                <span className="flex-1 text-xs truncate">{t.name}</span>
+                <div className="flex gap-1 shrink-0">
+                  <button onClick={() => applyTemplate(t)} className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px] font-medium hover:bg-purple-200 dark:hover:bg-purple-800 transition">Cargar</button>
+                  <button onClick={() => setTemplates(deleteTemplate(t.id))} className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px] font-medium text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 transition">✕</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
