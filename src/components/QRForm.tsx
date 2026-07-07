@@ -194,7 +194,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     const fixed = ensureProtocol(url);
     if (fixed !== url) setUrl(fixed);
     if (!fixed) { setUrlError(""); return; }
-    if (!isValidUrl(fixed)) setUrlError("Ingresa una URL válida (ej. youtube.com)");
+    if (!isValidUrl(fixed)) setUrlError(t("invalidUrl"));
     else setUrlError("");
   };
 
@@ -751,7 +751,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
           <button onClick={() => {
             const data = getData();
             if (!isRealContent(data.content, qrType)) {
-              setValidationError("Escribe contenido antes de guardar");
+              setValidationError(t("saveEmpty"));
               return;
             }
             setValidationError("");
