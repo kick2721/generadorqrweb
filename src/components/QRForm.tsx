@@ -74,8 +74,13 @@ export interface QRFormData {
 
 const PLACEHOLDER_PREFIX = "qrwing — ";
 
-function isRealContent(val: string): boolean {
-  return val.length > 0 && !val.startsWith(PLACEHOLDER_PREFIX);
+function isRealContent(val: string, type?: QrType): boolean {
+  if (val.length === 0) return false;
+  if (val.startsWith(PLACEHOLDER_PREFIX)) return false;
+  try {
+    if (type === "url" || type === "youtube" || type === "appstore") { new URL(val); }
+  } catch { return false; }
+  return true;
 }
 
 interface Props {
@@ -171,6 +176,27 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [templates, setTemplates] = useState<DesignTemplate[]>([]);
   const [templateName, setTemplateName] = useState("");
   const [validationError, setValidationError] = useState("");
+  const [urlError, setUrlError] = useState("");
+
+  const isValidUrl = (str: string): boolean => {
+    if (!str) return false;
+    try { new URL(str); return true; }
+    catch { return false; }
+  };
+
+  const ensureProtocol = (val: string): string => {
+    if (!val) return val;
+    if (!/^https?:\/\//i.test(val)) return "https://" + val;
+    return val;
+  };
+
+  const handleUrlBlur = () => {
+    const fixed = ensureProtocol(url);
+    if (fixed !== url) setUrl(fixed);
+    if (!fixed) { setUrlError(""); return; }
+    if (!isValidUrl(fixed)) setUrlError("Ingresa una URL válida (ej. youtube.com)");
+    else setUrlError("");
+  };
 
   useEffect(() => { setTemplates(loadTemplates()); }, []);
 
@@ -333,8 +359,11 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       <div className="md:hidden flex justify-center" key={qrData?.type || "empty"}><QRPreview qrData={qrData} isLogoBlocked={isLogoBlocked ?? false} withPro={withPro ?? (() => {})} withAuth={withAuth ?? (() => {})} /></div>
 
       {qrType === "url" && (
-        <input type="url" placeholder={t("placeUrl")} value={url} onChange={(e) => setUrl(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+        <div>
+          <input type="text" inputMode="url" placeholder={t("placeUrl")} value={url} onChange={(e) => { setUrl(e.target.value); setUrlError(""); }} onBlur={handleUrlBlur}
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          {urlError && <p className="text-xs text-red-500 mt-1.5">{urlError}</p>}
+        </div>
       )}
 
       {qrType === "text" && (
@@ -721,13 +750,13 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         <div>
           <button onClick={() => {
             const data = getData();
-            if (!isRealContent(data.content)) {
+            if (!isRealContent(data.content, qrType)) {
               setValidationError("Escribe contenido antes de guardar");
               return;
             }
             setValidationError("");
             onSubmit(data);
-          }} disabled={saving || !isRealContent(qrValue())}
+          }} disabled={saving || !isRealContent(qrValue(), qrType)}
             className="w-full px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition duration-75 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100">
             {saving ? t("saving") : submitLabel || t("save")}
           </button>
