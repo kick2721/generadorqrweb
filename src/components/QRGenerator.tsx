@@ -107,7 +107,7 @@ export default function QRGenerator() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 hidden md:flex md:sticky md:top-24 self-start">
-          <QRPreview key={qrData?.type || "empty"} qrData={qrData} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} />
+          <QRPreview key={qrData?.type || "empty"} qrData={qrData} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} onDownload={async () => { if (session?.user && qrData) await saveToServer(); }} />
 
           {qrData?.hasValues && (
             <>

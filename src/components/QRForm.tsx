@@ -77,9 +77,13 @@ const PLACEHOLDER_PREFIX = "qrwing — ";
 function isRealContent(val: string, type?: QrType): boolean {
   if (val.length === 0) return false;
   if (val.startsWith(PLACEHOLDER_PREFIX)) return false;
-  try {
-    if (type === "url" || type === "youtube" || type === "appstore") { new URL(val); }
-  } catch { return false; }
+  if (type === "url" || type === "youtube" || type === "appstore") {
+    try {
+      const u = new URL(val);
+      const h = u.hostname;
+      if (h !== "localhost" && !h.includes(".")) return false;
+    } catch { return false; }
+  }
   return true;
 }
 
@@ -180,7 +184,12 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
   const isValidUrl = (str: string): boolean => {
     if (!str) return false;
-    try { new URL(str); return true; }
+    try {
+      const u = new URL(str);
+      const h = u.hostname;
+      if (h !== "localhost" && !h.includes(".")) return false;
+      return true;
+    }
     catch { return false; }
   };
 
