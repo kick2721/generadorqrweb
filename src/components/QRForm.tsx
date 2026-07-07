@@ -72,6 +72,12 @@ export interface QRFormData {
   hasValues: boolean;
 }
 
+const PLACEHOLDER_PREFIX = "qrwing — ";
+
+function isRealContent(val: string): boolean {
+  return val.length > 0 && !val.startsWith(PLACEHOLDER_PREFIX);
+}
+
 interface Props {
   initialValues?: QRFormInitialValues;
   onChange?: (data: QRFormData) => void;
@@ -83,6 +89,7 @@ interface Props {
   isLogoBlocked?: boolean;
   withPro?: (cb: () => void) => void;
   withAuth?: (cb: () => void) => void;
+  user?: { name?: string | null; email?: string | null; image?: string | null } | null;
 }
 
 const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
@@ -106,7 +113,7 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
   { value: "image", key: "qrTypeImage", icon: "🖼️" },
 ];
 
-export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", qrData, isLogoBlocked, withPro, withAuth }: Props) {
+export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", qrData, isLogoBlocked, withPro, withAuth, user }: Props) {
   const { t } = useLang();
   const [qrType, setQrType] = useState<QrType>(initialValues?.type || "url");
   const [url, setUrl] = useState(initialValues?.url || "");
@@ -163,6 +170,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [frame, setFrame] = useState(initialValues?.frame || "none");
   const [templates, setTemplates] = useState<DesignTemplate[]>([]);
   const [templateName, setTemplateName] = useState("");
+  const [validationError, setValidationError] = useState("");
 
   useEffect(() => { setTemplates(loadTemplates()); }, []);
 
@@ -258,6 +266,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, folder, expiresAt, multiLinks]);
 
   useEffect(() => {
+    setValidationError("");
     if (onChange) onChange(getData());
   }, [getData, onChange]);
 
@@ -637,44 +646,54 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
           </select>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">Carpeta</label>
-            <input type="text" value={folder} onChange={(e) => setFolder(e.target.value)} placeholder="Sin carpeta" maxLength={30}
-              className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">Expira el</label>
-            <input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
-          </div>
-        </div>
-
-        <div className="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <label className="block text-xs text-gray-500 mb-2">Plantillas de diseño</label>
-          <div className="flex gap-2 mb-3">
-            <input type="text" value={templateName} onChange={(e) => setTemplateName(e.target.value)} placeholder="Nombre de la plantilla" maxLength={30}
-              className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
-            <button onClick={() => {
-              const n = templateName.trim();
-              if (!n) return;
-              setTemplates(saveTemplate({ name: n, fgColor, bgColor, dotsType, cornersSquareType, cornersDotType, gradientType, gradientColor1, gradientColor2, frame }));
-              setTemplateName("");
-            }} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium hover:bg-purple-700 transition">Guardar</button>
-          </div>
-          {templates.length === 0 && <p className="text-[10px] text-gray-400">No hay plantillas guardadas.</p>}
-          <div className="space-y-1.5 max-h-32 overflow-y-auto">
-            {templates.map(t => (
-              <div key={t.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2.5 py-1.5">
-                <span className="flex-1 text-xs truncate">{t.name}</span>
-                <div className="flex gap-1 shrink-0">
-                  <button onClick={() => applyTemplate(t)} className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px] font-medium hover:bg-purple-200 dark:hover:bg-purple-800 transition">Cargar</button>
-                  <button onClick={() => setTemplates(deleteTemplate(t.id))} className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px] font-medium text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 transition">✕</button>
-                </div>
+        {user ? (
+          <>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Carpeta</label>
+                <input type="text" value={folder} onChange={(e) => setFolder(e.target.value)} placeholder="Sin carpeta" maxLength={30}
+                  className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
+                <p className="text-[10px] text-gray-400 mt-1">Agrupa tus QRs y<a href="/dashboard" className="text-purple-500 hover:underline ml-1">filtra en Dashboard</a></p>
               </div>
-            ))}
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Expira el</label>
+                <input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
+                <p className="text-[10px] text-gray-400 mt-1">En blanco = nunca expira</p>
+              </div>
+            </div>
+
+            <div className="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <label className="block text-xs text-gray-500 mb-2">Plantillas de diseño</label>
+              <div className="flex gap-2 mb-3">
+                <input type="text" value={templateName} onChange={(e) => setTemplateName(e.target.value)} placeholder="Nombre de la plantilla" maxLength={30}
+                  className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
+                <button onClick={() => {
+                  const n = templateName.trim();
+                  if (!n) return;
+                  setTemplates(saveTemplate({ name: n, fgColor, bgColor, dotsType, cornersSquareType, cornersDotType, gradientType, gradientColor1, gradientColor2, frame }));
+                  setTemplateName("");
+                }} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium hover:bg-purple-700 transition">Guardar</button>
+              </div>
+              {templates.length === 0 && <p className="text-[10px] text-gray-400">No hay plantillas guardadas.</p>}
+              <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                {templates.map(t => (
+                  <div key={t.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2.5 py-1.5">
+                    <span className="flex-1 text-xs truncate">{t.name}</span>
+                    <div className="flex gap-1 shrink-0">
+                      <button onClick={() => applyTemplate(t)} className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px] font-medium hover:bg-purple-200 dark:hover:bg-purple-800 transition">Cargar</button>
+                      <button onClick={() => setTemplates(deleteTemplate(t.id))} className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px] font-medium text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 transition">✕</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
+            <p className="text-xs text-gray-500"><a href="/auth/signin" className="text-purple-500 hover:underline font-medium">Inicia sesión</a> para usar carpetas, fechas de expiración y plantillas de diseño</p>
           </div>
-        </div>
+        )}
 
         {(() => {
           const ratio = contrastRatio(fgColor, bgColor);
@@ -699,10 +718,21 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       </div>
 
       {onSubmit && (
-        <button onClick={() => onSubmit(getData())} disabled={saving || !getData().hasValues}
-          className="w-full px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition duration-75 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100">
-          {saving ? t("saving") : submitLabel || t("save")}
-        </button>
+        <div>
+          <button onClick={() => {
+            const data = getData();
+            if (!isRealContent(data.content)) {
+              setValidationError("Escribe contenido antes de guardar");
+              return;
+            }
+            setValidationError("");
+            onSubmit(data);
+          }} disabled={saving || !isRealContent(qrValue())}
+            className="w-full px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition duration-75 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100">
+            {saving ? t("saving") : submitLabel || t("save")}
+          </button>
+          {validationError && <p className="text-xs text-red-500 mt-2 text-center">{validationError}</p>}
+        </div>
       )}
     </div>
   );
