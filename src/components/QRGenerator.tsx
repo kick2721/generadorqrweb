@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLang } from "@/context/LangContext";
 import { useSession } from "next-auth/react";
 import QRForm, { type QRFormData } from "./QRForm";
@@ -22,6 +22,7 @@ export default function QRGenerator() {
   const [plan, setPlan] = useState("free");
   const [showLogoProModal, setShowLogoProModal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const savedFingerprintRef = useRef("");
 
   useEffect(() => {
     if (!session?.user) return;
@@ -83,6 +84,7 @@ export default function QRGenerator() {
       if (!r.ok) { setSaveError("error"); return null; }
       const result = await r.json();
       setQrData(prev => prev ? { ...prev, content: result.content } : null);
+      savedFingerprintRef.current = qrFingerprint;
       setSavedOk(true);
       setTimeout(() => setSavedOk(false), 2000);
       return result.content as string;
@@ -98,6 +100,8 @@ export default function QRGenerator() {
     setQrData(data);
     await saveToServer();
   };
+
+  const qrFingerprint = qrData ? `${qrData.type}|${qrData.content}|${JSON.stringify(qrData.config)}` : "";
 
   const isDownloadable = (() => {
     if (!qrData?.hasValues || !qrData?.content) return false;
@@ -119,7 +123,7 @@ export default function QRGenerator() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 hidden md:flex md:sticky md:top-24 self-start">
-          <QRPreview key={qrData?.type || "empty"} qrData={qrData} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} isDownloadable={isDownloadable} onDownload={async () => { if (session?.user && qrData && isDownloadable) await saveToServer(); }} />
+          <QRPreview key={qrData?.type || "empty"} qrData={qrData} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} isDownloadable={isDownloadable} onDownload={async () => { if (session?.user && qrData && isDownloadable && qrFingerprint !== savedFingerprintRef.current) await saveToServer(); }} />
 
           {qrData?.hasValues && (
             <>
