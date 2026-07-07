@@ -305,6 +305,18 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (onChange) onChange(getData());
   }, [getData, onChange]);
 
+  const isDownloadable = (() => {
+    const val = qrValue();
+    if (!val || val.startsWith(PLACEHOLDER_PREFIX)) return false;
+    if (qrType === "url" || qrType === "youtube" || qrType === "appstore") {
+      try {
+        const u = new URL(val);
+        if (u.hostname !== "localhost" && !u.hostname.includes(".")) return false;
+      } catch { return false; }
+    }
+    return true;
+  })();
+
   const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -365,7 +377,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
       <p className="text-xs text-gray-400 -mt-2">{t(`type${qrType.charAt(0).toUpperCase() + qrType.slice(1)}Desc` as any)}</p>
 
-      <div className="md:hidden flex justify-center" key={qrData?.type || "empty"}><QRPreview qrData={qrData} isLogoBlocked={isLogoBlocked ?? false} withPro={withPro ?? (() => {})} withAuth={withAuth ?? (() => {})} /></div>
+      <div className="md:hidden flex justify-center" key={qrData?.type || "empty"}><QRPreview qrData={qrData} isLogoBlocked={isLogoBlocked ?? false} withPro={withPro ?? (() => {})} withAuth={withAuth ?? (() => {})} isDownloadable={isDownloadable} /></div>
 
       {qrType === "url" && (
         <div>
