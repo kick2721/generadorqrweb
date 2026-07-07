@@ -99,6 +99,18 @@ export default function QRGenerator() {
     await saveToServer();
   };
 
+  const isDownloadable = (() => {
+    if (!qrData?.hasValues || !qrData?.content) return false;
+    if (qrData.content.startsWith("qrwing — ")) return false;
+    if (qrData.type === "url" || qrData.type === "youtube" || qrData.type === "appstore") {
+      try {
+        const u = new URL(qrData.content);
+        if (u.hostname !== "localhost" && !u.hostname.includes(".")) return false;
+      } catch { return false; }
+    }
+    return true;
+  })();
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="grid md:grid-cols-2 gap-8">
@@ -107,7 +119,7 @@ export default function QRGenerator() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 hidden md:flex md:sticky md:top-24 self-start">
-          <QRPreview key={qrData?.type || "empty"} qrData={qrData} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} onDownload={async () => { if (session?.user && qrData) await saveToServer(); }} />
+          <QRPreview key={qrData?.type || "empty"} qrData={qrData} isLogoBlocked={isLogoBlocked} withPro={withPro} withAuth={withAuth} isDownloadable={isDownloadable} onDownload={async () => { if (session?.user && qrData && isDownloadable) await saveToServer(); }} />
 
           {qrData?.hasValues && (
             <>

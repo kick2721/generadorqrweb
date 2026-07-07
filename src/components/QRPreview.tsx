@@ -7,7 +7,7 @@ import type { QRFormData } from "./QRForm";
 import { buildQrOptions } from "@/lib/qr-options";
 import { frameClass } from "@/lib/frames";
 
-export default function QRPreview({ qrData, isLogoBlocked, withPro, withAuth, onDownload }: { qrData: QRFormData | null | undefined; isLogoBlocked: boolean; withPro: (cb: () => void) => void; withAuth: (cb: () => void) => void; onDownload?: (format: string) => Promise<void> }) {
+export default function QRPreview({ qrData, isLogoBlocked, withPro, withAuth, onDownload, isDownloadable }: { qrData: QRFormData | null | undefined; isLogoBlocked: boolean; withPro: (cb: () => void) => void; withAuth: (cb: () => void) => void; onDownload?: (format: string) => Promise<void>; isDownloadable?: boolean }) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<any>(null);
   const { t } = useLang();
@@ -89,10 +89,13 @@ export default function QRPreview({ qrData, isLogoBlocked, withPro, withAuth, on
       </div>
       {qrData?.hasValues && (
         <div className="flex flex-wrap gap-2 justify-center">
-          <button onClick={() => withPro(async () => { await onDownload?.("png"); downloadQR("png"); })} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95]">{t("downloadPng")}</button>
-          <button onClick={() => withPro(async () => { await onDownload?.("jpg"); downloadQR("jpg"); })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">JPG</button>
-          <button onClick={() => withPro(async () => { await onDownload?.("svg"); downloadQR("svg"); })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95]">{t("downloadSvg")}</button>
-          <button onClick={() => withAuth(async () => { await onDownload?.("png"); copyToClipboard(); })} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">{copied ? t("copied") : t("copy")}</button>
+          {isDownloadable === false && (
+            <p className="w-full text-xs text-gray-400 text-center mb-1">{t("downloadInvalid")}</p>
+          )}
+          <button disabled={isDownloadable === false} onClick={() => withPro(async () => { if (isDownloadable !== false) { await onDownload?.("png"); downloadQR("png"); } })} className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95] disabled:opacity-40 disabled:cursor-not-allowed">{t("downloadPng")}</button>
+          <button disabled={isDownloadable === false} onClick={() => withPro(async () => { if (isDownloadable !== false) { await onDownload?.("jpg"); downloadQR("jpg"); } })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95] disabled:opacity-40 disabled:cursor-not-allowed">JPG</button>
+          <button disabled={isDownloadable === false} onClick={() => withPro(async () => { if (isDownloadable !== false) { await onDownload?.("svg"); downloadQR("svg"); } })} className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-75 active:scale-[0.95] disabled:opacity-40 disabled:cursor-not-allowed">{t("downloadSvg")}</button>
+          <button disabled={isDownloadable === false} onClick={() => withAuth(async () => { if (isDownloadable !== false) { await onDownload?.("png"); copyToClipboard(); } })} className="px-5 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95] disabled:opacity-40 disabled:cursor-not-allowed">{copied ? t("copied") : t("copy")}</button>
         </div>
       )}
     </>
