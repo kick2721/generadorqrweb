@@ -74,14 +74,18 @@ export interface QRFormData {
 
 const PLACEHOLDER_PREFIX = "qrwing — ";
 
+function hasValidDomain(str: string): boolean {
+  const raw = str.replace(/^https?:\/\//i, "").split(/[/?#]/)[0];
+  return raw === "localhost" || raw.includes(".");
+}
+
 function isRealContent(val: string, type?: QrType): boolean {
   if (val.length === 0) return false;
   if (val.startsWith(PLACEHOLDER_PREFIX)) return false;
   if (type === "url" || type === "youtube" || type === "appstore") {
     try {
-      const u = new URL(val);
-      const h = u.hostname;
-      if (h !== "localhost" && !h.includes(".")) return false;
+      new URL(val);
+      if (!hasValidDomain(val)) return false;
     } catch { return false; }
   }
   return true;
@@ -185,10 +189,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const isValidUrl = (str: string): boolean => {
     if (!str) return false;
     try {
-      const u = new URL(str);
-      const h = u.hostname;
-      if (h !== "localhost" && !h.includes(".")) return false;
-      return true;
+      new URL(str);
+      return hasValidDomain(str);
     }
     catch { return false; }
   };
@@ -310,8 +312,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (!val || val.startsWith(PLACEHOLDER_PREFIX)) return false;
     if (qrType === "url" || qrType === "youtube" || qrType === "appstore") {
       try {
-        const u = new URL(val);
-        if (u.hostname !== "localhost" && !u.hostname.includes(".")) return false;
+        new URL(val);
+        if (!hasValidDomain(val)) return false;
       } catch { return false; }
     }
     return true;

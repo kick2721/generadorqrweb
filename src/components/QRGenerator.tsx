@@ -11,6 +11,11 @@ import { contrastRatio } from "@/lib/color";
 
 const STORAGE_KEY = "generadorqr_last_qr";
 
+function hasValidDomain(str: string): boolean {
+  const raw = str.replace(/^https?:\/\//i, "").split(/[/?#]/)[0];
+  return raw === "localhost" || raw.includes(".");
+}
+
 export default function QRGenerator() {
   const { t } = useLang();
   const { data: session } = useSession();
@@ -108,8 +113,8 @@ export default function QRGenerator() {
     if (qrData.content.startsWith("qrwing — ")) return false;
     if (qrData.type === "url" || qrData.type === "youtube" || qrData.type === "appstore") {
       try {
-        const u = new URL(qrData.content);
-        if (u.hostname !== "localhost" && !u.hostname.includes(".")) return false;
+        new URL(qrData.content);
+        if (!hasValidDomain(qrData.content)) return false;
       } catch { return false; }
     }
     return true;
