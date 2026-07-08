@@ -459,7 +459,7 @@ export default function Dashboard() {
             ) : (
               <button onClick={() => setSelectMode(true)}
                 className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-purple-400 hover:text-purple-600 transition whitespace-nowrap">
-                ☐ Seleccionar varios
+                ☐ Seleccionar para mover a carpetas
               </button>
             )}
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
