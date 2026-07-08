@@ -91,8 +91,9 @@ export default function Dashboard() {
   const [folderFilter, setFolderFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "activity">("timeline");
-  const [editingFolder, setEditingFolder] = useState<string | null>(null);
-  const [folderInput, setFolderInput] = useState("");
+  const [selectedQrs, setSelectedQrs] = useState<Set<string>>(new Set());
+  const [batchFolder, setBatchFolder] = useState(false);
+  const [batchFolderInput, setBatchFolderInput] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -291,14 +292,28 @@ export default function Dashboard() {
     return label;
   }
 
-  async function saveFolder(qrId: string, folder: string) {
-    await fetch(`/api/qrcodes/${qrId}/folder`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ folder }),
+  function toggleSelect(id: string) {
+    setSelectedQrs(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
     });
-    setQrcodes(prev => prev.map(q => q.id === qrId ? { ...q, config: { ...q.config, folder } } : q));
-    setEditingFolder(null);
+  }
+
+  async function assignBatchFolder() {
+    const folder = batchFolderInput.trim();
+    if (!folder || selectedQrs.size === 0) return;
+    for (const id of selectedQrs) {
+      await fetch(`/api/qrcodes/${id}/folder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ folder }),
+      });
+    }
+    setQrcodes(prev => prev.map(q => selectedQrs.has(q.id) ? { ...q, config: { ...q.config, folder } } : q));
+    setSelectedQrs(new Set());
+    setBatchFolder(false);
+    setBatchFolderInput("");
   }
 
   return (
@@ -409,21 +424,41 @@ export default function Dashboard() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={t("dashboardSearch")}
-                className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-600 transition"
+                className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-600 transition"
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
+            {selectedQrs.size > 0 && (
+              <div className="flex items-center gap-1">
+                {batchFolder ? (
+                  <>
+                    <input type="text" value={batchFolderInput} onChange={e => setBatchFolderInput(e.target.value)} autoFocus
+                      placeholder="Nombre de carpeta" maxLength={30}
+                      className="w-36 px-2 py-2 text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 outline-none focus:border-purple-500"
+                      onKeyDown={e => { if (e.key === "Enter") assignBatchFolder(); if (e.key === "Escape") setBatchFolder(false); }}
+                    />
+                    <button onClick={assignBatchFolder} className="px-3 py-2 text-xs rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700 transition">Guardar</button>
+                    <button onClick={() => setBatchFolder(false)} className="px-2 py-2 text-xs text-gray-500 hover:text-gray-700">✕</button>
+                  </>
+                ) : (
+                  <button onClick={() => setBatchFolder(true)}
+                    className="px-3 py-2 text-xs rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition">
+                    📁 Mover a carpeta ({selectedQrs.size})
+                  </button>
+                )}
+              </div>
+            )}
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as any)}
-              className="px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+              className="px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
             >
               <option value="newest">{t("dashboardSortNewest")}</option>
               <option value="oldest">{t("dashboardSortOldest")}</option>
               {plan === "pro" && <option value="scans">{t("dashboardSortMostScans")}</option>}
               <option value="alpha">{t("dashboardSortAZ")}</option>
             </select>
-            <button onClick={() => setShowFilters(!showFilters)} className={`px-3 py-2 text-sm rounded-xl border transition ${typeFilter ? 'bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500'}`}>
+            <button onClick={() => setShowFilters(!showFilters)} className={`px-3 py-2 text-sm rounded-xl border-2 transition font-medium ${typeFilter ? 'bg-purple-100 dark:bg-purple-900/40 border-purple-400 dark:border-purple-600 text-purple-700 dark:text-purple-300' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-purple-400 hover:text-purple-600'}`}>
               <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
               {t("dashboardFilterAll")}{typeFilter ? `: ${typeLabel(typeFilter)}` : ""}
             </button>
@@ -431,18 +466,18 @@ export default function Dashboard() {
           {showFilters && (
             <>
             <div className="flex gap-2 mb-2 flex-wrap">
-              <button onClick={() => setTypeFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border transition ${!typeFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>{t("dashboardFilterAll")}</button>
+              <button onClick={() => setTypeFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${!typeFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-purple-400 hover:text-purple-600'}`}>{t("dashboardFilterAll")}</button>
               {types.map(tp => (
-                <button key={tp} onClick={() => setTypeFilter(typeFilter === tp ? null : tp)} className={`px-3 py-1.5 text-xs rounded-full border transition ${typeFilter === tp ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>
+                <button key={tp} onClick={() => setTypeFilter(typeFilter === tp ? null : tp)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${typeFilter === tp ? 'bg-purple-600 text-white border-purple-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-purple-400 hover:text-purple-600'}`}>
                   {typeIcon(tp)} {typeLabel(tp)}
                 </button>
               ))}
             </div>
             {folders.length > 0 && (
             <div className="flex gap-2 mb-4 flex-wrap">
-              <button onClick={() => setFolderFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border transition ${!folderFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-purple-300'}`}>Todas las carpetas</button>
+              <button onClick={() => setFolderFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${!folderFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-600'}`}>Todas las carpetas</button>
               {folders.map(f => (
-                <button key={f} onClick={() => setFolderFilter(folderFilter === f ? null : f)} className={`px-3 py-1.5 text-xs rounded-full border transition ${folderFilter === f ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-emerald-300'}`}>
+                <button key={f} onClick={() => setFolderFilter(folderFilter === f ? null : f)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${folderFilter === f ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-600'}`}>
                   📁 {f}
                 </button>
               ))}
@@ -471,6 +506,10 @@ export default function Dashboard() {
             {filteredQrs.map(qr => (
               <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => viewStats(qr.id)}>
                 <div className="flex items-center gap-4">
+                  <div onClick={e => e.stopPropagation()} className="shrink-0">
+                    <input type="checkbox" checked={selectedQrs.has(qr.id)} onChange={() => toggleSelect(qr.id)}
+                      className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer" />
+                  </div>
                     <div className="w-14 h-14 flex-shrink-0 bg-white rounded-xl p-1 border border-gray-100 dark:border-gray-700">
                       <QRSmallPreview qr={qr} />
                   </div>
@@ -481,21 +520,7 @@ export default function Dashboard() {
                       {qr.type === "vcard" ? <span className="text-xs text-blue-400">📇 Sin tracking de escaneos</span> : <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>}
                       <span>{new Date(qr.created_at).toLocaleDateString()}</span>
                     </div>
-                    {editingFolder === qr.id ? (
-                      <div className="flex items-center gap-1 mt-1">
-                        <input type="text" value={folderInput} onChange={e => setFolderInput(e.target.value)} autoFocus
-                          placeholder="Nombre de carpeta" maxLength={30}
-                          className="w-40 px-2 py-0.5 text-xs rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 outline-none focus:border-purple-500"
-                          onKeyDown={e => { if (e.key === "Enter") saveFolder(qr.id, folderInput); if (e.key === "Escape") setEditingFolder(null); }}
-                          onBlur={() => setTimeout(() => setEditingFolder(null), 200)} />
-                        <button onClick={() => saveFolder(qr.id, folderInput)} className="text-xs text-purple-500 hover:text-purple-700 font-medium">Guardar</button>
-                      </div>
-                    ) : (
-                      <button onClick={e => { e.stopPropagation(); setEditingFolder(qr.id); setFolderInput(qr.config?.folder || ""); }}
-                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-purple-600 mt-1 transition-colors">
-                        📁 {qr.config?.folder || <span className="text-gray-300 hover:text-purple-400">+ Carpeta</span>}
-                      </button>
-                    )}
+                    {qr.config?.folder && <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">📁 {qr.config.folder}</p>}
                   </div>
                   <div className="flex items-center gap-1">
                     {selectedQR === qr.id && (
