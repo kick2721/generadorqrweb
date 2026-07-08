@@ -764,13 +764,12 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             <option value={128}>{t("sizeSmall")}</option>
             <option value={256}>{t("sizeMed")}</option>
             <option value={384}>{t("sizeLarge")}</option>
-            <option value={512}>{t("sizeXl")}</option>
           </select>
         </label>
       </div>
 
       {onSubmit && (
-        <div>
+        <div className="md:hidden">
           <button onClick={() => {
             const data = getData();
             if (!isRealContent(data.content, qrType)) {

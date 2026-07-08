@@ -132,6 +132,10 @@ export default function QRGenerator() {
 
           {qrData?.hasValues && (
             <>
+              <button onClick={() => handleSave(qrData!)} disabled={saving || !isDownloadable}
+                className="w-full max-w-xs px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition duration-75 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100">
+                {saving ? t("saving") : t("save")}
+              </button>
               {(() => {
                 const ratio = contrastRatio(qrData.config.fgColor, qrData.config.bgColor);
                 if (ratio >= 3) return null;
