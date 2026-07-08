@@ -92,6 +92,7 @@ export default function Dashboard() {
   const [showFilters, setShowFilters] = useState(false);
   const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "activity">("timeline");
   const [selectedQrs, setSelectedQrs] = useState<Set<string>>(new Set());
+  const [selectMode, setSelectMode] = useState(false);
   const [batchFolder, setBatchFolder] = useState(false);
   const [batchFolderInput, setBatchFolderInput] = useState("");
 
@@ -300,6 +301,13 @@ export default function Dashboard() {
     });
   }
 
+  function exitSelectMode() {
+    setSelectMode(false);
+    setSelectedQrs(new Set());
+    setBatchFolder(false);
+    setBatchFolderInput("");
+  }
+
   async function assignBatchFolder() {
     const folder = batchFolderInput.trim();
     if (!folder || selectedQrs.size === 0) return;
@@ -311,9 +319,7 @@ export default function Dashboard() {
       });
     }
     setQrcodes(prev => prev.map(q => selectedQrs.has(q.id) ? { ...q, config: { ...q.config, folder } } : q));
-    setSelectedQrs(new Set());
-    setBatchFolder(false);
-    setBatchFolderInput("");
+    exitSelectMode();
   }
 
   return (
@@ -428,9 +434,9 @@ export default function Dashboard() {
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
-            {selectedQrs.size > 0 && (
+            {selectMode ? (
               <div className="flex items-center gap-1">
-                {batchFolder ? (
+                {selectedQrs.size > 0 && (batchFolder ? (
                   <>
                     <input type="text" value={batchFolderInput} onChange={e => setBatchFolderInput(e.target.value)} autoFocus
                       placeholder="Nombre de carpeta" maxLength={30}
@@ -445,12 +451,18 @@ export default function Dashboard() {
                     className="px-3 py-2 text-xs rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition">
                     📁 Mover a carpeta ({selectedQrs.size})
                   </button>
-                )}
+                ))}
+                <button onClick={exitSelectMode} className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-red-400 hover:text-red-600 transition">
+                  Cancelar selección
+                </button>
               </div>
+            ) : (
+              <button onClick={() => setSelectMode(true)}
+                className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-purple-400 hover:text-purple-600 transition whitespace-nowrap">
+                ☐ Seleccionar varios
+              </button>
             )}
-            <select
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value as any)}
+            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
               className="px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
             >
               <option value="newest">{t("dashboardSortNewest")}</option>
@@ -504,12 +516,14 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-semibold">{t("dashboardMyQRs")}</h2>
             {filteredQrs.map(qr => (
-              <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => viewStats(qr.id)}>
+              <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id && !selectMode ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => selectMode ? toggleSelect(qr.id) : viewStats(qr.id)}>
                 <div className="flex items-center gap-4">
-                  <div onClick={e => e.stopPropagation()} className="shrink-0">
-                    <input type="checkbox" checked={selectedQrs.has(qr.id)} onChange={() => toggleSelect(qr.id)}
-                      className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer" />
-                  </div>
+                  {selectMode && (
+                    <div onClick={e => e.stopPropagation()} className="shrink-0">
+                      <input type="checkbox" checked={selectedQrs.has(qr.id)} onChange={() => toggleSelect(qr.id)}
+                        className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer" />
+                    </div>
+                  )}
                     <div className="w-14 h-14 flex-shrink-0 bg-white rounded-xl p-1 border border-gray-100 dark:border-gray-700">
                       <QRSmallPreview qr={qr} />
                   </div>
@@ -520,7 +534,6 @@ export default function Dashboard() {
                       {qr.type === "vcard" ? <span className="text-xs text-blue-400">📇 Sin tracking de escaneos</span> : <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>}
                       <span>{new Date(qr.created_at).toLocaleDateString()}</span>
                     </div>
-                    {qr.config?.folder && <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">📁 {qr.config.folder}</p>}
                   </div>
                   <div className="flex items-center gap-1">
                     {selectedQR === qr.id && (
