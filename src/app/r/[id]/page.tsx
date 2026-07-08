@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import PasswordGate from "@/components/PasswordGate";
 import BusinessCardScan from "@/components/BusinessCardScan";
+import VCardContact from "@/components/VCardContact";
 
 async function getCountry(ip: string): Promise<string> {
   if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("172.16.")) return "";
@@ -14,14 +15,6 @@ async function getCountry(ip: string): Promise<string> {
     }
   } catch {}
   return "";
-}
-
-function parseVCard(text: string) {
-  const get = (k: string) => {
-    const m = text.match(new RegExp(`${k}:(.+)`));
-    return m ? m[1].trim() : "";
-  };
-  return { name: get("FN"), phone: get("TEL"), email: get("EMAIL") };
 }
 
 function parseSms(text: string) {
@@ -92,15 +85,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   }
 
   if (qr.type === "vcard") {
-    const v = parseVCard(qr.redirect_to);
-    return (
-      <LandingLayout>
-        <p className="text-sm font-semibold text-purple-600 mb-2">Contacto</p>
-        <p className="text-xl font-bold mb-1">{v.name}</p>
-        {v.phone && <p className="text-gray-500">📞 {v.phone}</p>}
-        {v.email && <p className="text-gray-500">✉️ {v.email}</p>}
-      </LandingLayout>
-    );
+    return <VCardContact vcardRaw={qr.redirect_to} />;
   }
 
   if (qr.type === "business-card") {
