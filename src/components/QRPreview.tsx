@@ -74,18 +74,6 @@ export default function QRPreview({ qrData, isLogoBlocked, withPro, withAuth, on
     downloadQR(format, qrInstance);
   };
 
-  const copyToClipboard = async () => {
-    if (!qrRef.current) return;
-    try {
-      const blob = await qrRef.current.getRawData("png");
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      qrRef.current.download({ name: `qrwing-${Date.now()}`, extension: "png" });
-    }
-  };
-
   return (
     <>
       <div ref={canvasRef} className={`${frameClass(qrData?.config?.frame || "none")}`} style={{ minWidth: 256, minHeight: 256 }}>
