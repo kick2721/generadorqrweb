@@ -41,7 +41,6 @@ interface QRFormInitialValues {
   passwordContent?: string;
   multiLinks?: { url: string; day?: string; hour?: string }[];
   passwordHint?: string;
-  folder?: string;
   expiresAt?: string;
 
   fgColor?: string;
@@ -165,7 +164,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [passwordContent, setPasswordContent] = useState(initialValues?.passwordContent || "");
   const [passwordHint, setPasswordHint] = useState(initialValues?.passwordHint || "");
   const [multiLinks, setMultiLinks] = useState<{ url: string; day?: string; hour?: string }[]>(initialValues?.multiLinks || [{ url: "" }]);
-  const [folder, setFolder] = useState(initialValues?.folder || "");
   const [expiresAt, setExpiresAt] = useState(initialValues?.expiresAt || "");
   const [frame, setFrame] = useState(initialValues?.frame || "none");
   const [templates, setTemplates] = useState<DesignTemplate[]>([]);
@@ -276,11 +274,11 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       type: qrType,
       content: val,
       redirect_to: val,
-      label: val.slice(0, 60),
-      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, folder, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined) },
+      label: qrType === "vcard" ? (val.match(/FN:(.+)/)?.[1]?.trim() || val.slice(0, 60)) : val.slice(0, 60),
+      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined) },
       hasValues: val.length > 0,
     };
-  }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, folder, expiresAt, multiLinks]);
+  }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks]);
 
   useEffect(() => {
     setValidationError("");
@@ -663,19 +661,11 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
         {user ? (
           <>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Carpeta</label>
-                <input type="text" value={folder} onChange={(e) => setFolder(e.target.value)} placeholder="Sin carpeta" maxLength={30}
-                  className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
-                <p className="text-[10px] text-gray-400 mt-1">Agrupa tus QRs y<a href="/dashboard" className="text-purple-500 hover:underline ml-1">filtra en Dashboard</a></p>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Expira el</label>
-                <input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500" />
-                <p className="text-[10px] text-gray-400 mt-1">En blanco = nunca expira</p>
-              </div>
+            <div className="mt-4">
+              <label className="block text-xs text-gray-500 mb-1">Expira el</label>
+              <input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)}
+                className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs outline-none focus:border-purple-500 max-w-48" />
+              <p className="text-[10px] text-gray-400 mt-1">En blanco = nunca expira</p>
             </div>
 
             <div className="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -706,7 +696,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
           </>
         ) : (
           <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
-            <p className="text-xs text-gray-500"><a href="/auth/signin" className="text-purple-500 hover:underline font-medium">Inicia sesión</a> para usar carpetas, fechas de expiración y plantillas de diseño</p>
+            <p className="text-xs text-gray-500"><a href="/auth/signin" className="text-purple-500 hover:underline font-medium">Inicia sesión</a> para usar fechas de expiración y plantillas de diseño</p>
           </div>
         )}
 

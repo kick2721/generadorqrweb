@@ -91,6 +91,8 @@ export default function Dashboard() {
   const [folderFilter, setFolderFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "activity">("timeline");
+  const [editingFolder, setEditingFolder] = useState<string | null>(null);
+  const [folderInput, setFolderInput] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
@@ -281,6 +283,24 @@ export default function Dashboard() {
 
   const types = [...new Set(qrcodes.map(q => q.type))];
 
+  function qrDisplayLabel(qr: QRCodeData): string {
+    const label = qr.label || qr.redirect_to || qr.content;
+    if (qr.type === "vcard" && label.startsWith("BEGIN:VCARD")) {
+      return label.match(/FN:(.+)/)?.[1]?.trim() || label;
+    }
+    return label;
+  }
+
+  async function saveFolder(qrId: string, folder: string) {
+    await fetch(`/api/qrcodes/${qrId}/folder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ folder }),
+    });
+    setQrcodes(prev => prev.map(q => q.id === qrId ? { ...q, config: { ...q.config, folder } } : q));
+    setEditingFolder(null);
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
       <div className="flex items-center justify-between">
@@ -455,12 +475,27 @@ export default function Dashboard() {
                       <QRSmallPreview qr={qr} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{qr.label || qr.redirect_to || qr.content}</p>
+                    <p className="font-medium truncate">{qrDisplayLabel(qr)}</p>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
                       <span>{typeIcon(qr.type)} {typeLabel(qr.type)}</span>
                       {qr.type === "vcard" ? <span className="text-xs text-blue-400">📇 Sin tracking de escaneos</span> : <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>}
                       <span>{new Date(qr.created_at).toLocaleDateString()}</span>
                     </div>
+                    {editingFolder === qr.id ? (
+                      <div className="flex items-center gap-1 mt-1">
+                        <input type="text" value={folderInput} onChange={e => setFolderInput(e.target.value)} autoFocus
+                          placeholder="Nombre de carpeta" maxLength={30}
+                          className="w-40 px-2 py-0.5 text-xs rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 outline-none focus:border-purple-500"
+                          onKeyDown={e => { if (e.key === "Enter") saveFolder(qr.id, folderInput); if (e.key === "Escape") setEditingFolder(null); }}
+                          onBlur={() => setTimeout(() => setEditingFolder(null), 200)} />
+                        <button onClick={() => saveFolder(qr.id, folderInput)} className="text-xs text-purple-500 hover:text-purple-700 font-medium">Guardar</button>
+                      </div>
+                    ) : (
+                      <button onClick={e => { e.stopPropagation(); setEditingFolder(qr.id); setFolderInput(qr.config?.folder || ""); }}
+                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-purple-600 mt-1 transition-colors">
+                        📁 {qr.config?.folder || <span className="text-gray-300 hover:text-purple-400">+ Carpeta</span>}
+                      </button>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
                     {selectedQR === qr.id && (
