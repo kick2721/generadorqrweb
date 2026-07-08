@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 function parseVCard(text: string) {
   const get = (k: string) => {
     const m = text.match(new RegExp(`${k}:(.+)`));
@@ -12,29 +10,19 @@ function parseVCard(text: string) {
 
 export default function VCardContact({ vcardRaw }: { vcardRaw: string }) {
   const { name, phone, email } = parseVCard(vcardRaw);
-  const blobUrlRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    const blob = new Blob([vcardRaw], { type: "text/vcard;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    blobUrlRef.current = url;
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "contacto.vcf";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    return () => { if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current); };
-  }, [vcardRaw]);
-
-  const handleDownload = () => {
-    if (blobUrlRef.current) {
-      const a = document.createElement("a");
-      a.href = blobUrlRef.current;
-      a.download = "contacto.vcf";
-      a.click();
-    }
+  const handleAddContact = async () => {
+    try {
+      if (navigator.canShare) {
+        const blob = new Blob([vcardRaw], { type: "text/vcard;charset=utf-8" });
+        const file = new File([blob], "contacto.vcf", { type: "text/vcard;charset=utf-8" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file] });
+          return;
+        }
+      }
+    } catch {}
+    window.location.href = "data:text/x-vcard;charset=utf-8," + encodeURIComponent(vcardRaw);
   };
 
   return (
@@ -45,11 +33,10 @@ export default function VCardContact({ vcardRaw }: { vcardRaw: string }) {
         <p className="text-xl font-bold mb-1">{name}</p>
         {phone && <p className="text-gray-500">📞 {phone}</p>}
         {email && <p className="text-gray-500">✉️ {email}</p>}
-        <button onClick={handleDownload}
+        <button onClick={handleAddContact}
           className="mt-6 inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors mb-3">
           📇 Agregar a Contactos
         </button>
-        <p className="text-xs text-gray-400">Si no se abre automáticamente, toca el botón</p>
       </div>
     </div>
   );
