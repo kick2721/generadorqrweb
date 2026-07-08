@@ -1,7 +1,6 @@
 import { query } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import ChatAssistant from "@/components/ChatAssistant";
 import PasswordGate from "@/components/PasswordGate";
 import BusinessCardScan from "@/components/BusinessCardScan";
 
@@ -219,19 +218,5 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
 
   const dest = qr.redirect_to;
   const cleanUrl = dest.startsWith("http") ? dest : `https://${dest}`;
-
-  return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="max-w-sm w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 text-center shadow-lg">
-        <p className="text-sm font-semibold text-purple-600 mb-4">QRWing</p>
-        <p className="text-sm text-gray-400 mb-2">Redirigiendo a</p>
-        <p className="text-sm text-gray-600 dark:text-gray-300 break-all mb-6">{cleanUrl}</p>
-        <a href={cleanUrl} className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors mb-3">
-          Ir al sitio →
-        </a>
-        <p className="text-xs text-gray-400">¿Preguntas? Usa el chat en la esquina inferior derecha.</p>
-      </div>
-      <ChatAssistant url={cleanUrl} title={qr.type} />
-    </div>
-  );
+  redirect(cleanUrl);
 }
