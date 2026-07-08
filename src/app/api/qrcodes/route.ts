@@ -61,11 +61,18 @@ export async function POST(req: Request) {
       [session.user.id, type, content, label || "", JSON.stringify(config || {}), actualContent]
     );
     const qr = rows.rows[0];
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://generadorqrweb.vercel.app";
-    const redirectUrl = `${baseUrl}/r/${qr.id}`;
-    await client.query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
-    await client.query("COMMIT");
-    return NextResponse.json({ ...qr, content: redirectUrl, redirect_to: actualContent }, { status: 201 });
+    let resContent: string;
+    if (type === "vcard") {
+      resContent = content;
+      await client.query("COMMIT");
+    } else {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://generadorqrweb.vercel.app";
+      const redirectUrl = `${baseUrl}/r/${qr.id}`;
+      resContent = redirectUrl;
+      await client.query(`UPDATE public.qrcodes SET content = $1 WHERE id = $2`, [redirectUrl, qr.id]);
+      await client.query("COMMIT");
+    }
+    return NextResponse.json({ ...qr, content: resContent, redirect_to: actualContent }, { status: 201 });
   } catch (e) {
     await client.query("ROLLBACK");
     return NextResponse.json({ error: "Failed to create QR" }, { status: 500 });

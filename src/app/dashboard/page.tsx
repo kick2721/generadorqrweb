@@ -458,7 +458,7 @@ export default function Dashboard() {
                     <p className="font-medium truncate">{qr.label || qr.redirect_to || qr.content}</p>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
                       <span>{typeIcon(qr.type)} {typeLabel(qr.type)}</span>
-                      <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>
+                      {qr.type === "vcard" ? <span className="text-xs text-blue-400">📇 Sin tracking de escaneos</span> : <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>}
                       <span>{new Date(qr.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
