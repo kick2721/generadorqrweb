@@ -7,7 +7,7 @@ import { FRAMES } from "@/lib/frames";
 import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from "@/lib/templates";
 import QRPreview from "./QRPreview";
 
-type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram" | "google-review" | "password" | "multi-link" | "business-card";
+type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram" | "google-review" | "password" | "multi-link";
 
 interface QRFormInitialValues {
   type?: QrType;
@@ -43,13 +43,7 @@ interface QRFormInitialValues {
   passwordHint?: string;
   folder?: string;
   expiresAt?: string;
-  bcName?: string;
-  bcCompany?: string;
-  bcTitle?: string;
-  bcPhone?: string;
-  bcEmail?: string;
-  bcWebsite?: string;
-  bcAddress?: string;
+
   fgColor?: string;
   bgColor?: string;
   size?: number;
@@ -110,7 +104,6 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
   { value: "text", key: "qrTypeText", icon: "📝" },
   { value: "wifi", key: "qrTypeWifi", icon: "📶" },
   { value: "vcard", key: "qrTypeVcard", icon: "👤" },
-  { value: "business-card", key: "qrTypeBusinessCard", icon: "💳" },
   { value: "email", key: "qrTypeEmail", icon: "✉️" },
   { value: "whatsapp", key: "qrTypeWhatsapp", icon: "💬" },
   { value: "phone", key: "qrTypePhone", icon: "📞" },
@@ -137,13 +130,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [vcardName, setVcardName] = useState(initialValues?.vcardName || "");
   const [vcardPhone, setVcardPhone] = useState(initialValues?.vcardPhone || "");
   const [vcardEmail, setVcardEmail] = useState(initialValues?.vcardEmail || "");
-  const [bcName, setBcName] = useState(initialValues?.bcName || "");
-  const [bcCompany, setBcCompany] = useState(initialValues?.bcCompany || "");
-  const [bcTitle, setBcTitle] = useState(initialValues?.bcTitle || "");
-  const [bcPhone, setBcPhone] = useState(initialValues?.bcPhone || "");
-  const [bcEmail, setBcEmail] = useState(initialValues?.bcEmail || "");
-  const [bcWebsite, setBcWebsite] = useState(initialValues?.bcWebsite || "");
-  const [bcAddress, setBcAddress] = useState(initialValues?.bcAddress || "");
+
   const [emailAddr, setEmailAddr] = useState(initialValues?.emailAddr || "");
   const [emailSubject, setEmailSubject] = useState(initialValues?.emailSubject || "");
   const [emailBody, setEmailBody] = useState(initialValues?.emailBody || "");
@@ -229,13 +216,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.vcardName !== undefined) setVcardName(initialValues.vcardName);
     if (initialValues.vcardPhone !== undefined) setVcardPhone(initialValues.vcardPhone);
     if (initialValues.vcardEmail !== undefined) setVcardEmail(initialValues.vcardEmail);
-    if (initialValues.bcName !== undefined) setBcName(initialValues.bcName);
-    if (initialValues.bcCompany !== undefined) setBcCompany(initialValues.bcCompany);
-    if (initialValues.bcTitle !== undefined) setBcTitle(initialValues.bcTitle);
-    if (initialValues.bcPhone !== undefined) setBcPhone(initialValues.bcPhone);
-    if (initialValues.bcEmail !== undefined) setBcEmail(initialValues.bcEmail);
-    if (initialValues.bcWebsite !== undefined) setBcWebsite(initialValues.bcWebsite);
-    if (initialValues.bcAddress !== undefined) setBcAddress(initialValues.bcAddress);
+
     if (initialValues.emailAddr !== undefined) setEmailAddr(initialValues.emailAddr);
     if (initialValues.emailSubject !== undefined) setEmailSubject(initialValues.emailSubject);
     if (initialValues.emailBody !== undefined) setEmailBody(initialValues.emailBody);
@@ -272,7 +253,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "text": return text || "qrwing — Texto";
       case "wifi": return wifiPass ? `WIFI:T:${wifiEnc};S:${wifiSsid};P:${wifiPass};;` : `WIFI:T:nopass;S:${wifiSsid};;`;
       case "vcard": return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
-      case "business-card": return `BEGIN:VCARD\nVERSION:3.0\nFN:${bcName}\nORG:${bcCompany}\nTITLE:${bcTitle}\nTEL:${bcPhone}\nEMAIL:${bcEmail}\nURL:${bcWebsite}\nADR:;;${bcAddress};;;\nEND:VCARD`;
       case "email": return `https://generadorqrweb.vercel.app/mail?to=${encodeURIComponent(emailAddr)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       case "image": return imageUploadedUrl || "qrwing — Imagen";
       case "whatsapp": return `https://wa.me/${whatsappPhone.replace(/[^0-9]/g, "")}${whatsappMsg ? "?text=" + encodeURIComponent(whatsappMsg) : ""}`;
@@ -288,7 +268,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "telegram": return `https://t.me/${telegramUser.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
       default: return "";
     }
-  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, bcName, bcCompany, bcTitle, bcPhone, bcEmail, bcWebsite, bcAddress, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
+  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
 
   const getData = useCallback((): QRFormData => {
     const val = qrValue();
@@ -423,24 +403,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         </div>
       )}
 
-      {qrType === "business-card" && (
-        <div className="space-y-3">
-          <input type="text" placeholder="Nombre completo" value={bcName} onChange={(e) => setBcName(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="text" placeholder="Empresa" value={bcCompany} onChange={(e) => setBcCompany(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="text" placeholder="Cargo" value={bcTitle} onChange={(e) => setBcTitle(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="tel" placeholder="Teléfono" value={bcPhone} onChange={(e) => setBcPhone(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="email" placeholder="Email" value={bcEmail} onChange={(e) => setBcEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="url" placeholder="Sitio web" value={bcWebsite} onChange={(e) => setBcWebsite(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="text" placeholder="Dirección" value={bcAddress} onChange={(e) => setBcAddress(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-        </div>
-      )}
+
 
       {qrType === "email" && (
         <div className="space-y-3">

@@ -48,7 +48,7 @@ const t = {
     qrTypeYoutube: "يوتيوب",
     qrTypeAppstore: "متجر التطبيقات",
     qrTypeTelegram: "تيليجرام",
-    qrTypeBusinessCard: "بطاقة رقمية",
+
     qrTypeGoogleReview: "مراجعة Google",
     qrTypePassword: "كلمة المرور",
     qrTypeMultiLink: "روابط متعددة",
@@ -455,7 +455,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Digitale Visitenkarte",
+
     qrTypeGoogleReview: "Google-Bewertung",
     qrTypePassword: "Passwort",
     qrTypeMultiLink: "Multi-Link",
@@ -862,7 +862,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Ψηφιακή κάρτα",
+
     qrTypeGoogleReview: "Κριτική Google",
     qrTypePassword: "Κωδικός πρόσβασης",
     qrTypeMultiLink: "Πολλαπλοί σύνδεσμοι",
@@ -1269,7 +1269,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Digital Card",
+
     qrTypeGoogleReview: "Google Review",
     qrTypePassword: "Password",
     qrTypeMultiLink: "Multi Link",
@@ -1702,7 +1702,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Tarjeta Digital",
+
     qrTypeGoogleReview: "Reseña Google",
     qrTypePassword: "Contraseña",
     qrTypeMultiLink: "Multi Enlace",
@@ -2109,7 +2109,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Carte numérique",
+
     qrTypeGoogleReview: "Avis Google",
     qrTypePassword: "Mot de passe",
     qrTypeMultiLink: "Multi lien",
@@ -2516,7 +2516,7 @@ const t = {
     qrTypeYoutube: "यूट्यूब",
     qrTypeAppstore: "ऐप स्टोर",
     qrTypeTelegram: "टेलीग्राम",
-    qrTypeBusinessCard: "डिजिटल कार्ड",
+
     qrTypeGoogleReview: "Google समीक्षा",
     qrTypePassword: "पासवर्ड",
     qrTypeMultiLink: "मल्टी लिंक",
@@ -2923,7 +2923,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Kartu Digital",
+
     qrTypeGoogleReview: "Ulasan Google",
     qrTypePassword: "Kata Sandi",
     qrTypeMultiLink: "Multi Tautan",
@@ -3330,7 +3330,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Biglietto da visita digitale",
+
     qrTypeGoogleReview: "Recensione Google",
     qrTypePassword: "Password",
     qrTypeMultiLink: "Multi link",
@@ -3737,7 +3737,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "デジタル名刺",
+
     qrTypeGoogleReview: "Googleレビュー",
     qrTypePassword: "パスワード",
     qrTypeMultiLink: "マルチリンク",
@@ -4144,7 +4144,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "디지털 명함",
+
     qrTypeGoogleReview: "Google 리뷰",
     qrTypePassword: "비밀번호",
     qrTypeMultiLink: "멀티 링크",
@@ -4551,7 +4551,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Digitale kaart",
+
     qrTypeGoogleReview: "Google-beoordeling",
     qrTypePassword: "Wachtwoord",
     qrTypeMultiLink: "Multi-link",
@@ -4958,7 +4958,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Wizytówka cyfrowa",
+
     qrTypeGoogleReview: "Recenzja Google",
     qrTypePassword: "Hasło",
     qrTypeMultiLink: "Multi link",
@@ -5365,7 +5365,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Cartão digital",
+
     qrTypeGoogleReview: "Avaliação Google",
     qrTypePassword: "Senha",
     qrTypeMultiLink: "Multi link",
@@ -5772,7 +5772,6 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Carte de vizită digitală",
     qrTypeGoogleReview: "Recenzie Google",
     qrTypePassword: "Parolă",
     qrTypeMultiLink: "Multi link",
@@ -6179,7 +6178,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Цифровая визитка",
+
     qrTypeGoogleReview: "Отзыв Google",
     qrTypePassword: "Пароль",
     qrTypeMultiLink: "Мульти-ссылка",
@@ -6586,7 +6585,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Digitalt kort",
+
     qrTypeGoogleReview: "Google-recension",
     qrTypePassword: "Lösenord",
     qrTypeMultiLink: "Multi-länk",
@@ -6993,7 +6992,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "นามบัตรดิจิทัล",
+
     qrTypeGoogleReview: "รีวิว Google",
     qrTypePassword: "รหัสผ่าน",
     qrTypeMultiLink: "หลายลิงก์",
@@ -7400,7 +7399,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Dijital Kart",
+
     qrTypeGoogleReview: "Google Yorumu",
     qrTypePassword: "Şifre",
     qrTypeMultiLink: "Çoklu Bağlantı",
@@ -7807,7 +7806,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Цифрова візитка",
+
     qrTypeGoogleReview: "Відгук Google",
     qrTypePassword: "Пароль",
     qrTypeMultiLink: "Мульти-посилання",
@@ -8214,7 +8213,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "Thẻ kỹ thuật số",
+
     qrTypeGoogleReview: "Đánh giá Google",
     qrTypePassword: "Mật khẩu",
     qrTypeMultiLink: "Nhiều liên kết",
@@ -8621,7 +8620,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "电子名片",
+
     qrTypeGoogleReview: "Google评价",
     qrTypePassword: "密码",
     qrTypeMultiLink: "多链接",
@@ -9028,7 +9027,7 @@ const t = {
     qrTypeYoutube: "YouTube",
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
-    qrTypeBusinessCard: "電子名片",
+
     qrTypeGoogleReview: "Google評價",
     qrTypePassword: "密碼",
     qrTypeMultiLink: "多連結",

@@ -2,7 +2,6 @@ import { query } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import PasswordGate from "@/components/PasswordGate";
-import BusinessCardScan from "@/components/BusinessCardScan";
 import VCardContact from "@/components/VCardContact";
 
 async function getCountry(ip: string): Promise<string> {
@@ -87,17 +86,6 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   if (qr.type === "vcard") {
     return <VCardContact vcardRaw={qr.redirect_to} />;
   }
-
-  if (qr.type === "business-card") {
-    const cfg = qr.config || {};
-    return (
-      <LandingLayout>
-        <p className="text-sm font-semibold text-purple-600 mb-2 text-center">Tarjeta Digital</p>
-        <BusinessCardScan name={cfg.bcName || ""} company={cfg.bcCompany || ""} title={cfg.bcTitle || ""} phone={cfg.bcPhone || ""} email={cfg.bcEmail || ""} website={cfg.bcWebsite || ""} address={cfg.bcAddress || ""} />
-      </LandingLayout>
-    );
-  }
-
   if (qr.type === "wifi") {
     return (
       <LandingLayout>
