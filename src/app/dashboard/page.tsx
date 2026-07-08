@@ -95,17 +95,43 @@ export default function Dashboard() {
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
     if (status !== "authenticated") return;
-    fetch("/api/qrcodes").then(r => r.json()).then(d => {
-      const codes = d.qrcodes || [];
-      setQrcodes(codes);
-      setPlan(d.plan || "free");
-      setQrCount(d.qrCount || 0);
-      setQrLimit(d.qrLimit || FREE_MAX_QR);
-      if (codes.length > 0) { setSelectedQR(codes[0].id); if ((d.plan || "free") !== "pro") setStatsBlocked(true); }
-    }).catch(() => {}).finally(() => setLoading(false));
+    let mounted = true;
+    let initial = true;
+    const poll = async () => {
+      try {
+        const r = await fetch("/api/qrcodes");
+        const d = await r.json();
+        if (!mounted) return;
+        const codes = d.qrcodes || [];
+        const currentPlan = d.plan || "free";
+        setQrcodes(codes);
+        setQrCount(d.qrCount || 0);
+        setPlan(currentPlan);
+        setQrLimit(d.qrLimit || FREE_MAX_QR);
+        if (initial) {
+          if (codes.length > 0) { setSelectedQR(codes[0].id); if (currentPlan !== "pro") setStatsBlocked(true); }
+          initial = false;
+        }
+        setLoading(false);
+        if (currentPlan === "pro") {
+          const selId = selectedRef.current;
+          if (selId) {
+            const r2 = await fetch(`/api/qrcodes/${selId}/scans`);
+            if (!mounted || selectedRef.current !== selId) return;
+            const data = await r2.json();
+            statsCache.current[selId] = data;
+            setStats(data);
+          }
+        }
+      } catch { setLoading(false); }
+    };
+    poll();
+    const interval = setInterval(poll, 5000);
     fetch("/api/subscription").then(r => r.json()).then(d => {
+      if (!mounted) return;
       if (d.plan !== "free") setSubscription(d);
     }).catch(() => {});
+    return () => { mounted = false; clearInterval(interval); };
   }, [status, router]);
 
   function confirmDelete(id: string) {
