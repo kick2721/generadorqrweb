@@ -140,7 +140,7 @@ export default function QRGenerator() {
                 <div className="w-full bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-xs text-blue-700 dark:text-blue-300 space-y-2">
                   <p className="font-semibold">📇 QR de Contacto</p>
                   <p>Este tipo de QR almacena la información directamente en el código. Al escanearlo con la cámara del teléfono se agrega el contacto automáticamente, <strong>sin pasar por nuestros servidores</strong>.</p>
-                  <p>Por esta razón <strong>no es posible registrar estadísticas de escaneo</strong>. Las descargas desde la web y las visitas al panel de control sí se contabilizan.</p>
+                  <p dangerouslySetInnerHTML={{ __html: t("vcardNoTracking") }} />
                 </div>
               )}
               {(() => {
