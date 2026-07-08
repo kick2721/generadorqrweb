@@ -15,7 +15,6 @@ const FEATURES = [
   { icon: "🔀", title: "Multi-enlace", desc: "Un QR que redirige a diferentes URLs según el día y la hora." },
   { icon: "📂", title: "Carpetas", desc: "Organiza tus QR en carpetas desde el panel de control." },
   { icon: "⏰", title: "Programado", desc: "Fecha de expiración. El QR deja de funcionar automáticamente." },
-  { icon: "💳", title: "Tarjeta digital", desc: "Editor de tarjeta de presentación con previsualización y descarga .vcf." },
   { icon: "⭐", title: "Google Review", desc: "QR que lleva directo al formulario de reseña de tu negocio en Google." },
   { icon: "📋", title: "Plantillas", desc: "Guarda y carga diseños. No vuelvas a configurar colores desde cero." },
   { icon: "🖼️", title: "Descarga PNG, SVG, JPG", desc: "Alta resolución para digital o vectorial para impresión profesional." },
@@ -27,7 +26,6 @@ const TYPES = [
   { icon: "🔗", label: "URL / Web", href: "/qr-url" },
   { icon: "📶", label: "WiFi", href: "/qr-wifi" },
   { icon: "👤", label: "vCard / Contacto", href: "/qr-vcard" },
-  { icon: "💳", label: "Tarjeta Digital", href: "/qr-tarjeta-digital" },
   { icon: "💬", label: "WhatsApp", href: "/qr-whatsapp" },
   { icon: "📧", label: "Email", href: "#" },
   { icon: "📝", label: "Texto", href: "/qr-text" },
@@ -197,7 +195,6 @@ export default function Home() {
               <li><Link href="/qr-url" className="hover:text-purple-600">URL</Link></li>
               <li><Link href="/qr-wifi" className="hover:text-purple-600">WiFi</Link></li>
               <li><Link href="/qr-vcard" className="hover:text-purple-600">vCard</Link></li>
-              <li><Link href="/qr-tarjeta-digital" className="hover:text-purple-600">Tarjeta Digital</Link></li>
               <li><Link href="/qr-whatsapp" className="hover:text-purple-600">WhatsApp</Link></li>
               <li><Link href="/qr-google-review" className="hover:text-purple-600">Google Review</Link></li>
               <li><Link href="/qr-password" className="hover:text-purple-600">Protegido</Link></li>
@@ -221,7 +218,6 @@ export default function Home() {
             <ul className="space-y-1.5 text-gray-500">
               <li><Link href="/pricing" className="hover:text-purple-600">Precios</Link></li>
               <li><Link href="/bulk" className="hover:text-purple-600">QR por lote</Link></li>
-              <li><Link href="/tarjeta-digital" className="hover:text-purple-600">Tarjeta Digital</Link></li>
               <li><Link href="/api/v1/generate" className="hover:text-purple-600">API</Link></li>
               <li><Link href="/dashboard" className="hover:text-purple-600">Panel de control</Link></li>
             </ul>
