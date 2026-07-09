@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import QRCodeStyling from "qr-code-styling";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useLang } from "@/context/LangContext";
 import { FREE_MAX_QR } from "@/lib/constants";
 import { parseUA } from "@/lib/ua";
@@ -24,11 +26,6 @@ interface ScanStats {
   total: number;
   daily: { date: string; count: number }[];
   recent: { scanned_at: string; ip: string; country: string; referrer: string; user_agent: string }[];
-}
-
-interface DashboardClientProps {
-  userName: string;
-  userEmail: string;
 }
 
 function qrStylingOptions(qr: QRCodeData, size: number) {
@@ -69,10 +66,19 @@ function QRSmallPreviewInner({ qr }: { qr: QRCodeData }) {
 }
 const QRSmallPreview = React.memo(QRSmallPreviewInner, (a, b) => a.qr.id === b.qr.id);
 
-export default function DashboardClient({ userName, userEmail }: DashboardClientProps) {
+export default function DashboardClient() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const { t } = useLang();
   const cached = getDashboardData();
   clearDashboardData();
+
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/");
+  }, [status, router]);
+
+  const userName = session?.user?.name ?? "";
+  const userEmail = session?.user?.email ?? "";
   const [qrcodes, setQrcodes] = useState<QRCodeData[]>(cached?.qrcodes ?? []);
   const [loading, setLoading] = useState(!cached);
   const [selectedQR, setSelectedQR] = useState<string | null>(cached?.qrcodes?.[0]?.id ?? null);
@@ -258,7 +264,7 @@ export default function DashboardClient({ userName, userEmail }: DashboardClient
     return labels[type] || type;
   }
 
-  if (loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-8 animate-pulse">
         <div className="flex items-center justify-between">
@@ -278,6 +284,7 @@ export default function DashboardClient({ userName, userEmail }: DashboardClient
       </div>
     );
   }
+  if (!session?.user?.id) return null;
 
   const totalScans = qrcodes.reduce((a, b) => a + Number(b.scan_count), 0);
 

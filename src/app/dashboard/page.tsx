@@ -1,15 +1,7 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+
 import DashboardClient from "./DashboardClient";
 
-export default async function DashboardPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/");
-
-  return (
-    <DashboardClient
-      userName={session.user.name ?? ""}
-      userEmail={session.user.email ?? ""}
-    />
-  );
+export default function DashboardPage() {
+  return <DashboardClient />;
 }
