@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import PasswordGate from "@/components/PasswordGate";
 import VCardContact from "@/components/VCardContact";
+import PhoneDialer from "@/components/PhoneDialer";
 
 async function getCountry(ip: string): Promise<string> {
   if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("172.16.")) return "";
@@ -97,15 +98,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
 
   if (qr.type === "phone") {
     const number = qr.redirect_to.replace("tel:", "");
-    const scanCount = await getScanCount(id);
-    return (
-      <LandingLayout>
-        <p className="text-sm font-semibold text-purple-600 mb-2">Teléfono</p>
-        <p className="text-2xl font-bold mb-4">{number}</p>
-        <a href={qr.redirect_to} className="inline-block px-6 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors mb-3">📞 Llamar</a>
-        <p className="text-xs text-gray-400">{scanCount} escaneos</p>
-      </LandingLayout>
-    );
+    return <PhoneDialer number={number} telHref={qr.redirect_to} />;
   }
 
   if (qr.type === "sms") {
