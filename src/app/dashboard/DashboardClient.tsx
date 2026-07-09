@@ -7,6 +7,7 @@ import { useLang } from "@/context/LangContext";
 import { FREE_MAX_QR } from "@/lib/constants";
 import { parseUA } from "@/lib/ua";
 import EditModal from "@/components/EditModal";
+import { getDashboardData, clearDashboardData } from "@/lib/dashboard-cache";
 
 interface QRCodeData {
   id: string;
@@ -26,11 +27,6 @@ interface ScanStats {
 }
 
 interface DashboardClientProps {
-  initialQrcodes: QRCodeData[];
-  initialPlan: string;
-  initialQrCount: number;
-  initialQrLimit: number;
-  initialSubscription: any;
   userName: string;
   userEmail: string;
 }
@@ -73,22 +69,24 @@ function QRSmallPreviewInner({ qr }: { qr: QRCodeData }) {
 }
 const QRSmallPreview = React.memo(QRSmallPreviewInner, (a, b) => a.qr.id === b.qr.id);
 
-export default function DashboardClient({ initialQrcodes, initialPlan, initialQrCount, initialQrLimit, initialSubscription, userName, userEmail }: DashboardClientProps) {
+export default function DashboardClient({ userName, userEmail }: DashboardClientProps) {
   const { t } = useLang();
-  const [qrcodes, setQrcodes] = useState<QRCodeData[]>(initialQrcodes);
-  const [loading, setLoading] = useState(false);
-  const [selectedQR, setSelectedQR] = useState<string | null>(initialQrcodes.length > 0 ? initialQrcodes[0].id : null);
+  const cached = getDashboardData();
+  clearDashboardData();
+  const [qrcodes, setQrcodes] = useState<QRCodeData[]>(cached?.qrcodes ?? []);
+  const [loading, setLoading] = useState(!cached);
+  const [selectedQR, setSelectedQR] = useState<string | null>(cached?.qrcodes?.[0]?.id ?? null);
   const selectedRef = useRef<string | null>(null);
   const [stats, setStats] = useState<ScanStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
   const statsCache = useRef<Record<string, ScanStats>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [plan, setPlan] = useState(initialPlan);
-  const [qrCount, setQrCount] = useState(initialQrCount);
-  const [qrLimit, setQrLimit] = useState(initialQrLimit);
-  const [statsBlocked, setStatsBlocked] = useState(initialPlan !== "pro" && initialQrcodes.length > 0);
+  const [plan, setPlan] = useState(cached?.plan ?? "free");
+  const [qrCount, setQrCount] = useState(cached?.qrCount ?? 0);
+  const [qrLimit, setQrLimit] = useState(cached?.qrLimit ?? FREE_MAX_QR);
+  const [statsBlocked, setStatsBlocked] = useState(cached ? (cached.plan !== "pro" && cached.qrcodes.length > 0) : false);
   const [editQR, setEditQR] = useState<QRCodeData | null>(null);
-  const [subscription, setSubscription] = useState<any>(initialSubscription?.plan !== "free" ? initialSubscription : null);
+  const [subscription, setSubscription] = useState<any>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);

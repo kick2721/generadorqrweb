@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS public.scans (
 );
 
 CREATE INDEX IF NOT EXISTS idx_qrcodes_user_id ON public.qrcodes(user_id);
+CREATE INDEX IF NOT EXISTS idx_qrcodes_user_created ON public.qrcodes(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_scans_qr_id ON public.scans(qr_id);
 CREATE INDEX IF NOT EXISTS idx_scans_scanned_at ON public.scans(scanned_at);
 

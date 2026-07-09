@@ -18,9 +18,9 @@ export async function GET() {
   const { plan, qrCount, qrLimit } = await getUserPlan();
 
   const rows = await query(
-    `SELECT q.*, COALESCE(s.scan_count, 0) AS scan_count
+    `SELECT q.*,
+       (SELECT COALESCE(COUNT(*), 0) FROM public.scans s WHERE s.qr_id = q.id) AS scan_count
      FROM public.qrcodes q
-     LEFT JOIN (SELECT qr_id, COUNT(*) AS scan_count FROM public.scans GROUP BY qr_id) s ON s.qr_id = q.id
      WHERE q.user_id = $1
      ORDER BY q.created_at DESC`,
     [session.user.id]
