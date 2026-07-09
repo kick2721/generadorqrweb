@@ -66,7 +66,12 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
     const countryPromise = getCountry(ip);
     const country = await countryPromise;
     await query(
-      `INSERT INTO public.scans (qr_id, ip, user_agent, referrer, country) VALUES ($1, $2, $3, $4, $5)`,
+      `INSERT INTO public.scans (qr_id, ip, user_agent, referrer, country)
+       SELECT $1, $2, $3, $4, $5
+       WHERE NOT EXISTS (
+         SELECT 1 FROM public.scans
+         WHERE qr_id = $1 AND ip = $2 AND scanned_at > now() - interval '30 seconds'
+       )`,
       [
         id,
         ip,
