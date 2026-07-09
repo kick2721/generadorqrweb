@@ -8,17 +8,18 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/");
 
-  const rows = await query(
-    `SELECT q.*, COALESCE(s.scan_count, 0) AS scan_count
-     FROM public.qrcodes q
-     LEFT JOIN (SELECT qr_id, COUNT(*) AS scan_count FROM public.scans GROUP BY qr_id) s ON s.qr_id = q.id
-     WHERE q.user_id = $1
-     ORDER BY q.created_at DESC`,
-    [session.user.id]
-  );
-
-  const { plan, qrCount, qrLimit } = await getUserPlan();
-  const subscription = await getFullSubscription(session.user.id);
+  const [rows, { plan, qrCount, qrLimit }, subscription] = await Promise.all([
+    query(
+      `SELECT q.*, COALESCE(s.scan_count, 0) AS scan_count
+       FROM public.qrcodes q
+       LEFT JOIN (SELECT qr_id, COUNT(*) AS scan_count FROM public.scans GROUP BY qr_id) s ON s.qr_id = q.id
+       WHERE q.user_id = $1
+       ORDER BY q.created_at DESC`,
+      [session.user.id]
+    ),
+    getUserPlan(),
+    getFullSubscription(session.user.id),
+  ]);
 
   const qrcodes = rows.map((r: any) => ({
     id: r.id,

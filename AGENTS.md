@@ -11,3 +11,10 @@ TODO el texto visible en la interfaz debe tener su clave en los 23 idiomas en `s
 Antes de dar por terminado cualquier cambio, verificar con `grep` que no haya textos
 hardcodeados en español en los archivos modificados.
 <!-- END:i18n-rule -->
+
+<!-- BEGIN:no-breakage -->
+# No romper funcionalidad existente
+
+Nunca preferir destruir funcionalidad actual. Siempre mejorar sin romper lo que funciona.
+Si un cambio puede romper algo existente, preguntar antes.
+<!-- END:no-breakage -->
