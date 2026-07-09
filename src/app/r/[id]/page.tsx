@@ -62,25 +62,27 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   const h = await headers();
   const ip = (h.get("x-forwarded-for") || "").split(",")[0]?.trim() || h.get("x-real-ip") || "";
 
-  try {
-    const countryPromise = getCountry(ip);
-    const country = await countryPromise;
-    await query(
-      `INSERT INTO public.scans (qr_id, ip, user_agent, referrer, country)
-       SELECT $1, $2, $3, $4, $5
-       WHERE NOT EXISTS (
-         SELECT 1 FROM public.scans
-         WHERE qr_id = $1 AND ip = $2 AND scanned_at > now() - interval '30 seconds'
-       )`,
-      [
-        id,
-        ip,
-        h.get("user-agent") || "",
-        h.get("referer") || "",
-        country,
-      ]
-    );
-  } catch {}
+  if (qr.type !== "sms" && qr.type !== "phone") {
+    try {
+      const countryPromise = getCountry(ip);
+      const country = await countryPromise;
+      await query(
+        `INSERT INTO public.scans (qr_id, ip, user_agent, referrer, country)
+         SELECT $1, $2, $3, $4, $5
+         WHERE NOT EXISTS (
+           SELECT 1 FROM public.scans
+           WHERE qr_id = $1 AND ip = $2 AND scanned_at > now() - interval '30 seconds'
+         )`,
+        [
+          id,
+          ip,
+          h.get("user-agent") || "",
+          h.get("referer") || "",
+          country,
+        ]
+      );
+    } catch {}
+  }
 
   if (qr.type === "text") {
     return (
@@ -104,12 +106,12 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
 
   if (qr.type === "phone") {
     const number = qr.redirect_to.replace("tel:", "");
-    return <PhoneDialer number={number} telHref={qr.redirect_to} />;
+    return <PhoneDialer number={number} telHref={qr.redirect_to} qrId={id} />;
   }
 
   if (qr.type === "sms") {
     const s = parseSms(qr.redirect_to);
-    return <SmsOpener number={s.phone} message={s.message} smsHref={qr.redirect_to} />;
+    return <SmsOpener number={s.phone} message={s.message} smsHref={qr.redirect_to} qrId={id} />;
   }
 
   if (qr.type === "location") {

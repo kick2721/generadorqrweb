@@ -1,10 +1,20 @@
 "use client";
 import { useEffect } from "react";
 
-export default function PhoneDialer({ number, telHref }: { number: string; telHref: string }) {
+export default function PhoneDialer({ number, telHref, qrId }: { number: string; telHref: string; qrId: string }) {
   useEffect(() => {
+    const key = `scan_${qrId}`;
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, "1");
+      fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ qrId }),
+      }).catch(() => {});
+    }
+
     window.location.href = telHref;
-  }, [telHref]);
+  }, [telHref, qrId]);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">

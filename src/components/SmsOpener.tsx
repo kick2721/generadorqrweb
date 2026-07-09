@@ -1,20 +1,29 @@
 "use client";
 import { useEffect } from "react";
 
-export default function SmsOpener({ number, message, smsHref }: { number: string; message: string; smsHref: string }) {
+export default function SmsOpener({ number, message, smsHref, qrId }: { number: string; message: string; smsHref: string; qrId: string }) {
   useEffect(() => {
+    const key = `scan_${qrId}`;
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, "1");
+      fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ qrId }),
+      }).catch(() => {});
+    }
+
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
-    const encoded = encodeURIComponent(number);
     const msg = encodeURIComponent(message);
     if (isIOS) {
-      window.location.href = `sms:${encoded}&body=${msg}`;
+      window.location.href = `sms:${number}&body=${msg}`;
     } else if (isAndroid) {
-      window.location.href = `sms:${encoded}?body=${msg}`;
+      window.location.href = `sms:${number}?body=${msg}`;
     } else {
       window.location.href = smsHref;
     }
-  }, [number, message, smsHref]);
+  }, [number, message, smsHref, qrId]);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
