@@ -439,27 +439,27 @@ export default function Dashboard() {
                 {selectedQrs.size > 0 && (batchFolder ? (
                   <>
                     <input type="text" value={batchFolderInput} onChange={e => setBatchFolderInput(e.target.value)} autoFocus
-                      placeholder="Nombre de carpeta" maxLength={30}
+                      placeholder={t("folderPlaceholder")} maxLength={30}
                       className="w-36 px-2 py-2 text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 outline-none focus:border-purple-500"
                       onKeyDown={e => { if (e.key === "Enter") assignBatchFolder(); if (e.key === "Escape") setBatchFolder(false); }}
                     />
-                    <button onClick={assignBatchFolder} className="px-3 py-2 text-xs rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700 transition">Guardar</button>
+                    <button onClick={assignBatchFolder} className="px-3 py-2 text-xs rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700 transition">{t("save")}</button>
                     <button onClick={() => setBatchFolder(false)} className="px-2 py-2 text-xs text-gray-500 hover:text-gray-700">✕</button>
                   </>
                 ) : (
                   <button onClick={() => setBatchFolder(true)}
                     className="px-3 py-2 text-xs rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition">
-                    📁 Mover a carpeta ({selectedQrs.size})
+                    📁 {t("folderMoveHere").replace("{n}", String(selectedQrs.size))}
                   </button>
                 ))}
                 <button onClick={exitSelectMode} className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-red-400 hover:text-red-600 transition">
-                  Cancelar selección
+                  {t("folderCancel")}
                 </button>
               </div>
             ) : (
               <button onClick={() => setSelectMode(true)}
                 className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-purple-400 hover:text-purple-600 transition whitespace-nowrap">
-                ☐ Seleccionar para mover a carpetas
+                ☐ {t("folderSelectMode")}
               </button>
             )}
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
@@ -487,7 +487,7 @@ export default function Dashboard() {
             </div>
             {folders.length > 0 && (
             <div className="flex gap-2 mb-4 flex-wrap">
-              <button onClick={() => setFolderFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${!folderFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-600'}`}>Todas las carpetas</button>
+              <button onClick={() => setFolderFilter(null)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${!folderFilter ? 'bg-purple-600 text-white border-purple-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-600'}`}>{t("folderAll")}</button>
               {folders.map(f => (
                 <button key={f} onClick={() => setFolderFilter(folderFilter === f ? null : f)} className={`px-3 py-1.5 text-xs rounded-full border-2 font-medium transition cursor-pointer ${folderFilter === f ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-600'}`}>
                   📁 {f}
@@ -531,7 +531,7 @@ export default function Dashboard() {
                     <p className="font-medium truncate">{qrDisplayLabel(qr)}</p>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
                       <span>{typeIcon(qr.type)} {typeLabel(qr.type)}</span>
-                      {qr.type === "vcard" ? <span className="text-xs text-blue-400">📇 Sin tracking de escaneos</span> : <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>}
+                      {qr.type === "vcard" ? <span className="text-xs text-blue-400">📇 {t("vcardNoTrackingShort")}</span> : <span>👁 {qr.scan_count} {t("dashboardScansLabel")}</span>}
                       <span>{new Date(qr.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
