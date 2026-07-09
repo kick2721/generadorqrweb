@@ -7,6 +7,7 @@ import CookieBanner from "@/components/CookieBanner";
 import { LangProvider } from "@/context/LangContext";
 import SessionProvider from "@/components/SessionProvider";
 import ThemeProvider from "@/components/ThemeProvider";
+import DashboardPrefetcher from "@/components/DashboardPrefetcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <SessionProvider>
           <LangProvider>
             <Navbar />
+            <DashboardPrefetcher />
             <main className="flex-1">{children}</main>
             <Footer />
             <CookieBanner />

@@ -9,7 +9,7 @@ import { useLang } from "@/context/LangContext";
 import { FREE_MAX_QR } from "@/lib/constants";
 import { parseUA } from "@/lib/ua";
 import EditModal from "@/components/EditModal";
-import { getDashboardData, clearDashboardData } from "@/lib/dashboard-cache";
+import { getDashboardData } from "@/lib/dashboard-cache";
 
 interface QRCodeData {
   id: string;
@@ -71,7 +71,6 @@ export default function DashboardClient() {
   const router = useRouter();
   const { t } = useLang();
   const cached = getDashboardData();
-  clearDashboardData();
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");

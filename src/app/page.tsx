@@ -3,7 +3,6 @@
 import QRGenerator from "@/components/QRGenerator";
 import { useLang } from "@/context/LangContext";
 import Link from "next/link";
-import DashboardPrefetcher from "@/components/DashboardPrefetcher";
 
 const FEATURES = [
   { icon: "🎨", title: "Diseño completo", desc: "Colores, degradados, 6 estilos de puntos, esquinas, logo y marcos decorativos." },
@@ -63,7 +62,6 @@ export default function Home() {
 
   return (
     <>
-      <DashboardPrefetcher />
       <div className="max-w-6xl mx-auto px-4 py-12">
       {/* Hero */}
       <section className="text-center mb-12">
