@@ -259,7 +259,7 @@ export default function Dashboard() {
     return <div className="max-w-5xl mx-auto px-4 py-12"><div className="animate-pulse space-y-4"><div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-48" /><div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-2xl" /><div className="h-64 bg-gray-200 dark:bg-gray-800 rounded-2xl" /></div></div>;
   }
 
-  const totalScans = qrcodes.reduce((a, b) => a + b.scan_count, 0);
+  const totalScans = qrcodes.reduce((a, b) => a + Number(b.scan_count), 0);
 
   const folders = [...new Set(qrcodes.map(q => q.config?.folder).filter(Boolean))] as string[];
   const filteredQrs = qrcodes
