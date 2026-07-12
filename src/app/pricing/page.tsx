@@ -76,7 +76,7 @@ export default function Pricing() {
               <p className="text-xs text-gray-400 mt-1">{t("pricingQarNote")}</p>
             </div>
             <ul className="space-y-2 mb-6 flex-1">
-              {[t("featPro1"), t("featPro2"), t("featPro3"), t("featPro4"), t("featPro5")].map((f) => (
+              {[t("featPro1"), t("featPro2"), t("featPro3"), t("featPro4"), t("featPro5"), t("featPro7")].map((f) => (
                 <li key={f} className="text-sm flex items-center gap-2 text-gray-600 dark:text-gray-400">
                   <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
