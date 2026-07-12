@@ -5,7 +5,7 @@ import PasswordGate from "@/components/PasswordGate";
 import VCardContact from "@/components/VCardContact";
 import PhoneDialer from "@/components/PhoneDialer";
 import SmsOpener from "@/components/SmsOpener";
-import MapsOpener from "@/components/MapsOpener";
+
 
 async function getCountry(ip: string): Promise<string> {
   if (!ip || ip === "::1" || ip === "127.0.0.1" || ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("172.16.")) return "";
@@ -63,7 +63,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   const h = await headers();
   const ip = (h.get("x-forwarded-for") || "").split(",")[0]?.trim() || h.get("x-real-ip") || "";
 
-  if (qr.type !== "sms" && qr.type !== "phone" && qr.type !== "location") {
+  if (qr.type !== "sms" && qr.type !== "phone") {
     try {
       const countryPromise = getCountry(ip);
       const country = await countryPromise;
@@ -116,8 +116,11 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   }
 
   if (qr.type === "location") {
-    const query = decodeURIComponent(qr.redirect_to.replace("https://maps.google.com/maps?q=", ""));
-    return <MapsOpener query={query} qrId={id} />;
+    const raw = qr.redirect_to.replace("https://maps.google.com/maps?q=", "");
+    const query = decodeURIComponent(raw);
+    const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(query);
+    const geoUri = isCoord ? `geo:${query}` : `geo:0,0?q=${encodeURIComponent(query)}`;
+    redirect(geoUri);
   }
 
   if (qr.type === "calendar") {
