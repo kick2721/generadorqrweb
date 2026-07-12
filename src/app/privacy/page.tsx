@@ -45,6 +45,11 @@ export default function PrivacyPage() {
         </div>
 
         <div>
+          <h3 className="font-semibold mt-4 mb-1 text-gray-800 dark:text-gray-200">{t("privacySec24Title")}</h3>
+          <p>{t("privacySec24Content")}</p>
+        </div>
+
+        <div>
           <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{t("privacySec3Title")}</h2>
           <p>{t("privacySec3Intro")} <strong>{t("privacySec3Essential")}</strong> {t("privacySec3IntroSuffix")}</p>
           <div className="overflow-x-auto mt-3">
