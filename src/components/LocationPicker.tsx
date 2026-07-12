@@ -1,9 +1,10 @@
 "use client";
-import { useMemo, useRef, useCallback, useState } from "react";
+import { useMemo, useRef, useCallback, useEffect } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 
 const containerStyle = { width: "100%", height: "288px" };
 const defaultCenter = { lat: 40.4168, lng: -3.7038 };
+const libraries: ("places")[] = ["places"];
 
 export default function LocationPicker({
   value,
@@ -12,10 +13,9 @@ export default function LocationPicker({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const [search, setSearch] = useState("");
-  const [geocoding, setGeocoding] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const apiKey =
     (typeof process !== "undefined" &&
@@ -24,6 +24,7 @@ export default function LocationPicker({
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,
+    libraries,
   });
 
   const center = useMemo(() => {
@@ -59,32 +60,49 @@ export default function LocationPicker({
     mapRef.current = map;
   }, []);
 
-  const handleSearch = useCallback(
-    (val: string) => {
-      setSearch(val);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      if (val.length < 3) return;
-      debounceRef.current = setTimeout(async () => {
-        setGeocoding(true);
-        try {
-          const res = await fetch("/api/geocode", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ q: val }),
-          });
-          if (!res.ok) return;
-          const data = await res.json();
-          if (data.lat != null && data.lng != null) {
-            onChange(`${data.lat.toFixed(6)},${data.lng.toFixed(6)}`);
-          }
-        } catch {
-        } finally {
-          setGeocoding(false);
-        }
-      }, 600);
+  useEffect(() => {
+    if (!isLoaded || !inputRef.current || autocompleteRef.current) return;
+    autocompleteRef.current = new google.maps.places.Autocomplete(
+      inputRef.current,
+      { fields: ["geometry", "formatted_address"] }
+    );
+    autocompleteRef.current.addListener("place_changed", () => {
+      const place = autocompleteRef.current?.getPlace();
+      if (place?.geometry?.location) {
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        onChange(`${lat.toFixed(6)},${lng.toFixed(6)}`);
+      }
+    });
+  }, [isLoaded, onChange]);
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      const coordMatch = val.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+      if (coordMatch) {
+        onChange(`${coordMatch[1]},${coordMatch[2]}`);
+        return;
+      }
+      const manualCoord = val.match(/^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/);
+      if (manualCoord) {
+        onChange(`${manualCoord[1]},${manualCoord[2]}`);
+      }
     },
     [onChange]
   );
+
+  const handleMyLocation = useCallback(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) =>
+          onChange(
+            `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`
+          ),
+        () => {}
+      );
+    }
+  }, [onChange]);
 
   if (loadError) {
     return (
@@ -104,19 +122,21 @@ export default function LocationPicker({
 
   return (
     <div className="space-y-2">
-      <div className="relative">
+      <div className="flex gap-2">
         <input
+          ref={inputRef}
           type="text"
-          placeholder="Buscar lugar en el mapa…"
-          value={search}
-          onChange={(e) => handleSearch(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+          placeholder="Buscar un lugar, pegar coordenadas o enlace de Maps…"
+          onChange={handleInputChange}
+          className="flex-1 w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
         />
-        {geocoding && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
-            buscando…
-          </span>
-        )}
+        <button
+          onClick={handleMyLocation}
+          className="px-3 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl text-sm transition-colors shrink-0"
+          title="Usar mi ubicación"
+        >
+          📍
+        </button>
       </div>
       <GoogleMap
         mapContainerStyle={containerStyle}
@@ -130,11 +150,7 @@ export default function LocationPicker({
           fullscreenControl: false,
         }}
       >
-        <Marker
-          position={center}
-          draggable
-          onDragEnd={onMarkerDrag}
-        />
+        <Marker position={center} draggable onDragEnd={onMarkerDrag} />
       </GoogleMap>
     </div>
   );

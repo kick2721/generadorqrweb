@@ -485,32 +485,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       {qrType === "location" && (
         <div className="space-y-3">
           {plan === "pro" ? (
-            <>
-              <div className="flex gap-2">
-                <input type="text" placeholder={t("placeLocation")} value={locationQuery}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setLocationQuery(val);
-                    const qParam = val.match(/[?&]q=([^&]+)/);
-                    if (qParam) {
-                      setLocationQuery(decodeURIComponent(qParam[1].replace(/\+/g, " ")));
-                    }
-                  }}
-                  className="flex-1 w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-                <button onClick={() => {
-                  if ("geolocation" in navigator) {
-                    navigator.geolocation.getCurrentPosition(
-                      (pos) => setLocationQuery(`${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`),
-                      () => {}
-                    );
-                  }
-                }} className="px-3 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl text-sm transition-colors shrink-0" title={t("locUseMyLocation")}>
-                  📍
-                </button>
-              </div>
-              <p className="text-xs text-gray-400">{t("locHint")}</p>
-              <LocationPicker value={locationQuery} onChange={(v) => setLocationQuery(v)} />
-            </>
+            <LocationPicker value={locationQuery} onChange={(v) => setLocationQuery(v)} />
           ) : (
             <div className="text-center py-6 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
               <span className="text-2xl">🔒</span>
