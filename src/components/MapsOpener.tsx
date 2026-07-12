@@ -14,26 +14,7 @@ export default function MapsOpener({ query, qrId }: { query: string; qrId: strin
         body: JSON.stringify({ qrId }),
       }).catch(() => {});
     }
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-
-    if (isCoord) {
-      const [lat, lng] = query.split(",").map((s) => s.trim());
-      if (isIOS) {
-        window.location.href = `https://maps.apple.com/?ll=${lat},${lng}&q=${lat},${lng}`;
-      } else if (isAndroid) {
-        window.location.href = `https://maps.google.com/maps?q=${lat},${lng}`;
-      }
-    } else {
-      const encoded = encodeURIComponent(query);
-      if (isIOS) {
-        window.location.href = `https://maps.apple.com/?q=${encoded}`;
-      } else if (isAndroid) {
-        window.location.href = `https://maps.google.com/maps?q=${encoded}`;
-      }
-    }
-  }, [query, qrId, isCoord]);
+  }, [qrId]);
 
   const googleMapsUrl = isCoord
     ? `https://maps.google.com/maps?q=${query.split(",").map((s) => s.trim()).join(",")}`
@@ -51,7 +32,7 @@ export default function MapsOpener({ query, qrId }: { query: string; qrId: strin
         <p className="text-sm font-semibold text-purple-600 mb-4">QRWing</p>
         <p className="text-sm font-semibold text-purple-600 mb-2">Ubicación</p>
         <p className="text-lg font-bold mb-4 break-words">{query}</p>
-        <p className="text-sm text-gray-400 mb-4">Abriendo mapa...</p>
+        <p className="text-sm text-gray-400 mb-4">Elige una aplicación:</p>
         <div className="flex flex-col gap-2">
           <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors">

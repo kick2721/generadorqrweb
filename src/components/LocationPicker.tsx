@@ -132,10 +132,10 @@ export default function LocationPicker({
         />
         <button
           onClick={handleMyLocation}
-          className="px-3 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl text-sm transition-colors shrink-0"
+          className="px-4 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl text-sm transition-colors shrink-0 whitespace-nowrap"
           title="Usar mi ubicación"
         >
-          📍
+          📍 Mi ubicación
         </button>
       </div>
       <GoogleMap
