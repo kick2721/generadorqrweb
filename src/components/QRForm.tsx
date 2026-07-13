@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useLang } from "@/context/LangContext";
 import { contrastRatio } from "@/lib/color";
 import { FRAMES } from "@/lib/frames";
@@ -146,6 +146,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [calendarTitle, setCalendarTitle] = useState(initialValues?.calendarTitle || "");
   const [calendarDate, setCalendarDate] = useState(initialValues?.calendarDate || "");
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const [calendarLocation, setCalendarLocation] = useState(initialValues?.calendarLocation || "");
   const [calendarDesc, setCalendarDesc] = useState(initialValues?.calendarDesc || "");
   const [youtubeUrl, setYoutubeUrl] = useState(initialValues?.youtubeUrl || "");
@@ -508,10 +509,15 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           <label className="text-xs text-gray-500">{t("placeCalendarDate")}</label>
           <div className="space-y-2">
-            <input type="date" readOnly min={nowDate} value={calendarDate.split(" ")[0] || ""} onClick={(e) => e.currentTarget.showPicker()} onChange={(e) => {
+            <div className="relative">
+            <div onClick={() => dateInputRef.current?.showPicker()}
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 cursor-pointer">
+              {calendarDate.split(" ")[0] || t("placeCalendarDate")}
+            </div>
+            <input type="date" ref={dateInputRef} min={nowDate} value={calendarDate.split(" ")[0] || ""} onChange={(e) => {
               const time = calendarDate.split(" ")[1] || "";
               setCalendarDate(e.target.value ? `${e.target.value} ${time}` : "");
-            }} className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none cursor-pointer" />
+            }} className="absolute inset-0 w-full h-full opacity-0 pointer-events-none" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, pointerEvents: "none" }} />
             {(() => {
               const timeParts = (calendarDate.split(" ")[1] || "00:00").split(":");
               const calH = timeParts[0], calM = timeParts[1];
@@ -557,6 +563,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
                 </div>
               );
             })()}
+            </div>
           </div>
           {plan === "pro" ? (
             <LocationPicker value={calendarLocation} onChange={(v) => setCalendarLocation(v)} />
