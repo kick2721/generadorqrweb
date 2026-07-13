@@ -500,10 +500,17 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         <div className="space-y-3">
           <input type="text" placeholder={t("placeCalendarTitle")} value={calendarTitle} onChange={(e) => setCalendarTitle(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="text" placeholder={t("placeCalendarDate")} value={calendarDate} onChange={(e) => setCalendarDate(e.target.value)}
+          <input type="datetime-local" value={calendarDate} onChange={(e) => setCalendarDate(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="text" placeholder={t("placeCalendarLocation")} value={calendarLocation} onChange={(e) => setCalendarLocation(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          {plan === "pro" ? (
+            <LocationPicker value={calendarLocation} onChange={(v) => setCalendarLocation(v)} />
+          ) : (
+            <div className="text-center py-6 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+              <span className="text-2xl">🔒</span>
+              <p className="text-sm text-gray-500 mt-2 mb-3">{t("calLocProDesc")}</p>
+              <a href="/pricing" className="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">{t("viewPlans")}</a>
+            </div>
+          )}
           <textarea placeholder={t("placeCalendarDesc")} value={calendarDesc} onChange={(e) => setCalendarDesc(e.target.value)} rows={2}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none resize-none" />
         </div>
