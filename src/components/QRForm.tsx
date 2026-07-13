@@ -514,6 +514,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             <input type="time" min={calendarDate.split(" ")[0] === nowDate ? nowTime : undefined} value={calendarDate.split(" ")[1] || ""} onChange={(e) => {
               const date = calendarDate.split(" ")[0] || "";
               setCalendarDate(date ? `${date} ${e.target.value}` : "");
+              e.currentTarget?.blur();
             }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           </div>
           {plan === "pro" ? (
