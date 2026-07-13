@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useLang } from "@/context/LangContext";
 import { contrastRatio } from "@/lib/color";
 import { FRAMES } from "@/lib/frames";
@@ -245,6 +245,11 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.cornersDotType !== undefined) setCornersDotType(initialValues.cornersDotType);
     if (initialValues.frame !== undefined) setFrame(initialValues.frame);
   }, [initialValues]);
+
+  const [nowDate, nowTime] = useMemo(() => {
+    const n = new Date();
+    return [n.toISOString().split("T")[0], `${String(n.getHours()).padStart(2, "0")}:${String(n.getMinutes()).padStart(2, "0")}`];
+  }, []);
 
   const qrValue = useCallback(() => {
     switch (qrType) {
@@ -502,11 +507,11 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           <label className="text-xs text-gray-500">{t("placeCalendarDate")}</label>
           <div className="flex gap-2">
-            <input type="date" value={calendarDate.split(" ")[0] || ""} onChange={(e) => {
+            <input type="date" min={nowDate} value={calendarDate.split(" ")[0] || ""} onChange={(e) => {
               const time = calendarDate.split(" ")[1] || "";
               setCalendarDate(e.target.value ? `${e.target.value} ${time}` : "");
             }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-            <input type="time" value={calendarDate.split(" ")[1] || ""} onChange={(e) => {
+            <input type="time" min={calendarDate.split(" ")[0] === nowDate ? nowTime : undefined} value={calendarDate.split(" ")[1] || ""} onChange={(e) => {
               const date = calendarDate.split(" ")[0] || "";
               setCalendarDate(date ? `${date} ${e.target.value}` : "");
             }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
