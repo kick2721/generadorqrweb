@@ -1,9 +1,9 @@
 "use client";
-import { useMemo, useRef, useCallback, useEffect } from "react";
+import { useMemo, useRef, useCallback, useEffect, useState } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 
 const containerStyle = { width: "100%", height: "288px" };
-const defaultCenter = { lat: 40.4168, lng: -3.7038 };
+const madrid = { lat: 40.4168, lng: -3.7038 };
 const libraries: ("places")[] = ["places"];
 
 export default function LocationPicker({
@@ -13,6 +13,7 @@ export default function LocationPicker({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const [ipCenter, setIpCenter] = useState<{ lat: number; lng: number } | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
@@ -21,6 +22,15 @@ export default function LocationPicker({
     (typeof process !== "undefined" &&
       (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string)) ||
     "";
+
+  useEffect(() => {
+    fetch("http://ip-api.com/json/?fields=lat,lon")
+      .then(r => r.json())
+      .then(d => { if (d.lat != null && d.lon != null) setIpCenter({ lat: d.lat, lng: d.lon }); })
+      .catch(() => {});
+  }, []);
+
+  const defaultCenter = ipCenter ?? madrid;
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,

@@ -32,7 +32,21 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
         return;
       }
     } catch {}
-    window.location.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+    const dt = vcalRaw.match(/DTSTART:(\d{8})T?(\d{0,6})/);
+    const dtNum = dt ? dt[1] + (dt[2] ? `T${dt[2]}00` : "T120000") : "";
+    const endDate = dtNum ? dtNum.replace(/(\d{8})T(\d{6})/, (_, d, t) => {
+      const start = new Date(`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}T${t.slice(0,2)}:${t.slice(2,4)}:${t.slice(4,6)}`);
+      start.setHours(start.getHours() + 1);
+      return `${start.getFullYear()}${String(start.getMonth()+1).padStart(2,"0")}${String(start.getDate()).padStart(2,"0")}T${String(start.getHours()).padStart(2,"0")}${String(start.getMinutes()).padStart(2,"0")}00`;
+    }) : "";
+    const params = new URLSearchParams({
+      action: "TEMPLATE",
+      text: ev.title || "Event",
+      dates: `${dtNum}/${endDate}`,
+      location: ev.location || "",
+      details: ev.description || "",
+    });
+    window.open(`https://calendar.google.com/calendar/render?${params}`, "_blank");
   };
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
