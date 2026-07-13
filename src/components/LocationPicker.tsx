@@ -43,6 +43,10 @@ export default function LocationPicker({
       : (ipCenter ?? madrid);
   }, [value, ipCenter]);
 
+  useEffect(() => {
+    mapRef.current?.panTo(center);
+  }, [center]);
+
   const onMapClick = useCallback(
     (e: google.maps.MapMouseEvent) => {
       const lat = e.latLng?.lat();
