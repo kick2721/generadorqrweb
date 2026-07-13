@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { useLang } from "@/context/LangContext";
 
 function parseVCalendar(text: string) {
@@ -26,24 +26,28 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
   const { t } = useLang();
   const ev = useMemo(() => parseVCalendar(vcalRaw), [vcalRaw]);
 
-  const webcalUrl = useMemo(() => {
+  const apiUrl = useMemo(() => {
     const enc = toBase64url(vcalRaw);
     if (typeof window === "undefined") return "";
-    const url = `${window.location.origin}/api/calendar/export?d=${enc}`;
-    return url.replace(/^https:/i, "webcal:");
+    return `${window.location.origin}/api/calendar/export?d=${enc}`;
   }, [vcalRaw]);
 
-  const handleClick = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleAddToCalendar = async () => {
     const ics = vcalRaw.replace(/\n/g, "\r\n");
     try {
       const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
       const file = new File([blob], "event.ics", { type: "text/calendar" });
       if (navigator.canShare?.({ files: [file] })) {
-        e.preventDefault();
-        await navigator.share({ files: [file], title: ev.title || "Event" });
+        await navigator.share({ title: ev.title || "Event", files: [file] });
+        return;
       }
     } catch {}
-  }, [vcalRaw, ev]);
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ url: apiUrl });
+      }
+    } catch {}
+  };
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
   const geoUri = isCoord ? `geo:${ev.location}` : `geo:0,0?q=${encodeURIComponent(ev.location)}`;
@@ -64,10 +68,10 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
           </p>
         )}
         {ev.description && <p className="text-gray-400 text-xs mt-2">{ev.description}</p>}
-        <a href={webcalUrl} onClick={handleClick}
-          className="mt-6 w-full inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors text-center">
+        <button onClick={handleAddToCalendar}
+          className="mt-6 w-full px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">
           {t("scannerAddToCalendar")}
-        </a>
+        </button>
       </div>
     </div>
   );
