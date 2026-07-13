@@ -106,7 +106,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   }
 
   if (qr.type === "calendar") {
-    return <CalendarEvent vcalRaw={qr.redirect_to} />;
+    return <CalendarEvent vcalRaw={qr.redirect_to} qrId={id} />;
   }
 
   const config = typeof qr.config === "string" ? JSON.parse(qr.config) : (qr.config || {});
