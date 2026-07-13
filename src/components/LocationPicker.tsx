@@ -25,7 +25,7 @@ export default function LocationPicker({
     "";
 
   useEffect(() => {
-    fetch("http://ip-api.com/json/?fields=lat,lon")
+    fetch("https://ip-api.com/json/?fields=lat,lon")
       .then(r => r.json())
       .then(d => { if (d.lat != null && d.lon != null) setIpCenter({ lat: d.lat, lng: d.lon }); })
       .catch(() => {});

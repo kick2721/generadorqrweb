@@ -36,24 +36,6 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
     return apiUrl.replace(/^https:/i, "webcal:");
   }, [apiUrl]);
 
-  const gcalUrl = useMemo(() => {
-    const dt = vcalRaw.match(/DTSTART:(\d{8})T?(\d{0,6})/);
-    const dtNum = dt ? dt[1] + (dt[2] ? `T${dt[2]}00` : "T120000") : "";
-    const endDate = dtNum ? dtNum.replace(/(\d{8})T(\d{6})/, (_, d, t) => {
-      const start = new Date(`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}T${t.slice(0,2)}:${t.slice(2,4)}:${t.slice(4,6)}`);
-      start.setHours(start.getHours() + 1);
-      return `${start.getFullYear()}${String(start.getMonth()+1).padStart(2,"0")}${String(start.getDate()).padStart(2,"0")}T${String(start.getHours()).padStart(2,"0")}${String(start.getMinutes()).padStart(2,"0")}00`;
-    }) : "";
-    const params = new URLSearchParams({
-      action: "TEMPLATE",
-      text: ev.title || "Event",
-      dates: `${dtNum}/${endDate}`,
-      location: ev.location || "",
-      details: ev.description || "",
-    });
-    return `https://calendar.google.com/calendar/render?${params}`;
-  }, [vcalRaw, ev]);
-
   const handleAddToCalendar = useCallback(async () => {
     const ics = vcalRaw.replace(/\n/g, "\r\n");
     try {
@@ -64,8 +46,14 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
         return;
       }
     } catch {}
+    try {
+      if (navigator.share) {
+        await navigator.share({ url: apiUrl });
+        return;
+      }
+    } catch {}
     window.location.href = webcalUrl;
-  }, [vcalRaw, ev, webcalUrl]);
+  }, [vcalRaw, ev, apiUrl, webcalUrl]);
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
   const geoUri = isCoord ? `geo:${ev.location}` : `geo:0,0?q=${encodeURIComponent(ev.location)}`;
@@ -90,10 +78,6 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
           className="mt-6 w-full px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">
           {t("scannerAddToCalendar")}
         </button>
-        <a href={gcalUrl} target="_blank" rel="noopener noreferrer"
-          className="mt-3 w-full inline-block px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-medium border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors text-sm">
-          Google Calendar
-        </a>
       </div>
     </div>
   );
