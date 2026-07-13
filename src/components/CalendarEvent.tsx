@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useLang } from "@/context/LangContext";
 
 function parseVCalendar(text: string) {
@@ -23,28 +23,13 @@ function toBase64url(s: string): string {
 }
 
 export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
-  const linkRef = useRef<HTMLAnchorElement>(null);
   const { t } = useLang();
   const ev = useMemo(() => parseVCalendar(vcalRaw), [vcalRaw]);
 
-  const webcalUrl = useMemo(() => {
-    const enc = toBase64url(vcalRaw);
-    if (typeof window === "undefined") return "";
-    const url = `${window.location.origin}/api/calendar/export?d=${enc}`;
-    return url.replace(/^https:/i, "webcal:");
-  }, [vcalRaw]);
-
-  const handleAddToCalendar = async () => {
+  const handleAddToCalendar = () => {
     const ics = vcalRaw.replace(/\n/g, "\r\n");
-    try {
-      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-      const file = new File([blob], "event.ics", { type: "text/calendar" });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ title: ev.title || "Event", files: [file] });
-        return;
-      }
-    } catch {}
-    linkRef.current?.click();
+    const enc = toBase64url(ics);
+    window.location.href = `/api/calendar/export?d=${enc}`;
   };
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
@@ -52,7 +37,6 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <a ref={linkRef} href={webcalUrl} className="hidden" />
       <div className="max-w-sm w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 text-center shadow-lg">
         <p className="text-sm font-semibold text-purple-600 mb-4">QRWing</p>
         <p className="text-sm font-semibold text-purple-600 mb-2">{t("scannerEventTitle")}</p>
