@@ -45,7 +45,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   const h = await headers();
   const ip = (h.get("x-forwarded-for") || "").split(",")[0]?.trim() || h.get("x-real-ip") || "";
 
-  if (qr.type !== "sms" && qr.type !== "phone") {
+  if (qr.type !== "sms" && qr.type !== "phone" && qr.type !== "calendar") {
     try {
       const countryPromise = getCountry(ip);
       const country = await countryPromise;
