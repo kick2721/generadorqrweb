@@ -506,32 +506,39 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
           <input type="text" placeholder={t("placeCalendarTitle")} value={calendarTitle} onChange={(e) => setCalendarTitle(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           <label className="text-xs text-gray-500">{t("placeCalendarDate")}</label>
-          <div className="flex gap-2">
+          <div className="space-y-2">
             <input type="date" min={nowDate} value={calendarDate.split(" ")[0] || ""} onChange={(e) => {
               const time = calendarDate.split(" ")[1] || "";
               setCalendarDate(e.target.value ? `${e.target.value} ${time}` : "");
-            }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            }} className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
             {(() => {
               const timeParts = (calendarDate.split(" ")[1] || "00:00").split(":");
               const calH = timeParts[0], calM = timeParts[1];
               const dateOnly = calendarDate.split(" ")[0] || "";
+              const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+              const mins = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+              const sel = "bg-purple-600 text-white border-purple-600";
+              const unsel = "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700";
               return (
-                <div className="flex gap-1 items-center">
-                  <select value={calH} onChange={(e) => setCalendarDate(dateOnly ? `${dateOnly} ${e.target.value}:${calM}` : "")}
-                    className="px-3 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none appearance-none">
-                    {Array.from({ length: 24 }, (_, i) => {
-                      const v = String(i).padStart(2, "0");
-                      return <option key={v} value={v}>{v}</option>;
-                    })}
-                  </select>
-                  <span className="text-gray-400 font-bold text-lg">:</span>
-                  <select value={calM} onChange={(e) => setCalendarDate(dateOnly ? `${dateOnly} ${calH}:${e.target.value}` : "")}
-                    className="px-3 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none appearance-none">
-                    {Array.from({ length: 12 }, (_, i) => {
-                      const v = String(i * 5).padStart(2, "0");
-                      return <option key={v} value={v}>{v}</option>;
-                    })}
-                  </select>
+                <div className="space-y-1">
+                  <div className="flex gap-2 items-center">
+                    <span className="text-xs text-gray-500 w-8">Hora</span>
+                    <div className="grid grid-cols-7 gap-1">
+                      {hours.map(h => (
+                        <button key={h} type="button" onClick={() => setCalendarDate(dateOnly ? `${dateOnly} ${h}:${calM}` : "")}
+                          className={`px-1.5 py-1 text-xs rounded-lg border transition-colors ${h === calH ? sel : unsel}`}>{h}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <span className="text-xs text-gray-500 w-8">Min</span>
+                    <div className="grid grid-cols-7 gap-1">
+                      {mins.map(m => (
+                        <button key={m} type="button" onClick={() => setCalendarDate(dateOnly ? `${dateOnly} ${calH}:${m}` : "")}
+                          className={`px-1.5 py-1 text-xs rounded-lg border transition-colors ${m === calM ? sel : unsel}`}>{m}</button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               );
             })()}
