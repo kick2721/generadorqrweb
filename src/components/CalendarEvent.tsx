@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { useLang } from "@/context/LangContext";
 
 function parseVCalendar(text: string) {
@@ -14,24 +15,28 @@ function parseVCalendar(text: string) {
   return { title: get("SUMMARY"), date: dateStr, location: get("LOCATION"), description: get("DESCRIPTION") };
 }
 
-function formatIcs(raw: string): string {
-  return raw.replace(/\n/g, "\r\n");
+function toBase64url(s: string): string {
+  if (typeof btoa !== "undefined") {
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  return Buffer.from(s).toString("base64url");
 }
 
 export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
   const { t } = useLang();
-  const ev = parseVCalendar(vcalRaw);
+  const ev = useMemo(() => parseVCalendar(vcalRaw), [vcalRaw]);
 
-  const handleAddToCalendar = async () => {
-    const ics = formatIcs(vcalRaw);
-    try {
-      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-      const file = new File([blob], "event.ics", { type: "text/calendar" });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ title: ev.title || "Event", files: [file] });
-        return;
-      }
-    } catch {}
+  const apiUrl = useMemo(() => {
+    const enc = toBase64url(vcalRaw);
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}/api/calendar/export?d=${enc}`;
+  }, [vcalRaw]);
+
+  const webcalUrl = useMemo(() => {
+    return apiUrl.replace(/^https:/i, "webcal:");
+  }, [apiUrl]);
+
+  const gcalUrl = useMemo(() => {
     const dt = vcalRaw.match(/DTSTART:(\d{8})T?(\d{0,6})/);
     const dtNum = dt ? dt[1] + (dt[2] ? `T${dt[2]}00` : "T120000") : "";
     const endDate = dtNum ? dtNum.replace(/(\d{8})T(\d{6})/, (_, d, t) => {
@@ -46,8 +51,21 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
       location: ev.location || "",
       details: ev.description || "",
     });
-    window.open(`https://calendar.google.com/calendar/render?${params}`, "_blank");
-  };
+    return `https://calendar.google.com/calendar/render?${params}`;
+  }, [vcalRaw, ev]);
+
+  const handleAddToCalendar = useCallback(async () => {
+    const ics = vcalRaw.replace(/\n/g, "\r\n");
+    try {
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const file = new File([blob], "event.ics", { type: "text/calendar" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ title: ev.title || "Event", files: [file] });
+        return;
+      }
+    } catch {}
+    window.location.href = webcalUrl;
+  }, [vcalRaw, ev, webcalUrl]);
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
   const geoUri = isCoord ? `geo:${ev.location}` : `geo:0,0?q=${encodeURIComponent(ev.location)}`;
@@ -69,9 +87,13 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
         )}
         {ev.description && <p className="text-gray-400 text-xs mt-2">{ev.description}</p>}
         <button onClick={handleAddToCalendar}
-          className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">
+          className="mt-6 w-full px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">
           {t("scannerAddToCalendar")}
         </button>
+        <a href={gcalUrl} target="_blank" rel="noopener noreferrer"
+          className="mt-3 w-full inline-block px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-medium border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors text-sm">
+          Google Calendar
+        </a>
       </div>
     </div>
   );

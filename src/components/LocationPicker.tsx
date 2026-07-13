@@ -14,6 +14,7 @@ export default function LocationPicker({
   onChange: (v: string) => void;
 }) {
   const [ipCenter, setIpCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
   const mapRef = useRef<google.maps.Map | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
@@ -30,8 +31,6 @@ export default function LocationPicker({
       .catch(() => {});
   }, []);
 
-  const defaultCenter = ipCenter ?? madrid;
-
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,
     libraries,
@@ -41,8 +40,8 @@ export default function LocationPicker({
     const m = value.match(/^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/);
     return m
       ? { lat: parseFloat(m[1]), lng: parseFloat(m[2]) }
-      : defaultCenter;
-  }, [value]);
+      : (ipCenter ?? madrid);
+  }, [value, ipCenter]);
 
   const onMapClick = useCallback(
     (e: google.maps.MapMouseEvent) => {
@@ -104,12 +103,13 @@ export default function LocationPicker({
 
   const handleMyLocation = useCallback(() => {
     if ("geolocation" in navigator) {
+      setIsLocating(true);
       navigator.geolocation.getCurrentPosition(
-        (pos) =>
-          onChange(
-            `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`
-          ),
-        () => {}
+        (pos) => {
+          onChange(`${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`);
+          setIsLocating(false);
+        },
+        () => setIsLocating(false)
       );
     }
   }, [onChange]);
@@ -148,20 +148,27 @@ export default function LocationPicker({
           📍 Mi ubicación
         </button>
       </div>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={15}
-        onClick={onMapClick}
-        onLoad={onMapLoad}
-        options={{
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: false,
-        }}
-      >
-        <Marker position={center} draggable onDragEnd={onMarkerDrag} />
-      </GoogleMap>
+      <div className="relative">
+        {isLocating && (
+          <div className="absolute inset-0 bg-black/10 flex items-center justify-center rounded-xl z-10">
+            <div className="w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={15}
+          onClick={onMapClick}
+          onLoad={onMapLoad}
+          options={{
+            streetViewControl: false,
+            mapTypeControl: false,
+            fullscreenControl: false,
+          }}
+        >
+          <Marker position={center} draggable onDragEnd={onMarkerDrag} />
+        </GoogleMap>
+      </div>
     </div>
   );
 }
