@@ -500,8 +500,17 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         <div className="space-y-3">
           <input type="text" placeholder={t("placeCalendarTitle")} value={calendarTitle} onChange={(e) => setCalendarTitle(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <input type="datetime-local" value={calendarDate} onChange={(e) => setCalendarDate(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <label className="text-xs text-gray-500">{t("placeCalendarDate")}</label>
+          <div className="flex gap-2">
+            <input type="date" value={calendarDate.split(" ")[0] || ""} onChange={(e) => {
+              const time = calendarDate.split(" ")[1] || "";
+              setCalendarDate(e.target.value ? `${e.target.value} ${time}` : "");
+            }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            <input type="time" value={calendarDate.split(" ")[1] || ""} onChange={(e) => {
+              const date = calendarDate.split(" ")[0] || "";
+              setCalendarDate(date ? `${date} ${e.target.value}` : "");
+            }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          </div>
           {plan === "pro" ? (
             <LocationPicker value={calendarLocation} onChange={(v) => setCalendarLocation(v)} />
           ) : (
