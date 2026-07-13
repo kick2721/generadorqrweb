@@ -15,22 +15,9 @@ function parseVCalendar(text: string) {
   return { title: get("SUMMARY"), date: dateStr, location: get("LOCATION"), description: get("DESCRIPTION") };
 }
 
-function toBase64url(s: string): string {
-  if (typeof btoa !== "undefined") {
-    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  }
-  return Buffer.from(s).toString("base64url");
-}
-
 export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
   const { t } = useLang();
   const ev = useMemo(() => parseVCalendar(vcalRaw), [vcalRaw]);
-
-  const apiUrl = useMemo(() => {
-    const enc = toBase64url(vcalRaw);
-    if (typeof window === "undefined") return "";
-    return `${window.location.origin}/api/calendar/export?d=${enc}`;
-  }, [vcalRaw]);
 
   const handleAddToCalendar = async () => {
     const ics = vcalRaw.replace(/\n/g, "\r\n");
@@ -42,11 +29,7 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
         return;
       }
     } catch {}
-    try {
-      if (typeof navigator.share === "function") {
-        await navigator.share({ url: apiUrl });
-      }
-    } catch {}
+    window.location.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
   };
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
