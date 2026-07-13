@@ -145,6 +145,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [locationQuery, setLocationQuery] = useState(initialValues?.locationQuery || "");
   const [calendarTitle, setCalendarTitle] = useState(initialValues?.calendarTitle || "");
   const [calendarDate, setCalendarDate] = useState(initialValues?.calendarDate || "");
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [calendarLocation, setCalendarLocation] = useState(initialValues?.calendarLocation || "");
   const [calendarDesc, setCalendarDesc] = useState(initialValues?.calendarDesc || "");
   const [youtubeUrl, setYoutubeUrl] = useState(initialValues?.youtubeUrl || "");
@@ -507,38 +508,52 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           <label className="text-xs text-gray-500">{t("placeCalendarDate")}</label>
           <div className="space-y-2">
-            <input type="date" min={nowDate} value={calendarDate.split(" ")[0] || ""} onChange={(e) => {
+            <input type="date" readOnly min={nowDate} value={calendarDate.split(" ")[0] || ""} onClick={(e) => e.currentTarget.showPicker()} onChange={(e) => {
               const time = calendarDate.split(" ")[1] || "";
               setCalendarDate(e.target.value ? `${e.target.value} ${time}` : "");
-            }} className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            }} className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none cursor-pointer" />
             {(() => {
               const timeParts = (calendarDate.split(" ")[1] || "00:00").split(":");
               const calH = timeParts[0], calM = timeParts[1];
               const dateOnly = calendarDate.split(" ")[0] || "";
+              const hasTime = !!calendarDate.split(" ")[1];
               const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
               const mins = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
               const sel = "bg-purple-600 text-white border-purple-600";
               const unsel = "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700";
               return (
-                <div className="space-y-1">
-                  <div className="flex gap-2 items-center">
-                    <span className="text-xs text-gray-500 w-8">Hora</span>
-                    <div className="grid grid-cols-7 gap-1">
-                      {hours.map(h => (
-                        <button key={h} type="button" onClick={() => setCalendarDate(dateOnly ? `${dateOnly} ${h}:${calM}` : "")}
-                          className={`px-1.5 py-1 text-xs rounded-lg border transition-colors ${h === calH ? sel : unsel}`}>{h}</button>
-                      ))}
+                <div>
+                  <button type="button" onClick={() => setShowTimePicker(!showTimePicker)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <span>🕐</span>
+                    <span className="flex-1 text-left">{hasTime ? `${calH}:${calM}` : (t("placeCalendarTime") || "Seleccionar hora")}</span>
+                    <svg className={`w-4 h-4 transition-transform ${showTimePicker ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </button>
+                  {showTimePicker && (
+                    <div className="mt-2 p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 space-y-2">
+                      <div className="flex gap-2 items-center">
+                        <span className="text-xs text-gray-500 w-8">Hora</span>
+                        <div className="grid grid-cols-7 gap-1 flex-1">
+                          {hours.map(h => (
+                            <button key={h} type="button" onClick={() => setCalendarDate(dateOnly ? `${dateOnly} ${h}:${calM}` : "")}
+                              className={`px-1.5 py-1 text-xs rounded-lg border transition-colors ${h === calH ? sel : unsel}`}>{h}</button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        <span className="text-xs text-gray-500 w-8">Min</span>
+                        <div className="grid grid-cols-7 gap-1 flex-1">
+                          {mins.map(m => (
+                            <button key={m} type="button" onClick={() => {
+                              setCalendarDate(dateOnly ? `${dateOnly} ${calH}:${m}` : "");
+                              setShowTimePicker(false);
+                            }}
+                              className={`px-1.5 py-1 text-xs rounded-lg border transition-colors ${m === calM ? sel : unsel}`}>{m}</button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <span className="text-xs text-gray-500 w-8">Min</span>
-                    <div className="grid grid-cols-7 gap-1">
-                      {mins.map(m => (
-                        <button key={m} type="button" onClick={() => setCalendarDate(dateOnly ? `${dateOnly} ${calH}:${m}` : "")}
-                          className={`px-1.5 py-1 text-xs rounded-lg border transition-colors ${m === calM ? sel : unsel}`}>{m}</button>
-                      ))}
-                    </div>
-                  </div>
+                  )}
                 </div>
               );
             })()}
