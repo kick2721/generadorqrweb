@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useLang } from "@/context/LangContext";
 import { contrastRatio } from "@/lib/color";
 import { FRAMES } from "@/lib/frames";
@@ -121,7 +121,6 @@ const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
 
 export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", qrData, isLogoBlocked, withPro, withAuth, user }: Props) {
   const { t } = useLang();
-  const blurTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [qrType, setQrType] = useState<QrType>(initialValues?.type || "url");
   const [url, setUrl] = useState(initialValues?.url || "");
   const [text, setText] = useState(initialValues?.text || "");
@@ -512,12 +511,30 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
               const time = calendarDate.split(" ")[1] || "";
               setCalendarDate(e.target.value ? `${e.target.value} ${time}` : "");
             }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-            <input type="time" min={calendarDate.split(" ")[0] === nowDate ? nowTime : undefined} value={calendarDate.split(" ")[1] || ""} onChange={(e) => {
-              const date = calendarDate.split(" ")[0] || "";
-              setCalendarDate(date ? `${date} ${e.target.value}` : "");
-              clearTimeout(blurTimer.current);
-              blurTimer.current = setTimeout(() => e.currentTarget?.blur(), 300);
-            }} className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            {(() => {
+              const timeParts = (calendarDate.split(" ")[1] || "00:00").split(":");
+              const calH = timeParts[0], calM = timeParts[1];
+              const dateOnly = calendarDate.split(" ")[0] || "";
+              return (
+                <div className="flex gap-1 items-center">
+                  <select value={calH} onChange={(e) => setCalendarDate(dateOnly ? `${dateOnly} ${e.target.value}:${calM}` : "")}
+                    className="px-3 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none appearance-none">
+                    {Array.from({ length: 24 }, (_, i) => {
+                      const v = String(i).padStart(2, "0");
+                      return <option key={v} value={v}>{v}</option>;
+                    })}
+                  </select>
+                  <span className="text-gray-400 font-bold text-lg">:</span>
+                  <select value={calM} onChange={(e) => setCalendarDate(dateOnly ? `${dateOnly} ${calH}:${e.target.value}` : "")}
+                    className="px-3 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none appearance-none">
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const v = String(i * 5).padStart(2, "0");
+                      return <option key={v} value={v}>{v}</option>;
+                    })}
+                  </select>
+                </div>
+              );
+            })()}
           </div>
           {plan === "pro" ? (
             <LocationPicker value={calendarLocation} onChange={(v) => setCalendarLocation(v)} />

@@ -26,10 +26,15 @@ export default function CalendarEvent({ vcalRaw }: { vcalRaw: string }) {
   const { t } = useLang();
   const ev = useMemo(() => parseVCalendar(vcalRaw), [vcalRaw]);
 
-  const handleAddToCalendar = () => {
+  const handleAddToCalendar = async () => {
     const ics = vcalRaw.replace(/\n/g, "\r\n");
     const enc = toBase64url(ics);
-    window.location.href = `/api/calendar/export?d=${enc}`;
+    const url = `/api/calendar/export?d=${enc}`;
+    try {
+      await navigator.share({ title: ev.title || "Evento", url });
+    } catch {
+      window.location.href = url;
+    }
   };
 
   const isCoord = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(ev.location);
