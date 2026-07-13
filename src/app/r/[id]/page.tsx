@@ -5,6 +5,7 @@ import PasswordGate from "@/components/PasswordGate";
 import VCardContact from "@/components/VCardContact";
 import PhoneDialer from "@/components/PhoneDialer";
 import SmsOpener from "@/components/SmsOpener";
+import CalendarEvent from "@/components/CalendarEvent";
 
 
 async function getCountry(ip: string): Promise<string> {
@@ -22,25 +23,6 @@ async function getCountry(ip: string): Promise<string> {
 function parseSms(text: string) {
   const m = text.match(/^smsto:(.+?):(.+)$/);
   return m ? { phone: m[1], message: m[2] } : { phone: text.replace("smsto:", ""), message: "" };
-}
-
-function parseVCalendar(text: string) {
-  const get = (k: string) => {
-    const m = text.match(new RegExp(`${k}:(.+)`));
-    return m ? m[1].trim() : "";
-  };
-  const dtstart = get("DTSTART");
-  const dateStr = dtstart ? dtstart.replace(/(\d{4})(\d{2})(\d{2})T?(\d{0,2})(\d{0,2})/, (_, y, m, d, h, min) => {
-    return `${y}-${m}-${d}${h ? ` ${h}:${min || "00"}` : ""}`;
-  }) : "";
-  return { title: get("SUMMARY"), date: dateStr, location: get("LOCATION"), description: get("DESCRIPTION") };
-}
-
-async function getScanCount(id: string): Promise<number> {
-  try {
-    const rows = await query(`SELECT COUNT(*) AS cnt FROM public.scans WHERE qr_id = $1`, [id]);
-    return rows[0]?.cnt || 0;
-  } catch { return 0; }
 }
 
 function LandingLayout({ children }: { children: React.ReactNode }) {
@@ -124,18 +106,7 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
   }
 
   if (qr.type === "calendar") {
-    const ev = parseVCalendar(qr.redirect_to);
-    const scanCount = await getScanCount(id);
-    return (
-      <LandingLayout>
-        <p className="text-sm font-semibold text-purple-600 mb-2">Evento</p>
-        <p className="text-xl font-bold mb-1">{ev.title || "Evento"}</p>
-        {ev.date && <p className="text-gray-500 text-sm">📅 {ev.date}</p>}
-        {ev.location && <p className="text-gray-500 text-sm">📍 {ev.location}</p>}
-        {ev.description && <p className="text-gray-400 text-xs mt-2">{ev.description}</p>}
-        <p className="text-xs text-gray-400 mt-4">{scanCount} escaneos</p>
-      </LandingLayout>
-    );
+    return <CalendarEvent vcalRaw={qr.redirect_to} />;
   }
 
   const config = typeof qr.config === "string" ? JSON.parse(qr.config) : (qr.config || {});
