@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth";
+import { del } from "@vercel/blob";
 import { query } from "@/lib/db";
 import { getUserPlan } from "@/lib/plan";
 import { NextResponse } from "next/server";
 
+const BLOB_REGEX = /blob\.vercel-storage\.com\//;
 const VALID_TYPES = ["url", "text", "wifi", "vcard", "email", "image", "whatsapp", "phone", "sms", "location", "calendar", "appstore", "telegram", "google-review", "password", "multi-link"];
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -11,11 +13,20 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
   const { id } = await params;
   const rows = await query(
-    `DELETE FROM public.qrcodes WHERE id = $1 AND user_id = $2 RETURNING id`,
+    `DELETE FROM public.qrcodes WHERE id = $1 AND user_id = $2 RETURNING id, redirect_to, content`,
     [id, session.user.id]
   );
 
   if (rows.length === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const qr = rows[0];
+  if (qr.redirect_to && BLOB_REGEX.test(qr.redirect_to)) {
+    try { await del(qr.redirect_to); } catch { /* blob already gone */ }
+  }
+  if (qr.content && qr.content !== qr.redirect_to && BLOB_REGEX.test(qr.content)) {
+    try { await del(qr.content); } catch { /* blob already gone */ }
+  }
+
   return NextResponse.json({ success: true });
 }
 
