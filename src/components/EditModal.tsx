@@ -65,7 +65,7 @@ function parseQRValues(qr: QRCodeData) {
       const dt = g("DTSTART").replace(/(\d{4})(\d{2})(\d{2})T?(\d{0,2})(\d{0,2})/, (_, y, m, d, h, min) => `${y}-${m}-${d}${h ? `T${h}:${min || "00"}` : ""}`);
       return { ...base, type: "calendar" as const, calendarTitle: g("SUMMARY"), calendarDate: dt, calendarLocation: g("LOCATION"), calendarDesc: g("DESCRIPTION") };
     }
-    case "appstore": return { ...base, type: "appstore" as const, appstoreUrl: content };
+    case "appstore": return { ...base, type: "url" as const, url: content };
     case "telegram": {
       try {
         const u = new URL(content);

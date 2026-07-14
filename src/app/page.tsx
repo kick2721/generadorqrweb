@@ -4,7 +4,7 @@ import QRGenerator from "@/components/QRGenerator";
 import { useLang } from "@/context/LangContext";
 import Link from "next/link";
 import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Palette, RefreshCw, BarChart3, Bot, Grid3X3, Code, GitBranch, Folder, Clock, Files, Download, Smartphone, UtensilsCrossed, Megaphone, PartyPopper, Hotel, GraduationCap, Briefcase } from "lucide-react";
-import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaInstagram } from "react-icons/fa";
+import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay, FaInstagram } from "react-icons/fa";
 
 const FEATURES = [
   { icon: <Palette size={24} />, title: "Diseño completo", desc: "Colores, degradados, 6 estilos de puntos, esquinas, logo y marcos decorativos." },
@@ -20,7 +20,7 @@ const FEATURES = [
   { icon: <Star size={24} />, title: "Google Review", desc: "QR que lleva directo al formulario de reseña de tu negocio en Google." },
   { icon: <Files size={24} />, title: "Plantillas", desc: "Guarda y carga diseños. No vuelvas a configurar colores desde cero." },
   { icon: <Download size={24} />, title: "Descarga PNG, SVG, JPG", desc: "Alta resolución para digital o vectorial para impresión profesional." },
-  { icon: <Smartphone size={24} />, title: "17 tipos QR", desc: "URL, WiFi, vCard, WhatsApp, email, SMS, teléfono, ubicación, calendario, YouTube y más." },
+  { icon: <Smartphone size={24} />, title: "16 tipos QR", desc: "URL, WiFi, vCard, WhatsApp, email, SMS, teléfono, ubicación, calendario y más." },
   { icon: <Globe size={24} />, title: "23 idiomas", desc: "Interfaz traducida a 23 idiomas. Alcance global desde el primer día." },
 ];
 
@@ -35,7 +35,8 @@ const TYPES = [
   { icon: <MessageSquareText size={24} />, label: "SMS", href: "/qr-sms" },
   { icon: <MapPin size={24} />, label: "Ubicación", href: "/qr-location" },
   { icon: <Calendar size={24} />, label: "Evento", href: "/qr-calendar" },
-  { icon: <FaAppStoreIos size={24} />, label: "App Store", href: "/qr-appstore" },
+  { icon: <FaAppStoreIos size={24} />, label: "App Store", href: "/qr-url" },
+  { icon: <FaGooglePlay size={24} />, label: "Google Play", href: "/qr-url" },
   { icon: <FaTelegramPlane size={24} />, label: "Telegram", href: "/qr-telegram" },
   { icon: <Star size={24} />, label: "Google Review", href: "/qr-google-review" },
   { icon: <Lock size={24} />, label: "Protegido", href: "/qr-password" },
@@ -53,7 +54,7 @@ const USE_CASES = [
 ];
 
 const STEPS = [
-  { n: "1", title: "Elige el tipo", desc: "Selecciona entre 17 tipos de QR: URL, WiFi, vCard, WhatsApp y más." },
+  { n: "1", title: "Elige el tipo", desc: "Selecciona entre 16 tipos de QR: URL, WiFi, vCard, WhatsApp y más." },
   { n: "2", title: "Personaliza", desc: "Colores, degradados, logo, marcos. Hazlo tuyo en segundos." },
   { n: "3", title: "Descarga o guarda", desc: "PNG, SVG o JPG. O guárdalo como QR dinámico para editarlo después." },
 ];

@@ -5,7 +5,7 @@ import { getUserPlan } from "@/lib/plan";
 import { NextResponse } from "next/server";
 
 const BLOB_REGEX = /blob\.vercel-storage\.com\//;
-const VALID_TYPES = ["url", "text", "wifi", "vcard", "email", "image", "whatsapp", "phone", "sms", "location", "calendar", "appstore", "telegram", "google-review", "password", "multi-link"];
+const VALID_TYPES = ["url", "text", "wifi", "vcard", "email", "image", "whatsapp", "phone", "sms", "location", "calendar", "telegram", "google-review", "password", "multi-link"];
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
