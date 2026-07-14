@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo, type ReactNode } from "react";
 import { useLang } from "@/context/LangContext";
 import { contrastRatio } from "@/lib/color";
 import { FRAMES } from "@/lib/frames";
 import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from "@/lib/templates";
 import QRPreview from "./QRPreview";
 import LocationPicker from "./LocationPicker";
+import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Image as ImageIcon } from "lucide-react";
+import { FaWhatsapp, FaYoutube, FaTelegramPlane, FaAppStoreIos } from "react-icons/fa";
 
 type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram" | "google-review" | "password" | "multi-link";
 
@@ -99,24 +101,24 @@ interface Props {
   user?: { name?: string | null; email?: string | null; image?: string | null } | null;
 }
 
-const QR_TYPES: { value: QrType; key: any; icon: string }[] = [
-  { value: "url", key: "qrTypeUrl", icon: "🔗" },
-  { value: "text", key: "qrTypeText", icon: "📝" },
-  { value: "wifi", key: "qrTypeWifi", icon: "📶" },
-  { value: "vcard", key: "qrTypeVcard", icon: "👤" },
-  { value: "email", key: "qrTypeEmail", icon: "✉️" },
-  { value: "whatsapp", key: "qrTypeWhatsapp", icon: "💬" },
-  { value: "phone", key: "qrTypePhone", icon: "📞" },
-  { value: "sms", key: "qrTypeSms", icon: "✉️" },
-  { value: "location", key: "qrTypeLocation", icon: "📍" },
-  { value: "calendar", key: "qrTypeCalendar", icon: "📅" },
-  { value: "youtube", key: "qrTypeYoutube", icon: "▶️" },
-  { value: "appstore", key: "qrTypeAppstore", icon: "📱" },
-  { value: "telegram", key: "qrTypeTelegram", icon: "✈️" },
-  { value: "google-review", key: "qrTypeGoogleReview", icon: "⭐" },
-  { value: "password", key: "qrTypePassword", icon: "🔒" },
-  { value: "multi-link", key: "qrTypeMultiLink", icon: "🔀" },
-  { value: "image", key: "qrTypeImage", icon: "🖼️" },
+const QR_TYPES: { value: QrType; key: any; icon: ReactNode }[] = [
+  { value: "url", key: "qrTypeUrl", icon: <Globe size={18} /> },
+  { value: "text", key: "qrTypeText", icon: <FileText size={18} /> },
+  { value: "wifi", key: "qrTypeWifi", icon: <Wifi size={18} /> },
+  { value: "vcard", key: "qrTypeVcard", icon: <UserRound size={18} /> },
+  { value: "email", key: "qrTypeEmail", icon: <Mail size={18} /> },
+  { value: "whatsapp", key: "qrTypeWhatsapp", icon: <FaWhatsapp color="#25D366" size={18} /> },
+  { value: "phone", key: "qrTypePhone", icon: <Phone size={18} /> },
+  { value: "sms", key: "qrTypeSms", icon: <MessageSquareText size={18} /> },
+  { value: "location", key: "qrTypeLocation", icon: <MapPin size={18} /> },
+  { value: "calendar", key: "qrTypeCalendar", icon: <Calendar size={18} /> },
+  { value: "youtube", key: "qrTypeYoutube", icon: <FaYoutube color="#FF0000" size={18} /> },
+  { value: "appstore", key: "qrTypeAppstore", icon: <FaAppStoreIos size={18} /> },
+  { value: "telegram", key: "qrTypeTelegram", icon: <FaTelegramPlane color="#0088cc" size={18} /> },
+  { value: "google-review", key: "qrTypeGoogleReview", icon: <Star size={18} /> },
+  { value: "password", key: "qrTypePassword", icon: <Lock size={18} /> },
+  { value: "multi-link", key: "qrTypeMultiLink", icon: <Shuffle size={18} /> },
+  { value: "image", key: "qrTypeImage", icon: <ImageIcon size={18} /> },
 ];
 
 export default function QRForm({ initialValues, onChange, onSubmit, submitLabel, saving, plan = "free", qrData, isLogoBlocked, withPro, withAuth, user }: Props) {

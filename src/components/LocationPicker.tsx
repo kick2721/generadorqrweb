@@ -6,12 +6,58 @@ const containerStyle = { width: "100%", height: "288px" };
 const madrid = { lat: 40.4168, lng: -3.7038 };
 const libraries: ("places")[] = ["places"];
 
+type QuotaStatus = "loading" | "unavailable" | "maps-only" | "ok";
+
 export default function LocationPicker({
   value,
   onChange,
 }: {
   value: string;
   onChange: (v: string) => void;
+}) {
+  const [quota, setQuota] = useState<QuotaStatus>("loading");
+
+  useEffect(() => {
+    fetch("/api/geo/status")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d) { setQuota("ok"); return; }
+        const mapsAvail = d.usage?.maps?.available;
+        const autoAvail = d.usage?.autocomplete?.available;
+        if (!mapsAvail) setQuota("unavailable");
+        else if (!autoAvail) setQuota("maps-only");
+        else setQuota("ok");
+      })
+      .catch(() => setQuota("ok"));
+  }, []);
+
+  if (quota === "loading") {
+    return (
+      <div className="w-full h-72 rounded-xl border border-gray-300 dark:border-gray-700 flex items-center justify-center text-sm text-gray-400 bg-gray-50 dark:bg-gray-800">
+        Cargando mapa...
+      </div>
+    );
+  }
+
+  if (quota === "unavailable") {
+    return (
+      <div className="w-full h-72 rounded-xl border border-gray-300 dark:border-gray-700 flex items-center justify-center text-center text-sm text-gray-400 bg-gray-50 dark:bg-gray-800 px-6">
+        Este mes hemos alcanzado el límite de visualizaciones del mapa. Vuelve el próximo mes.
+      </div>
+    );
+  }
+
+  return <MapContent value={value} onChange={onChange} showAutocomplete={quota === "ok"} />;
+}
+
+function MapContent({
+  value,
+  onChange,
+  showAutocomplete,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  showAutocomplete: boolean;
 }) {
   const [ipCenter, setIpCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [isLocating, setIsLocating] = useState(false);
@@ -74,7 +120,7 @@ export default function LocationPicker({
   }, []);
 
   useEffect(() => {
-    if (!isLoaded || !inputRef.current || autocompleteRef.current) return;
+    if (!showAutocomplete || !isLoaded || !inputRef.current || autocompleteRef.current) return;
     autocompleteRef.current = new google.maps.places.Autocomplete(
       inputRef.current,
       { fields: ["geometry", "formatted_address"] }
@@ -87,7 +133,7 @@ export default function LocationPicker({
         onChange(`${lat.toFixed(6)},${lng.toFixed(6)}`);
       }
     });
-  }, [isLoaded, onChange]);
+  }, [isLoaded, onChange, showAutocomplete]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +186,7 @@ export default function LocationPicker({
         <input
           ref={inputRef}
           type="text"
-          placeholder="Buscar un lugar, pegar coordenadas o enlace de Maps…"
+          placeholder={showAutocomplete ? "Buscar un lugar, pegar coordenadas o enlace de Maps…" : "Pegar coordenadas o enlace de Maps…"}
           onChange={handleInputChange}
           className="flex-1 w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
         />
