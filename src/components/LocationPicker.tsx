@@ -22,8 +22,8 @@ export default function LocationPicker({
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (!d) { setQuota("ok"); return; }
-        const mapsAvail = d.usage?.maps?.available;
-        const autoAvail = d.usage?.autocomplete?.available;
+        const mapsAvail = (d.usage?.maps?.used ?? 0) < (d.usage?.maps?.threshold ?? 0);
+        const autoAvail = (d.usage?.autocomplete?.used ?? 0) < (d.usage?.autocomplete?.threshold ?? 0);
         if (!mapsAvail) setQuota("unavailable");
         else if (!autoAvail) setQuota("maps-only");
         else setQuota("ok");
