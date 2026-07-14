@@ -4,7 +4,7 @@ import QRGenerator from "@/components/QRGenerator";
 import { useLang } from "@/context/LangContext";
 import Link from "next/link";
 import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Palette, RefreshCw, BarChart3, Bot, Grid3X3, Code, GitBranch, Folder, Clock, Files, Download, Smartphone, UtensilsCrossed, Megaphone, PartyPopper, Hotel, GraduationCap, Briefcase } from "lucide-react";
-import { FaWhatsapp, FaYoutube, FaTelegramPlane, FaAppStoreIos, FaInstagram } from "react-icons/fa";
+import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaInstagram } from "react-icons/fa";
 
 const FEATURES = [
   { icon: <Palette size={24} />, title: "Diseño completo", desc: "Colores, degradados, 6 estilos de puntos, esquinas, logo y marcos decorativos." },
@@ -35,7 +35,6 @@ const TYPES = [
   { icon: <MessageSquareText size={24} />, label: "SMS", href: "/qr-sms" },
   { icon: <MapPin size={24} />, label: "Ubicación", href: "/qr-location" },
   { icon: <Calendar size={24} />, label: "Evento", href: "/qr-calendar" },
-  { icon: <FaYoutube size={24} />, label: "YouTube", href: "/qr-youtube" },
   { icon: <FaAppStoreIos size={24} />, label: "App Store", href: "/qr-appstore" },
   { icon: <FaTelegramPlane size={24} />, label: "Telegram", href: "/qr-telegram" },
   { icon: <Star size={24} />, label: "Google Review", href: "/qr-google-review" },

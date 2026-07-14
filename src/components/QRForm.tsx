@@ -8,9 +8,9 @@ import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from
 import QRPreview from "./QRPreview";
 import LocationPicker from "./LocationPicker";
 import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Image as ImageIcon } from "lucide-react";
-import { FaWhatsapp, FaYoutube, FaTelegramPlane, FaAppStoreIos } from "react-icons/fa";
+import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos } from "react-icons/fa";
 
-type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "youtube" | "appstore" | "telegram" | "google-review" | "password" | "multi-link";
+type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "telegram" | "google-review" | "password" | "multi-link";
 
 interface QRFormInitialValues {
   type?: QrType;
@@ -36,7 +36,7 @@ interface QRFormInitialValues {
   calendarDate?: string;
   calendarLocation?: string;
   calendarDesc?: string;
-  youtubeUrl?: string;
+
   appstoreUrl?: string;
   telegramUser?: string;
   telegramMsg?: string;
@@ -78,7 +78,7 @@ function hasValidDomain(str: string): boolean {
 function isRealContent(val: string, type?: QrType): boolean {
   if (val.length === 0) return false;
   if (val.startsWith(PLACEHOLDER_PREFIX)) return false;
-  if (type === "url" || type === "youtube" || type === "appstore") {
+  if (type === "url" || type === "appstore") {
     try {
       new URL(val);
       if (!hasValidDomain(val)) return false;
@@ -112,7 +112,6 @@ const QR_TYPES: { value: QrType; key: any; icon: ReactNode }[] = [
   { value: "sms", key: "qrTypeSms", icon: <MessageSquareText size={18} /> },
   { value: "location", key: "qrTypeLocation", icon: <MapPin size={18} /> },
   { value: "calendar", key: "qrTypeCalendar", icon: <Calendar size={18} /> },
-  { value: "youtube", key: "qrTypeYoutube", icon: <FaYoutube size={18} /> },
   { value: "appstore", key: "qrTypeAppstore", icon: <FaAppStoreIos size={18} /> },
   { value: "telegram", key: "qrTypeTelegram", icon: <FaTelegramPlane size={18} /> },
   { value: "google-review", key: "qrTypeGoogleReview", icon: <Star size={18} /> },
@@ -151,7 +150,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const dateInputRef = useRef<HTMLInputElement>(null);
   const [calendarLocation, setCalendarLocation] = useState(initialValues?.calendarLocation || "");
   const [calendarDesc, setCalendarDesc] = useState(initialValues?.calendarDesc || "");
-  const [youtubeUrl, setYoutubeUrl] = useState(initialValues?.youtubeUrl || "");
+
   const [appstoreUrl, setAppstoreUrl] = useState(initialValues?.appstoreUrl || "");
   const [telegramUser, setTelegramUser] = useState(initialValues?.telegramUser || "");
   const [telegramMsg, setTelegramMsg] = useState(initialValues?.telegramMsg || "");
@@ -233,7 +232,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.calendarDate !== undefined) setCalendarDate(initialValues.calendarDate);
     if (initialValues.calendarLocation !== undefined) setCalendarLocation(initialValues.calendarLocation);
     if (initialValues.calendarDesc !== undefined) setCalendarDesc(initialValues.calendarDesc);
-    if (initialValues.youtubeUrl !== undefined) setYoutubeUrl(initialValues.youtubeUrl);
+
     if (initialValues.appstoreUrl !== undefined) setAppstoreUrl(initialValues.appstoreUrl);
     if (initialValues.telegramUser !== undefined) setTelegramUser(initialValues.telegramUser);
     if (initialValues.telegramMsg !== undefined) setTelegramMsg(initialValues.telegramMsg);
@@ -268,7 +267,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "sms": return `smsto:${smsPhone}:${smsMsg}`;
       case "location": return `https://maps.google.com/maps?q=${encodeURIComponent(locationQuery)}`;
       case "calendar": return `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${calendarTitle}\nDTSTART:${calendarDate ? calendarDate.replace(/[\s:-]/g, "").padEnd(15, "0") : ""}\nLOCATION:${calendarLocation}\nDESCRIPTION:${calendarDesc}\nEND:VEVENT\nEND:VCALENDAR`;
-      case "youtube": return youtubeUrl || "qrwing — YouTube";
       case "appstore": return appstoreUrl || "qrwing — App Store";
       case "google-review": return googlePlaceId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}` : "qrwing — Reseña Google";
       case "password": return passwordContent || "qrwing — Contenido protegido";
@@ -276,7 +274,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "telegram": return `https://t.me/${telegramUser.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
       default: return "";
     }
-  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, youtubeUrl, appstoreUrl, telegramUser, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
+  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, appstoreUrl, telegramUser, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
 
   const getData = useCallback((): QRFormData => {
     const val = qrValue();
@@ -298,7 +296,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const isDownloadable = (() => {
     const val = qrValue();
     if (!val || val.startsWith(PLACEHOLDER_PREFIX)) return false;
-    if (qrType === "url" || qrType === "youtube" || qrType === "appstore") {
+    if (qrType === "url" || qrType === "appstore") {
       try {
         new URL(val);
         if (!hasValidDomain(val)) return false;
@@ -581,10 +579,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         </div>
       )}
 
-      {qrType === "youtube" && (
-        <input type="url" placeholder={t("placeYoutubeUrl")} value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-      )}
 
       {qrType === "appstore" && (
         <input type="url" placeholder={t("placeAppstoreIos")} value={appstoreUrl} onChange={(e) => setAppstoreUrl(e.target.value)}

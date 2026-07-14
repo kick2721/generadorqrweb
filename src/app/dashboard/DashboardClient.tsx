@@ -254,12 +254,12 @@ export default function DashboardClient() {
   }
 
   function typeIcon(type: string) {
-    const icons: Record<string, string> = { url: "🔗", text: "📝", wifi: "📶", vcard: "👤", email: "📧", image: "🖼️", whatsapp: "💬", phone: "📞", sms: "💬", location: "📍", calendar: "📅", youtube: "▶️", appstore: "📱", telegram: "✈️", "google-review": "⭐", password: "🔒", "multi-link": "🔀" };
+    const icons: Record<string, string> = { url: "🔗", text: "📝", wifi: "📶", vcard: "👤", email: "📧", image: "🖼️", whatsapp: "💬", phone: "📞", sms: "💬", location: "📍", calendar: "📅", appstore: "📱", telegram: "✈️", "google-review": "⭐", password: "🔒", "multi-link": "🔀" };
     return icons[type] || "📄";
   }
 
   function typeLabel(type: string) {
-    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", youtube: "YouTube", appstore: "App Store", telegram: "Telegram", "google-review": "Google Review", password: "Protegido", "multi-link": "Multi-enlace" };
+    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", appstore: "App Store", telegram: "Telegram", "google-review": "Google Review", password: "Protegido", "multi-link": "Multi-enlace" };
     return labels[type] || type;
   }
 
