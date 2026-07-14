@@ -8,9 +8,9 @@ import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from
 import QRPreview from "./QRPreview";
 import LocationPicker from "./LocationPicker";
 import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Image as ImageIcon } from "lucide-react";
-import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
+import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay } from "react-icons/fa";
 
-type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "telegram" | "google-review" | "password" | "multi-link";
+type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "googleplay" | "telegram" | "google-review" | "password" | "multi-link";
 
 interface QRFormInitialValues {
   type?: QrType;
@@ -78,7 +78,7 @@ function hasValidDomain(str: string): boolean {
 function isRealContent(val: string, type?: QrType): boolean {
   if (val.length === 0) return false;
   if (val.startsWith(PLACEHOLDER_PREFIX)) return false;
-  if (type === "url") {
+  if (type === "url" || type === "appstore" || type === "googleplay") {
     try {
       new URL(val);
       if (!hasValidDomain(val)) return false;
@@ -112,7 +112,8 @@ const QR_TYPES: { value: QrType; key: any; icon: ReactNode }[] = [
   { value: "sms", key: "qrTypeSms", icon: <MessageSquareText size={18} /> },
   { value: "location", key: "qrTypeLocation", icon: <MapPin size={18} /> },
   { value: "calendar", key: "qrTypeCalendar", icon: <Calendar size={18} /> },
-
+  { value: "appstore", key: "qrTypeAppstore", icon: <FaAppStoreIos size={18} /> },
+  { value: "googleplay", key: "qrTypeGoogleplay", icon: <FaGooglePlay size={18} /> },
   { value: "telegram", key: "qrTypeTelegram", icon: <FaTelegramPlane size={18} /> },
   { value: "google-review", key: "qrTypeGoogleReview", icon: <Star size={18} /> },
   { value: "password", key: "qrTypePassword", icon: <Lock size={18} /> },
@@ -256,7 +257,9 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
   const qrValue = useCallback(() => {
     switch (qrType) {
-      case "url": return url || "qrwing — URL";
+      case "url":
+      case "appstore":
+      case "googleplay": return url || "qrwing — URL";
       case "text": return text || "qrwing — Texto";
       case "wifi": return wifiPass ? `WIFI:T:${wifiEnc};S:${wifiSsid};P:${wifiPass};;` : `WIFI:T:nopass;S:${wifiSsid};;`;
       case "vcard": return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
@@ -296,7 +299,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const isDownloadable = (() => {
     const val = qrValue();
     if (!val || val.startsWith(PLACEHOLDER_PREFIX)) return false;
-    if (qrType === "url") {
+    if (qrType === "url" || qrType === "appstore" || qrType === "googleplay") {
       try {
         new URL(val);
         if (!hasValidDomain(val)) return false;
@@ -367,9 +370,9 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
       <div className="md:hidden flex justify-center" key={qrData?.type || "empty"}><QRPreview qrData={qrData} isLogoBlocked={isLogoBlocked ?? false} withPro={withPro ?? (() => {})} withAuth={withAuth ?? (() => {})} isDownloadable={isDownloadable} /></div>
 
-      {qrType === "url" && (
+      {(qrType === "url" || qrType === "appstore" || qrType === "googleplay") && (
         <div>
-          <input type="text" inputMode="url" placeholder={t("placeUrl")} value={url} onChange={(e) => { setUrl(e.target.value); setUrlError(""); }} onBlur={handleUrlBlur}
+          <input type="text" inputMode="url" placeholder={qrType === "appstore" ? t("placeAppstoreIos") : qrType === "googleplay" ? t("placeGoogleplayAndroid") : t("placeUrl")} value={url} onChange={(e) => { setUrl(e.target.value); setUrlError(""); }} onBlur={handleUrlBlur}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
           {urlError && <p className="text-xs text-red-500 mt-1.5">{urlError}</p>}
         </div>
