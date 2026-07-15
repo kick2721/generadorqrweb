@@ -9,6 +9,8 @@ import QRPreview from "./QRPreview";
 import LocationPicker from "./LocationPicker";
 import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Image as ImageIcon } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay } from "react-icons/fa";
+import CountryCodeSelect from "./CountryCodeSelect";
+import { COUNTRY_CODES } from "@/data/country-codes";
 
 type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "googleplay" | "telegram" | "google-review" | "password" | "multi-link";
 
@@ -27,6 +29,8 @@ interface QRFormInitialValues {
   emailBody?: string;
   imageUploadedUrl?: string;
   whatsappPhone?: string;
+  whatsappPrefix?: string;
+  whatsappLocal?: string;
   whatsappMsg?: string;
   phoneNumber?: string;
   smsPhone?: string;
@@ -39,6 +43,8 @@ interface QRFormInitialValues {
 
 
   telegramUser?: string;
+  telegramPrefix?: string;
+  telegramLocal?: string;
   telegramMsg?: string;
   googlePlaceId?: string;
   passwordContent?: string;
@@ -69,6 +75,26 @@ export interface QRFormData {
 }
 
 const PLACEHOLDER_PREFIX = "qrwing — ";
+
+function parsePhonePrefix(full: string): { prefix: string; local: string } {
+  const sorted = [...COUNTRY_CODES].sort((a, b) => b.dial.length - a.dial.length);
+  for (const c of sorted) {
+    const d = c.dial.replace("+", "");
+    if (full.startsWith(d)) return { prefix: c.code, local: full.slice(d.length) };
+  }
+  return { prefix: "ES", local: full };
+}
+
+function parseTelegramPrefix(full: string): { prefix: string; local: string } {
+  if (full.startsWith("+")) {
+    const sorted = [...COUNTRY_CODES].sort((a, b) => b.dial.length - a.dial.length);
+    for (const c of sorted) {
+      if (full.startsWith(c.dial)) return { prefix: c.code, local: full.slice(c.dial.length) };
+    }
+    return { prefix: "__username__", local: full };
+  }
+  return { prefix: "__username__", local: full };
+}
 
 function hasValidDomain(str: string): boolean {
   const raw = str.replace(/^https?:\/\//i, "").split(/[/?#]/)[0];
@@ -139,7 +165,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [imageUploadedUrl, setImageUploadedUrl] = useState(initialValues?.imageUploadedUrl || "");
   const [imageUploading, setImageUploading] = useState(false);
   const [imageError, setImageError] = useState("");
-  const [whatsappPhone, setWhatsappPhone] = useState(initialValues?.whatsappPhone || "");
+  const [whatsappPrefix, setWhatsappPrefix] = useState(initialValues?.whatsappPrefix || "");
+  const [whatsappLocal, setWhatsappLocal] = useState(initialValues?.whatsappLocal || "");
   const [whatsappMsg, setWhatsappMsg] = useState(initialValues?.whatsappMsg || "");
   const [phoneNumber, setPhoneNumber] = useState(initialValues?.phoneNumber || "");
   const [smsPhone, setSmsPhone] = useState(initialValues?.smsPhone || "");
@@ -153,7 +180,8 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [calendarDesc, setCalendarDesc] = useState(initialValues?.calendarDesc || "");
 
 
-  const [telegramUser, setTelegramUser] = useState(initialValues?.telegramUser || "");
+  const [telegramPrefix, setTelegramPrefix] = useState(initialValues?.telegramPrefix || (initialValues?.telegramUser?.startsWith("+") ? "ES" : "__username__"));
+  const [telegramLocal, setTelegramLocal] = useState(initialValues?.telegramLocal || "");
   const [telegramMsg, setTelegramMsg] = useState(initialValues?.telegramMsg || "");
   const [fgColor, setFgColor] = useState(initialValues?.fgColor || "#000000");
   const [bgColor, setBgColor] = useState(initialValues?.bgColor || "#ffffff");
@@ -166,6 +194,9 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [cornersSquareType, setCornersSquareType] = useState(initialValues?.cornersSquareType || "square");
   const [cornersDotType, setCornersDotType] = useState(initialValues?.cornersDotType || "square");
   const [googlePlaceId, setGooglePlaceId] = useState(initialValues?.googlePlaceId || "");
+  const [mapsUrl, setMapsUrl] = useState("");
+  const [placeIdExtracted, setPlaceIdExtracted] = useState(!!initialValues?.googlePlaceId);
+  const [resolvingPlaceId, setResolvingPlaceId] = useState(false);
   const [passwordContent, setPasswordContent] = useState(initialValues?.passwordContent || "");
   const [passwordHint, setPasswordHint] = useState(initialValues?.passwordHint || "");
   const [multiLinks, setMultiLinks] = useState<{ url: string; day?: string; hour?: string }[]>(initialValues?.multiLinks || [{ url: "" }]);
@@ -199,6 +230,64 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     else setUrlError("");
   };
 
+  function extractPlaceId(url: string): string | null {
+    const m = url.match(/!1s([a-zA-Z0-9:_]+)/);
+    if (m) return m[1];
+    const m2 = url.match(/0x[a-fA-F0-9]+:0x[a-fA-F0-9]+/);
+    if (m2) return m2[0];
+    return null;
+  }
+
+  const handleMapsUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMapsUrl(val);
+    const placeId = extractPlaceId(val);
+    if (placeId) {
+      setGooglePlaceId(placeId);
+      setPlaceIdExtracted(true);
+      setResolvingPlaceId(false);
+    } else if (!val && initialValues?.googlePlaceId) {
+      setGooglePlaceId(initialValues.googlePlaceId);
+      setPlaceIdExtracted(true);
+      setResolvingPlaceId(false);
+    } else {
+      setPlaceIdExtracted(false);
+      setGooglePlaceId("");
+    }
+  };
+
+  const resolveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resolveAbort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    if (resolveTimer.current) clearTimeout(resolveTimer.current);
+    if (resolveAbort.current) resolveAbort.current.abort();
+    if (!mapsUrl || placeIdExtracted || !/goo\.gl|maps\.app\.goo\.gl/i.test(mapsUrl)) {
+      setResolvingPlaceId(false);
+      return;
+    }
+    setResolvingPlaceId(true);
+    resolveTimer.current = setTimeout(async () => {
+      const ac = new AbortController();
+      resolveAbort.current = ac;
+      try {
+        const r = await fetch("/api/place-lookup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: mapsUrl }),
+          signal: ac.signal,
+        });
+        if (ac.signal.aborted) return;
+        const data = await r.json();
+        if (data.placeId) {
+          setGooglePlaceId(data.placeId);
+          setPlaceIdExtracted(true);
+        }
+      } catch {} finally {
+        if (!ac.signal.aborted) setResolvingPlaceId(false);
+      }
+    }, 400);
+  }, [mapsUrl, placeIdExtracted]);
+
   useEffect(() => { setTemplates(loadTemplates()); }, []);
 
   const applyTemplate = (t: DesignTemplate) => {
@@ -223,7 +312,14 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.emailAddr !== undefined) setEmailAddr(initialValues.emailAddr);
     if (initialValues.emailSubject !== undefined) setEmailSubject(initialValues.emailSubject);
     if (initialValues.emailBody !== undefined) setEmailBody(initialValues.emailBody);
-    if (initialValues.whatsappPhone !== undefined) setWhatsappPhone(initialValues.whatsappPhone);
+    if (initialValues.whatsappPrefix !== undefined) {
+      setWhatsappPrefix(initialValues.whatsappPrefix);
+    } else if (initialValues.whatsappPhone) {
+      const parsed = parsePhonePrefix(initialValues.whatsappPhone);
+      setWhatsappPrefix(parsed.prefix);
+      setWhatsappLocal(parsed.local);
+    }
+    if (initialValues.whatsappLocal !== undefined) setWhatsappLocal(initialValues.whatsappLocal);
     if (initialValues.whatsappMsg !== undefined) setWhatsappMsg(initialValues.whatsappMsg);
     if (initialValues.phoneNumber !== undefined) setPhoneNumber(initialValues.phoneNumber);
     if (initialValues.smsPhone !== undefined) setSmsPhone(initialValues.smsPhone);
@@ -235,7 +331,14 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
     if (initialValues.calendarDesc !== undefined) setCalendarDesc(initialValues.calendarDesc);
 
 
-    if (initialValues.telegramUser !== undefined) setTelegramUser(initialValues.telegramUser);
+    if (initialValues.telegramPrefix !== undefined) {
+      setTelegramPrefix(initialValues.telegramPrefix);
+    } else if (initialValues.telegramUser) {
+      const parsed = parseTelegramPrefix(initialValues.telegramUser);
+      setTelegramPrefix(parsed.prefix);
+      setTelegramLocal(parsed.local);
+    }
+    if (initialValues.telegramLocal !== undefined) setTelegramLocal(initialValues.telegramLocal);
     if (initialValues.telegramMsg !== undefined) setTelegramMsg(initialValues.telegramMsg);
     if (initialValues.fgColor) setFgColor(initialValues.fgColor);
     if (initialValues.bgColor) setBgColor(initialValues.bgColor);
@@ -265,19 +368,36 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       case "vcard": return `BEGIN:VCARD\nVERSION:3.0\nFN:${vcardName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nEND:VCARD`;
       case "email": return `https://generadorqrweb.vercel.app/mail?to=${encodeURIComponent(emailAddr)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       case "image": return imageUploadedUrl || "qrwing — Imagen";
-      case "whatsapp": return `https://wa.me/${whatsappPhone.replace(/[^0-9]/g, "")}${whatsappMsg ? "?text=" + encodeURIComponent(whatsappMsg) : ""}`;
+      case "whatsapp": {
+        const waDial = COUNTRY_CODES.find(c => c.code === whatsappPrefix)?.dial.replace("+", "") || "";
+        const waFull = waDial + whatsappLocal;
+        return `https://wa.me/${waFull.replace(/[^0-9]/g, "")}${whatsappMsg ? "?text=" + encodeURIComponent(whatsappMsg) : ""}`;
+      }
       case "phone": return `tel:${phoneNumber}`;
       case "sms": return `smsto:${smsPhone}:${smsMsg}`;
       case "location": return `https://maps.google.com/maps?q=${encodeURIComponent(locationQuery)}`;
       case "calendar": return `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${calendarTitle}\nDTSTART:${calendarDate ? calendarDate.replace(/[\s:-]/g, "").padEnd(15, "0") : ""}\nLOCATION:${calendarLocation}\nDESCRIPTION:${calendarDesc}\nEND:VEVENT\nEND:VCALENDAR`;
 
-      case "google-review": return googlePlaceId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}` : "qrwing — Reseña Google";
+      case "google-review": {
+        if (!googlePlaceId) return "qrwing — Reseña Google";
+        if (googlePlaceId.startsWith("ChIJ")) {
+          return `https://search.google.com/local/writereview?placeid=${encodeURIComponent(googlePlaceId)}`;
+        }
+        const [high, low] = googlePlaceId.split(":");
+        return `https://www.google.com/maps/place//data=!4m3!3m2!1s${high}:${low}!12e1?source=g.page.m.dd._&laa=lu-desktop-reviews-dialog-review-solicitation`;
+      }
       case "password": return passwordContent || "qrwing — Contenido protegido";
       case "multi-link": return multiLinks.map(m => m.url).filter(Boolean).join(",") || "qrwing — Múltiples enlaces";
-      case "telegram": return `https://t.me/${telegramUser.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
+      case "telegram": {
+        if (telegramPrefix === "__username__") {
+          return `https://t.me/${telegramLocal.replace(/^@/, "")}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
+        }
+        const tgDial = COUNTRY_CODES.find(c => c.code === telegramPrefix)?.dial || "";
+        return `https://t.me/${tgDial}${telegramLocal}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
+      }
       default: return "";
     }
-  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPhone, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, telegramUser, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
+  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPrefix, whatsappLocal, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, telegramPrefix, telegramLocal, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
 
   const getData = useCallback((): QRFormData => {
     const val = qrValue();
@@ -286,7 +406,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       content: val,
       redirect_to: val,
       label: qrType === "vcard" ? (val.match(/FN:(.+)/)?.[1]?.trim() || val.slice(0, 60)) : val.slice(0, 60),
-      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined) },
+      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined), googlePlaceId },
       hasValues: val.length > 0,
     };
   }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks]);
@@ -471,8 +591,11 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
       {qrType === "whatsapp" && (
         <div className="space-y-3">
-          <input type="tel" placeholder={t("placeWhatsappPhone")} value={whatsappPhone} onChange={(e) => setWhatsappPhone(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <div className="flex gap-2">
+            <CountryCodeSelect value={whatsappPrefix} onChange={setWhatsappPrefix} />
+            <input type="tel" placeholder="612345678" value={whatsappLocal} onChange={(e) => setWhatsappLocal(e.target.value.replace(/[^0-9]/g, ""))}
+              className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          </div>
           <input type="text" placeholder={t("placeWhatsappMsg")} value={whatsappMsg} onChange={(e) => setWhatsappMsg(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
         </div>
@@ -585,8 +708,16 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
       {qrType === "telegram" && (
         <div className="space-y-3">
-          <input type="text" placeholder={t("placeTelegramUser")} value={telegramUser} onChange={(e) => setTelegramUser(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+          <div className="flex gap-2">
+            <CountryCodeSelect value={telegramPrefix} onChange={setTelegramPrefix} includeUsername />
+            {telegramPrefix === "__username__" ? (
+              <input type="text" placeholder="@username" value={telegramLocal} onChange={(e) => setTelegramLocal(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            ) : (
+              <input type="tel" placeholder="612345678" value={telegramLocal} onChange={(e) => setTelegramLocal(e.target.value.replace(/[^0-9]/g, ""))}
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            )}
+          </div>
           <input type="text" placeholder={t("placeTelegramMsg")} value={telegramMsg} onChange={(e) => setTelegramMsg(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
         </div>
@@ -594,9 +725,61 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
 
       {qrType === "google-review" && (
         <div className="space-y-3">
-          <input type="text" placeholder="ID de Google Place (ej. ChIJ..." value={googlePlaceId} onChange={(e) => setGooglePlaceId(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
-          <p className="text-xs text-gray-400">Encuentra tu Place ID en <a href="https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline">Google Place ID Finder</a></p>
+          <div className="relative">
+            <input type="text" value={mapsUrl} onChange={handleMapsUrlChange}
+              placeholder={googlePlaceId ? "Pegá un nuevo link para cambiar el negocio" : "Pegá el link de tu negocio en Google Maps"}
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+            {resolvingPlaceId && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 animate-spin">⟳</span>
+            )}
+            {!resolvingPlaceId && mapsUrl && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-lg">{placeIdExtracted ? "✓" : "✗"}</span>
+            )}
+          </div>
+          {resolvingPlaceId && (
+            <p className="text-xs text-gray-500 flex items-center gap-1">
+              <span className="animate-spin inline-block">⟳</span> Resolviendo link...
+            </p>
+          )}
+          {googlePlaceId && !resolvingPlaceId && (
+            <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400 px-3 py-2 rounded-xl">
+              <span>✓</span>
+              <span>Negocio identificado. Al escanear el QR se abrirá el formulario de reseña de Google.</span>
+            </div>
+          )}
+          {mapsUrl && !placeIdExtracted && !resolvingPlaceId && (
+            <p className="text-xs text-red-500">No se pudo encontrar el Place ID. Probá pegando la URL de la barra del navegador, o usá el método manual abajo.</p>
+          )}
+          <details className="text-sm group">
+            <summary className="cursor-pointer text-purple-600 hover:text-purple-700 font-medium list-none flex items-center gap-1">
+              <span className="inline-block transition-transform group-open:rotate-90">▶</span>
+              📖 ¿Cómo obtener el link?
+            </summary>
+            <div className="mt-2 space-y-1.5 pl-4 text-gray-500">
+              <p><strong>Opción 1 (recomendada):</strong></p>
+              <p>1. Abrí Google Maps en tu <strong>navegador</strong> (chrome/safari)</p>
+              <p>2. Buscá tu negocio</p>
+              <p>3. Copiá la URL de la <strong>barra del navegador</strong></p>
+              <p className="mt-2"><strong>Opción 2 (app):</strong></p>
+              <p>1. Abrí la app de Google Maps</p>
+              <p>2. Buscá tu negocio</p>
+              <p>3. Tocá <strong>"Compartir"</strong> → <strong>"Copiar link"</strong></p>
+              <p>4. Pegalo acá arriba (tarda unos segundos en procesarse)</p>
+            </div>
+          </details>
+          {!placeIdExtracted && !resolvingPlaceId && (
+            <details className="text-sm group">
+              <summary className="cursor-pointer text-purple-600 hover:text-purple-700 font-medium list-none flex items-center gap-1">
+                <span className="inline-block transition-transform group-open:rotate-90">▶</span>
+                O ingresá el código manualmente
+              </summary>
+              <div className="mt-2 space-y-2 pl-4">
+                <input type="text" placeholder="Place ID (ej. ChIJ...)" value={googlePlaceId} onChange={e => { setGooglePlaceId(e.target.value); if (e.target.value) setPlaceIdExtracted(true); else setPlaceIdExtracted(false); }}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
+                <a href="https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline text-xs">Buscar Place ID en Google</a>
+              </div>
+            </details>
+          )}
         </div>
       )}
 

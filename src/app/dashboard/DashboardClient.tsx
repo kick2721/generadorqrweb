@@ -10,6 +10,8 @@ import { FREE_MAX_QR } from "@/lib/constants";
 import { parseUA } from "@/lib/ua";
 import EditModal from "@/components/EditModal";
 import { getDashboardData } from "@/lib/dashboard-cache";
+import { Globe, FileText, Wifi, UserRound, Mail, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, ImageIcon } from "lucide-react";
+import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay } from "react-icons/fa";
 
 interface QRCodeData {
   id: string;
@@ -103,8 +105,9 @@ export default function DashboardClient() {
   const [analyticsTab, setAnalyticsTab] = useState<"timeline" | "countries" | "devices" | "activity">("timeline");
   const [selectedQrs, setSelectedQrs] = useState<Set<string>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
-  const [batchFolder, setBatchFolder] = useState(false);
+  const [showFolderModal, setShowFolderModal] = useState(false);
   const [batchFolderInput, setBatchFolderInput] = useState("");
+  const [batchDeleteConfirm, setBatchDeleteConfirm] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -254,8 +257,26 @@ export default function DashboardClient() {
   }
 
   function typeIcon(type: string) {
-    const icons: Record<string, string> = { url: "🔗", text: "📝", wifi: "📶", vcard: "👤", email: "📧", image: "🖼️", whatsapp: "💬", phone: "📞", sms: "💬", location: "📍", calendar: "📅", appstore: "📱", googleplay: "▶️", telegram: "✈️", "google-review": "⭐", password: "🔒", "multi-link": "🔀" };
-    return icons[type] || "📄";
+    const icons: Record<string, React.ReactNode> = {
+      url: <Globe size={16} />,
+      text: <FileText size={16} />,
+      wifi: <Wifi size={16} />,
+      vcard: <UserRound size={16} />,
+      email: <Mail size={16} />,
+      image: <ImageIcon size={16} />,
+      whatsapp: <FaWhatsapp size={16} />,
+      phone: <Phone size={16} />,
+      sms: <MessageSquareText size={16} />,
+      location: <MapPin size={16} />,
+      calendar: <Calendar size={16} />,
+      appstore: <FaAppStoreIos size={16} />,
+      googleplay: <FaGooglePlay size={16} />,
+      telegram: <FaTelegramPlane size={16} />,
+      "google-review": <Star size={16} />,
+      password: <Lock size={16} />,
+      "multi-link": <Shuffle size={16} />,
+    };
+    return icons[type] || <FileText size={16} />;
   }
 
   function typeLabel(type: string) {
@@ -327,10 +348,17 @@ export default function DashboardClient() {
     });
   }
 
+  function toggleSelectAll() {
+    if (selectedQrs.size === filteredQrs.length) {
+      setSelectedQrs(new Set());
+    } else {
+      setSelectedQrs(new Set(filteredQrs.map(q => q.id)));
+    }
+  }
+
   function exitSelectMode() {
     setSelectMode(false);
     setSelectedQrs(new Set());
-    setBatchFolder(false);
     setBatchFolderInput("");
   }
 
@@ -345,11 +373,27 @@ export default function DashboardClient() {
       });
     }
     setQrcodes(prev => prev.map(q => selectedQrs.has(q.id) ? { ...q, config: { ...q.config, folder } } : q));
+    setShowFolderModal(false);
+    setBatchFolderInput("");
+    setSelectedQrs(new Set());
+  }
+
+  async function batchDelete() {
+    const ids = Array.from(selectedQrs);
+    await fetch("/api/qrcodes/batch", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids }),
+    });
+    setQrcodes(prev => prev.filter(q => !selectedQrs.has(q.id)));
+    setQrCount(prev => Math.max(0, prev - selectedQrs.size));
+    if (selectedQR && selectedQrs.has(selectedQR)) { setSelectedQR(null); setStats(null); }
+    setBatchDeleteConfirm(false);
     exitSelectMode();
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
+    <div className={`max-w-5xl mx-auto px-4 py-12 space-y-8 ${selectMode ? "pb-28" : ""}`}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t("dashboardTitle")}</h1>
@@ -461,31 +505,14 @@ export default function DashboardClient() {
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
             {selectMode ? (
-              <div className="flex items-center gap-1">
-                {selectedQrs.size > 0 && (batchFolder ? (
-                  <>
-                    <input type="text" value={batchFolderInput} onChange={e => setBatchFolderInput(e.target.value)} autoFocus
-                      placeholder={t("folderPlaceholder")} maxLength={30}
-                      className="w-36 px-2 py-2 text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 outline-none focus:border-purple-500"
-                      onKeyDown={e => { if (e.key === "Enter") assignBatchFolder(); if (e.key === "Escape") setBatchFolder(false); }}
-                    />
-                    <button onClick={assignBatchFolder} className="px-3 py-2 text-xs rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700 transition">{t("save")}</button>
-                    <button onClick={() => setBatchFolder(false)} className="px-2 py-2 text-xs text-gray-500 hover:text-gray-700">✕</button>
-                  </>
-                ) : (
-                  <button onClick={() => setBatchFolder(true)}
-                    className="px-3 py-2 text-xs rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition">
-                    📁 {t("folderMoveHere").replace("{n}", String(selectedQrs.size))}
-                  </button>
-                ))}
-                <button onClick={exitSelectMode} className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-red-400 hover:text-red-600 transition">
-                  {t("folderCancel")}
-                </button>
-              </div>
+              <button onClick={exitSelectMode}
+                className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-red-400 hover:text-red-600 transition whitespace-nowrap">
+                ✕ {t("folderCancel")}
+              </button>
             ) : (
               <button onClick={() => setSelectMode(true)}
                 className="px-3 py-2 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-purple-400 hover:text-purple-600 transition whitespace-nowrap">
-                ☐ {t("folderSelectMode")}
+                {t("folderSelectMode")}
               </button>
             )}
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
@@ -840,6 +867,22 @@ export default function DashboardClient() {
           </div>
         </div>
       )}
+      {batchDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setBatchDeleteConfirm(false)}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold mb-2">{t("dashboardBatchConfirmTitle")}</h3>
+            <p className="text-sm text-gray-500 mb-6">{t("dashboardBatchConfirmDesc").replace("{n}", String(selectedQrs.size))}</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setBatchDeleteConfirm(false)} className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">
+                {t("dashboardCancel")}
+              </button>
+              <button onClick={batchDelete} className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition duration-75 active:scale-[0.95]">
+                {t("dashboardConfirmDelete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {editQR && <EditModal qr={editQR} onClose={() => setEditQR(null)} onSaved={() => { setEditQR(null); window.location.reload(); }} />}
       {showCancelConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowCancelConfirm(false)}>
@@ -852,6 +895,67 @@ export default function DashboardClient() {
               </button>
               <button onClick={cancelSub} disabled={cancelling} className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition duration-75 active:scale-[0.95] disabled:opacity-50">
                 {cancelling ? t("loading") : t("proCancel")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {selectMode && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] px-4 py-3">
+          <div className="max-w-5xl mx-auto flex items-center gap-3 flex-wrap">
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              {selectedQrs.size} {t("dashboardSelected")}
+            </span>
+            <span className="text-gray-300 dark:text-gray-700 hidden sm:inline">|</span>
+            <button onClick={toggleSelectAll}
+              className="px-3 py-1.5 text-xs rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:border-purple-400 hover:text-purple-600 transition whitespace-nowrap">
+              {selectedQrs.size === filteredQrs.length ? t("folderDeselectAll") : t("folderSelectAll")}
+            </button>
+            <div className="flex-1" />
+            <button onClick={() => setShowFolderModal(true)}
+              disabled={selectedQrs.size === 0}
+              className="px-3 py-1.5 text-xs rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              📁 {t("folderMoveTo")}
+            </button>
+            <button onClick={() => setBatchDeleteConfirm(true)}
+              disabled={selectedQrs.size === 0}
+              className="px-3 py-1.5 text-xs rounded-xl bg-red-600 text-white font-medium hover:bg-red-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              🗑 {t("dashboardDeleteN").replace("{n}", String(selectedQrs.size))}
+            </button>
+          </div>
+        </div>
+      )}
+      {showFolderModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => { setShowFolderModal(false); setBatchFolderInput(""); }}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold mb-4">{t("folderMoveTo")}</h3>
+            {folders.length > 0 && (
+              <div className="mb-3">
+                <p className="text-xs text-gray-500 mb-2">{t("folderExisting")}</p>
+                <div className="flex flex-wrap gap-2 max-h-28 overflow-y-auto">
+                  {folders.map(f => (
+                    <button key={f} onClick={() => setBatchFolderInput(f)}
+                      className={`px-3 py-1.5 text-xs rounded-xl border-2 font-medium transition cursor-pointer ${batchFolderInput === f ? 'bg-purple-600 text-white border-purple-600' : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-purple-400'}`}>
+                      📁 {f}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <input type="text" value={batchFolderInput} onChange={e => setBatchFolderInput(e.target.value)} autoFocus
+              placeholder={t("folderPlaceholder")} maxLength={30}
+              className="w-full px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 outline-none focus:border-purple-500 mb-4"
+              onKeyDown={e => { if (e.key === "Enter") assignBatchFolder(); }}
+            />
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => { setShowFolderModal(false); setBatchFolderInput(""); }}
+                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-75 active:scale-[0.95]">
+                {t("dashboardCancel")}
+              </button>
+              <button onClick={assignBatchFolder}
+                disabled={!batchFolderInput.trim() || selectedQrs.size === 0}
+                className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition duration-75 active:scale-[0.95] disabled:opacity-50">
+                {t("folderMoveTo")}
               </button>
             </div>
           </div>

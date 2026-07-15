@@ -73,6 +73,7 @@ function parseQRValues(qr: QRCodeData) {
         return { ...base, type: "telegram" as const, telegramUser: u.pathname.replace("/", ""), telegramMsg: u.searchParams.get("text") || "" };
       } catch { return { ...base, type: "telegram" as const, telegramUser: content }; }
     }
+    case "google-review": return { ...base, type: "google-review" as const, googlePlaceId: config.googlePlaceId || "" };
     default: return { ...base, type: "url" as const, url: content };
   }
 }

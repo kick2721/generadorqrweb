@@ -10,6 +10,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 TODO el texto visible en la interfaz debe tener su clave en los 23 idiomas en `src/lib/i18n.ts`.
 Antes de dar por terminado cualquier cambio, verificar con `grep` que no haya textos
 hardcodeados en español en los archivos modificados.
+
+## ⚠️ CRITICAL: No dañar la codificación UTF-8
+
+`src/lib/i18n.ts` contiene caracteres no-ASCII (á, é, ñ, árabe, griego, japonés, coreano, chino, etc.).
+NUNCA editar este archivo con herramientas que puedan alterar la codificación (PowerShell Set-Content,
+cmd, etc.). Usar SOLO Node.js (fs.readFileSync/writeFileSync con 'utf8') o el tool Edit del agente
+para modificar este archivo. Si se daña, restaurar con `git checkout HEAD -- src/lib/i18n.ts`.
 <!-- END:i18n-rule -->
 
 <!-- BEGIN:no-breakage -->
