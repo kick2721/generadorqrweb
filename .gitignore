@@ -44,4 +44,5 @@ next-env.d.ts
 .env*
 
 # supabase
+.temp/
 supabase/.temp/
