@@ -3,7 +3,7 @@
 import QRGenerator from "@/components/QRGenerator";
 import { useLang } from "@/context/LangContext";
 import Link from "next/link";
-import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Palette, RefreshCw, BarChart3, Bot, Grid3X3, Code, GitBranch, Folder, Clock, Files, Download, Smartphone, UtensilsCrossed, Megaphone, PartyPopper, Hotel, GraduationCap, Briefcase } from "lucide-react";
+import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Shuffle, Palette, RefreshCw, BarChart3, Bot, Grid3X3, Code, GitBranch, Folder, Clock, Files, Download, Smartphone, UtensilsCrossed, Megaphone, PartyPopper, Hotel, GraduationCap, Briefcase } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay, FaInstagram } from "react-icons/fa";
 
 const FEATURES = [
@@ -13,7 +13,6 @@ const FEATURES = [
   { icon: <Bot size={24} />, title: "AI Chat", desc: "Cada QR dinámico tiene un asistente que responde preguntas sobre su contenido." },
   { icon: <Grid3X3 size={24} />, title: "QR por lote", desc: "Sube un CSV y genera cientos de QR a la vez. Descarga todo en ZIP." },
   { icon: <Code size={24} />, title: "API pública", desc: "POST /api/v1/generate — integra generación de QR en tus propios sistemas." },
-  { icon: <Lock size={24} />, title: "Protegido", desc: "QR con contraseña. Solo quien tiene la clave accede al contenido." },
   { icon: <GitBranch size={24} />, title: "Multi-enlace", desc: "Un QR que redirige a diferentes URLs según el día y la hora." },
   { icon: <Folder size={24} />, title: "Carpetas", desc: "Organiza tus QR en carpetas desde el panel de control." },
   { icon: <Clock size={24} />, title: "Programado", desc: "Fecha de expiración. El QR deja de funcionar automáticamente." },
@@ -39,7 +38,6 @@ const TYPES = [
   { icon: <FaGooglePlay size={24} />, label: "Google Play", href: "/qr-play-store" },
   { icon: <FaTelegramPlane size={24} />, label: "Telegram", href: "/qr-telegram" },
   { icon: <Star size={24} />, label: "Google Review", href: "/qr-google-review" },
-  { icon: <Lock size={24} />, label: "Protegido", href: "/qr-password" },
   { icon: <Shuffle size={24} />, label: "Multi-enlace", href: "/qr-multi-link" },
 ];
 

@@ -10,7 +10,7 @@ import { FREE_MAX_QR } from "@/lib/constants";
 import { parseUA } from "@/lib/ua";
 import EditModal from "@/components/EditModal";
 import { getDashboardData } from "@/lib/dashboard-cache";
-import { Globe, FileText, Wifi, UserRound, Mail, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, ImageIcon } from "lucide-react";
+import { Globe, FileText, Wifi, UserRound, Mail, Phone, MessageSquareText, MapPin, Calendar, Star, Shuffle, ImageIcon } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay } from "react-icons/fa";
 
 interface QRCodeData {
@@ -273,14 +273,13 @@ export default function DashboardClient() {
       googleplay: <FaGooglePlay size={16} />,
       telegram: <FaTelegramPlane size={16} />,
       "google-review": <Star size={16} />,
-      password: <Lock size={16} />,
       "multi-link": <Shuffle size={16} />,
     };
     return icons[type] || <FileText size={16} />;
   }
 
   function typeLabel(type: string) {
-    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", appstore: "App Store", googleplay: "Google Play", telegram: "Telegram", "google-review": "Google Review", password: "Protegido", "multi-link": "Multi-enlace" };
+    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", appstore: "App Store", googleplay: "Google Play", telegram: "Telegram", "google-review": "Google Review", "multi-link": "Multi-enlace" };
     return labels[type] || type;
   }
 

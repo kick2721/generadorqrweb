@@ -47,7 +47,6 @@ const t = {
     qrTypeTelegram: "تيليجرام",
 
     qrTypeGoogleReview: "مراجعة Google",
-    qrTypePassword: "كلمة المرور",
     qrTypeMultiLink: "روابط متعددة",
 
     typeUrlDesc: "رابط لصفحة ويب",
@@ -72,7 +71,6 @@ const t = {
     typeTelegramDesc: "يفتح محادثة تيليجرام عند المسح",
     "typeBusiness-cardDesc": "ملف رقمي يُحفظ في الهاتف",
     "typeGoogle-reviewDesc": "يفتح مراجعة Google",
-    typePasswordDesc: "يعرض محتوى محمي بكلمة مرور",
     "typeMulti-linkDesc": "روابط متعددة تتغير حسب اليوم/الوقت",
     placeUrl: "https://example.com",
     invalidUrl: "أدخل رابطًا صالحًا (مثال: youtube.com)",
@@ -479,7 +477,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google-Bewertung",
-    qrTypePassword: "Passwort",
     qrTypeMultiLink: "Multi-Link",
 
     typeUrlDesc: "Link zu einer Webseite",
@@ -504,7 +501,6 @@ const t = {
     typeTelegramDesc: "Öffnet einen Telegram-Chat",
     "typeBusiness-cardDesc": "Digitales Profil wird im Telefon gespeichert",
     "typeGoogle-reviewDesc": "Öffnet eine Google-Bewertung",
-    typePasswordDesc: "Zeigt passwortgeschützten Inhalt",
     "typeMulti-linkDesc": "Mehrere Links je nach Tag/Zeit",
     placeUrl: "https://beispiel.de",
     invalidUrl: "Gib eine gültige URL ein (z.B. youtube.com)",
@@ -911,7 +907,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Κριτική Google",
-    qrTypePassword: "Κωδικός πρόσβασης",
     qrTypeMultiLink: "Πολλαπλοί σύνδεσμοι",
 
     typeUrlDesc: "Σύνδεσμος προς ιστοσελίδα",
@@ -936,7 +931,6 @@ const t = {
     typeTelegramDesc: "Ανοίγει συνομιλία Telegram",
     "typeBusiness-cardDesc": "Ψηφιακό προφίλ που αποθηκεύεται στο τηλέφωνο",
     "typeGoogle-reviewDesc": "Ανοίγει μια κριτική Google",
-    typePasswordDesc: "Εμφανίζει περιεχόμενο που προστατεύεται",
     "typeMulti-linkDesc": "Πολλαπλοί σύνδεσμοι ανάλογα με την ημέρα/ώρα",
     placeUrl: "https://παράδειγμα.gr",
     invalidUrl: "Εισαγάγετε μια έγκυρη διεύθυνση URL (π.χ. youtube.com)",
@@ -1343,7 +1337,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google Review",
-    qrTypePassword: "Password",
     qrTypeMultiLink: "Multi Link",
 
     typeUrlDesc: "Link to a webpage",
@@ -1368,7 +1361,6 @@ const t = {
     typeTelegramDesc: "Opens a Telegram chat when scanned",
     "typeBusiness-cardDesc": "Digital profile saved to your phone",
     "typeGoogle-reviewDesc": "Opens a Google review page",
-    typePasswordDesc: "Shows password-protected content",
     "typeMulti-linkDesc": "Multiple links that change by day/time",
     placeUrl: "https://example.com",
     invalidUrl: "Enter a valid URL (e.g. youtube.com)",
@@ -1801,7 +1793,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Reseña Google",
-    qrTypePassword: "Contraseña",
     qrTypeMultiLink: "Multi Enlace",
 
     typeUrlDesc: "Enlace a una página web",
@@ -1826,7 +1817,6 @@ const t = {
     typeTelegramDesc: "Abre un chat de Telegram",
     "typeBusiness-cardDesc": "Perfil digital que se guarda en el teléfono",
     "typeGoogle-reviewDesc": "Abre una reseña de Google",
-    typePasswordDesc: "Muestra contenido protegido con contraseña",
     "typeMulti-linkDesc": "Múltiples enlaces que cambian según día/horario",
     placeUrl: "https://ejemplo.com",
     invalidUrl: "Ingresa una URL válida (ej. youtube.com)",
@@ -2233,7 +2223,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Avis Google",
-    qrTypePassword: "Mot de passe",
     qrTypeMultiLink: "Multi lien",
 
     typeUrlDesc: "Lien vers une page web",
@@ -2258,7 +2247,6 @@ const t = {
     typeTelegramDesc: "Ouvre une discussion Telegram",
     "typeBusiness-cardDesc": "Profil numérique enregistré dans le téléphone",
     "typeGoogle-reviewDesc": "Ouvre un avis Google",
-    typePasswordDesc: "Affiche du contenu protégé par mot de passe",
     "typeMulti-linkDesc": "Plusieurs liens selon le jour/heure",
     placeUrl: "https://exemple.fr",
     invalidUrl: "Entrez une URL valide (ex: youtube.com)",
@@ -2665,7 +2653,6 @@ const t = {
     qrTypeTelegram: "टेलीग्राम",
 
     qrTypeGoogleReview: "Google समीक्षा",
-    qrTypePassword: "पासवर्ड",
     qrTypeMultiLink: "मल्टी लिंक",
 
     typeUrlDesc: "वेबपेज का लिंक",
@@ -2690,7 +2677,6 @@ const t = {
     typeTelegramDesc: "टेलीग्राम चैट खोलता है",
     "typeBusiness-cardDesc": "डिजिटल प्रोफ़ाइल फ़ोन में सहेजी गई",
     "typeGoogle-reviewDesc": "Google समीक्षा खोलता है",
-    typePasswordDesc: "पासवर्ड-सुरक्षित सामग्री दिखाता है",
     "typeMulti-linkDesc": "दिन/समय के अनुसार बदलने वाले कई लिंक",
     placeUrl: "https://example.com",
     invalidUrl: "एक मान्य URL दर्ज करें (जैसे: youtube.com)",
@@ -3097,7 +3083,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Ulasan Google",
-    qrTypePassword: "Kata Sandi",
     qrTypeMultiLink: "Multi Tautan",
 
     typeUrlDesc: "Tautan ke halaman web",
@@ -3122,7 +3107,6 @@ const t = {
     typeTelegramDesc: "Membuka chat Telegram",
     "typeBusiness-cardDesc": "Profil digital disimpan di ponsel",
     "typeGoogle-reviewDesc": "Membuka ulasan Google",
-    typePasswordDesc: "Menampilkan konten yang dilindungi kata sandi",
     "typeMulti-linkDesc": "Beberapa tautan yang berubah sesuai hari/waktu",
     placeUrl: "https://contoh.com",
     invalidUrl: "Masukkan URL yang valid (contoh: youtube.com)",
@@ -3529,7 +3513,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Recensione Google",
-    qrTypePassword: "Password",
     qrTypeMultiLink: "Multi link",
 
     typeUrlDesc: "Collegamento a una pagina web",
@@ -3554,7 +3537,6 @@ const t = {
     typeTelegramDesc: "Apre una chat Telegram",
     "typeBusiness-cardDesc": "Profilo digitale salvato sul telefono",
     "typeGoogle-reviewDesc": "Apre una recensione Google",
-    typePasswordDesc: "Mostra contenuto protetto da password",
     "typeMulti-linkDesc": "Più link che cambiano per giorno/ora",
     placeUrl: "https://esempio.it",
     invalidUrl: "Inserisci un URL valido (es. youtube.com)",
@@ -3961,7 +3943,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Googleレビュー",
-    qrTypePassword: "パスワード",
     qrTypeMultiLink: "マルチリンク",
 
     typeUrlDesc: "ウェブページへのリンク",
@@ -3986,7 +3967,6 @@ const t = {
     typeTelegramDesc: "Telegramチャットを開く",
     "typeBusiness-cardDesc": "電話に保存されるデジタルプロフィール",
     "typeGoogle-reviewDesc": "Googleレビューページを開く",
-    typePasswordDesc: "パスワードで保護されたコンテンツを表示",
     "typeMulti-linkDesc": "日時によって変わる複数のリンク",
     placeUrl: "https://example.com",
     invalidUrl: "有効なURLを入力してください（例: youtube.com）",
@@ -4393,7 +4373,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google 리뷰",
-    qrTypePassword: "비밀번호",
     qrTypeMultiLink: "멀티 링크",
 
     typeUrlDesc: "웹페이지 링크",
@@ -4418,7 +4397,6 @@ const t = {
     typeTelegramDesc: "Telegram 채팅 열기",
     "typeBusiness-cardDesc": "휴대폰에 저장되는 디지털 프로필",
     "typeGoogle-reviewDesc": "Google 리뷰 페이지 열기",
-    typePasswordDesc: "비밀번호로 보호된 콘텐츠 표시",
     "typeMulti-linkDesc": "날짜/시간에 따라 변경되는 여러 링크",
     placeUrl: "https://example.com",
     invalidUrl: "유효한 URL을 입력하세요 (예: youtube.com)",
@@ -4825,7 +4803,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google-beoordeling",
-    qrTypePassword: "Wachtwoord",
     qrTypeMultiLink: "Multi-link",
 
     typeUrlDesc: "Link naar een webpagina",
@@ -4850,7 +4827,6 @@ const t = {
     typeTelegramDesc: "Opent een Telegram-gesprek",
     "typeBusiness-cardDesc": "Digitaal profiel opgeslagen op je telefoon",
     "typeGoogle-reviewDesc": "Opent een Google-beoordeling",
-    typePasswordDesc: "Toont met wachtwoord beveiligde inhoud",
     "typeMulti-linkDesc": "Meerdere links die veranderen per dag/tijd",
     placeUrl: "https://voorbeeld.nl",
     invalidUrl: "Voer een geldige URL in (bijv. youtube.com)",
@@ -5257,7 +5233,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Recenzja Google",
-    qrTypePassword: "Hasło",
     qrTypeMultiLink: "Multi link",
 
     typeUrlDesc: "Link do strony internetowej",
@@ -5282,7 +5257,6 @@ const t = {
     typeTelegramDesc: "Otwiera czat Telegram",
     "typeBusiness-cardDesc": "Cyfrowy profil zapisany w telefonie",
     "typeGoogle-reviewDesc": "Otwiera recenzję Google",
-    typePasswordDesc: "Pokazuje treści chronione hasłem",
     "typeMulti-linkDesc": "Wiele linków zmieniających się w zależności od dnia/godziny",
     placeUrl: "https://przyklad.pl",
     invalidUrl: "Wprowadź prawidłowy URL (np. youtube.com)",
@@ -5689,7 +5663,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Avaliação Google",
-    qrTypePassword: "Senha",
     qrTypeMultiLink: "Multi link",
 
     typeUrlDesc: "Link para uma página web",
@@ -5714,7 +5687,6 @@ const t = {
     typeTelegramDesc: "Abre um chat do Telegram",
     "typeBusiness-cardDesc": "Perfil digital salvo no telefone",
     "typeGoogle-reviewDesc": "Abre uma avaliação do Google",
-    typePasswordDesc: "Mostra conteúdo protegido por senha",
     "typeMulti-linkDesc": "Vários links que mudam conforme dia/horário",
     placeUrl: "https://exemplo.com",
     invalidUrl: "Insira uma URL válida (ex: youtube.com)",
@@ -6120,7 +6092,6 @@ const t = {
     qrTypeAppstore: "App Store",
     qrTypeTelegram: "Telegram",
     qrTypeGoogleReview: "Recenzie Google",
-    qrTypePassword: "Parolă",
     qrTypeMultiLink: "Multi link",
 
     typeUrlDesc: "Link către o pagină web",
@@ -6145,7 +6116,6 @@ const t = {
     typeTelegramDesc: "Deschide un chat Telegram",
     "typeBusiness-cardDesc": "Profil digital salvat în telefon",
     "typeGoogle-reviewDesc": "Deschide o recenzie Google",
-    typePasswordDesc: "Afișează conținut protejat prin parolă",
     "typeMulti-linkDesc": "Mai multe linkuri care se schimbă în funcție de zi/oră",
     placeUrl: "https://exemplu.ro",
     invalidUrl: "Introduceți o URL validă (ex: youtube.com)",
@@ -6552,7 +6522,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Отзыв Google",
-    qrTypePassword: "Пароль",
     qrTypeMultiLink: "Мульти-ссылка",
 
     typeUrlDesc: "Ссылка на веб-страницу",
@@ -6577,7 +6546,6 @@ const t = {
     typeTelegramDesc: "Открывает чат Telegram",
     "typeBusiness-cardDesc": "Цифровой профиль сохраняется в телефон",
     "typeGoogle-reviewDesc": "Открывает страницу отзыва Google",
-    typePasswordDesc: "Показывает контент, защищенный паролем",
     "typeMulti-linkDesc": "Несколько ссылок, меняющихся по дню/времени",
     placeUrl: "https://пример.рф",
     invalidUrl: "Введите действительный URL (например: youtube.com)",
@@ -6984,7 +6952,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google-recension",
-    qrTypePassword: "Lösenord",
     qrTypeMultiLink: "Multi-länk",
 
     typeUrlDesc: "Länk till en webbsida",
@@ -7009,7 +6976,6 @@ const t = {
     typeTelegramDesc: "Öppnar en Telegram-chatt",
     "typeBusiness-cardDesc": "Digital profil sparas i telefonen",
     "typeGoogle-reviewDesc": "Öppnar en Google-recension",
-    typePasswordDesc: "Visar lösenordsskyddat innehåll",
     "typeMulti-linkDesc": "Flera länkar som ändras efter dag/tid",
     placeUrl: "https://exempel.se",
     invalidUrl: "Ange en giltig URL (t.ex. youtube.com)",
@@ -7416,7 +7382,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "รีวิว Google",
-    qrTypePassword: "รหัสผ่าน",
     qrTypeMultiLink: "หลายลิงก์",
 
     typeUrlDesc: "ลิงก์ไปยังเว็บเพจ",
@@ -7441,7 +7406,6 @@ const t = {
     typeTelegramDesc: "เปิดแชท Telegram",
     "typeBusiness-cardDesc": "โปรไฟล์ดิจิทัลที่บันทึกในโทรศัพท์",
     "typeGoogle-reviewDesc": "เปิดหน้ารีวิว Google",
-    typePasswordDesc: "แสดงเนื้อหาที่ป้องกันด้วยรหัสผ่าน",
     "typeMulti-linkDesc": "หลายลิงก์ที่เปลี่ยนแปลงตามวัน/เวลา",
     placeUrl: "https://example.com",
     invalidUrl: "ป้อน URL ที่ถูกต้อง (เช่น youtube.com)",
@@ -7848,7 +7812,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google Yorumu",
-    qrTypePassword: "Şifre",
     qrTypeMultiLink: "Çoklu Bağlantı",
 
     typeUrlDesc: "Bir web sayfasına bağlantı",
@@ -7873,7 +7836,6 @@ const t = {
     typeTelegramDesc: "Telegram sohbeti açar",
     "typeBusiness-cardDesc": "Telefona kaydedilen dijital profil",
     "typeGoogle-reviewDesc": "Bir Google yorumu açar",
-    typePasswordDesc: "Şifre korumalı içeriği gösterir",
     "typeMulti-linkDesc": "Güne/saate göre değişen birden çok bağlantı",
     placeUrl: "https://ornek.com",
     invalidUrl: "Geçerli bir URL girin (ör: youtube.com)",
@@ -8280,7 +8242,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Відгук Google",
-    qrTypePassword: "Пароль",
     qrTypeMultiLink: "Мульти-посилання",
 
     typeUrlDesc: "Посилання на веб-сторінку",
@@ -8305,7 +8266,6 @@ const t = {
     typeTelegramDesc: "Відкриває чат Telegram",
     "typeBusiness-cardDesc": "Цифровий профіль зберігається в телефон",
     "typeGoogle-reviewDesc": "Відкриває сторінку відгуку Google",
-    typePasswordDesc: "Показує захищений паролем вміст",
     "typeMulti-linkDesc": "Кілька посилань, що змінюються залежно від дня/часу",
     placeUrl: "https://приклад.ua",
     invalidUrl: "Введіть дійсний URL (наприклад: youtube.com)",
@@ -8712,7 +8672,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Đánh giá Google",
-    qrTypePassword: "Mật khẩu",
     qrTypeMultiLink: "Nhiều liên kết",
 
     typeUrlDesc: "Liên kết đến trang web",
@@ -8737,7 +8696,6 @@ const t = {
     typeTelegramDesc: "Mở chat Telegram",
     "typeBusiness-cardDesc": "Hồ sơ kỹ thuật số được lưu trong điện thoại",
     "typeGoogle-reviewDesc": "Mở trang đánh giá Google",
-    typePasswordDesc: "Hiển thị nội dung được bảo vệ bằng mật khẩu",
     "typeMulti-linkDesc": "Nhiều liên kết thay đổi theo ngày/giờ",
     placeUrl: "https://vidu.com",
     invalidUrl: "Nhập URL hợp lệ (ví dụ: youtube.com)",
@@ -9144,7 +9102,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google评价",
-    qrTypePassword: "密码",
     qrTypeMultiLink: "多链接",
 
     typeUrlDesc: "链接到网页",
@@ -9169,7 +9126,6 @@ const t = {
     typeTelegramDesc: "打开 Telegram 聊天",
     "typeBusiness-cardDesc": "保存在手机中的数字档案",
     "typeGoogle-reviewDesc": "打开Google评价页面",
-    typePasswordDesc: "显示受密码保护的内容",
     "typeMulti-linkDesc": "根据日期/时间变化的多个链接",
     placeUrl: "https://example.com",
     invalidUrl: "输入有效的网址（例如：youtube.com）",
@@ -9576,7 +9532,6 @@ const t = {
     qrTypeTelegram: "Telegram",
 
     qrTypeGoogleReview: "Google評價",
-    qrTypePassword: "密碼",
     qrTypeMultiLink: "多連結",
 
     typeUrlDesc: "連結到網頁",
@@ -9601,7 +9556,6 @@ const t = {
     typeTelegramDesc: "打開 Telegram 聊天",
     "typeBusiness-cardDesc": "保存在手機中的數位檔案",
     "typeGoogle-reviewDesc": "打開Google評價頁面",
-    typePasswordDesc: "顯示受密碼保護的內容",
     "typeMulti-linkDesc": "根據日期/時間變化的多個連結",
     placeUrl: "https://example.com",
     invalidUrl: "輸入有效的網址（例如：youtube.com）",

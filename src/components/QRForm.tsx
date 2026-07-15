@@ -7,12 +7,12 @@ import { FRAMES } from "@/lib/frames";
 import { loadTemplates, saveTemplate, deleteTemplate, type DesignTemplate } from "@/lib/templates";
 import QRPreview from "./QRPreview";
 import LocationPicker from "./LocationPicker";
-import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Lock, Shuffle, Image as ImageIcon } from "lucide-react";
+import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Shuffle, Image as ImageIcon } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay } from "react-icons/fa";
 import CountryCodeSelect from "./CountryCodeSelect";
 import { COUNTRY_CODES } from "@/data/country-codes";
 
-type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "googleplay" | "telegram" | "google-review" | "password" | "multi-link";
+type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "googleplay" | "telegram" | "google-review" | "multi-link";
 
 interface QRFormInitialValues {
   type?: QrType;
@@ -47,9 +47,7 @@ interface QRFormInitialValues {
   telegramLocal?: string;
   telegramMsg?: string;
   googlePlaceId?: string;
-  passwordContent?: string;
   multiLinks?: { url: string; day?: string; hour?: string }[];
-  passwordHint?: string;
   expiresAt?: string;
 
   fgColor?: string;
@@ -142,7 +140,6 @@ const QR_TYPES: { value: QrType; key: any; icon: ReactNode }[] = [
   { value: "googleplay", key: "qrTypeGoogleplay", icon: <FaGooglePlay size={18} /> },
   { value: "telegram", key: "qrTypeTelegram", icon: <FaTelegramPlane size={18} /> },
   { value: "google-review", key: "qrTypeGoogleReview", icon: <Star size={18} /> },
-  { value: "password", key: "qrTypePassword", icon: <Lock size={18} /> },
   { value: "multi-link", key: "qrTypeMultiLink", icon: <Shuffle size={18} /> },
   { value: "image", key: "qrTypeImage", icon: <ImageIcon size={18} /> },
 ];
@@ -197,8 +194,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
   const [mapsUrl, setMapsUrl] = useState("");
   const [placeIdExtracted, setPlaceIdExtracted] = useState(!!initialValues?.googlePlaceId);
   const [resolvingPlaceId, setResolvingPlaceId] = useState(false);
-  const [passwordContent, setPasswordContent] = useState(initialValues?.passwordContent || "");
-  const [passwordHint, setPasswordHint] = useState(initialValues?.passwordHint || "");
   const [multiLinks, setMultiLinks] = useState<{ url: string; day?: string; hour?: string }[]>(initialValues?.multiLinks || [{ url: "" }]);
   const [expiresAt, setExpiresAt] = useState(initialValues?.expiresAt || "");
   const [frame, setFrame] = useState(initialValues?.frame || "none");
@@ -386,7 +381,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         const [high, low] = googlePlaceId.split(":");
         return `https://www.google.com/maps/place//data=!4m3!3m2!1s${high}:${low}!12e1?source=g.page.m.dd._&laa=lu-desktop-reviews-dialog-review-solicitation`;
       }
-      case "password": return passwordContent || "qrwing — Contenido protegido";
       case "multi-link": return multiLinks.map(m => m.url).filter(Boolean).join(",") || "qrwing — Múltiples enlaces";
       case "telegram": {
         if (telegramPrefix === "__username__") {
@@ -397,7 +391,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       }
       default: return "";
     }
-  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPrefix, whatsappLocal, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, telegramPrefix, telegramLocal, telegramMsg, googlePlaceId, passwordContent, multiLinks]);
+  }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPrefix, whatsappLocal, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, telegramPrefix, telegramLocal, telegramMsg, googlePlaceId, multiLinks]);
 
   const getData = useCallback((): QRFormData => {
     const val = qrValue();
@@ -406,10 +400,10 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       content: val,
       redirect_to: val,
       label: qrType === "vcard" ? (val.match(/FN:(.+)/)?.[1]?.trim() || val.slice(0, 60)) : val.slice(0, 60),
-      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined), googlePlaceId },
+      config: { fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, expiresAt, multiLinks: (qrType === "multi-link" ? multiLinks : undefined), googlePlaceId },
       hasValues: val.length > 0,
     };
-  }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, passwordHint, expiresAt, multiLinks]);
+  }, [qrValue, qrType, fgColor, bgColor, size, logo, gradientType, gradientColor1, gradientColor2, dotsType, cornersSquareType, cornersDotType, frame, expiresAt, multiLinks]);
 
   useEffect(() => {
     setValidationError("");
@@ -780,15 +774,6 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
               </div>
             </details>
           )}
-        </div>
-      )}
-
-      {qrType === "password" && (
-        <div className="space-y-3">
-          <textarea placeholder="Contenido protegido (texto o URL)" value={passwordContent} onChange={(e) => setPasswordContent(e.target.value)} rows={3}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none resize-none" />
-          <input type="text" placeholder="Pista opcional para la contraseña" value={passwordHint} onChange={(e) => setPasswordHint(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none" />
         </div>
       )}
 

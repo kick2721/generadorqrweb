@@ -1,7 +1,6 @@
 import { query } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import PasswordGate from "@/components/PasswordGate";
 import VCardContact from "@/components/VCardContact";
 import PhoneDialer from "@/components/PhoneDialer";
 import SmsOpener from "@/components/SmsOpener";
@@ -123,10 +122,6 @@ export default async function RedirectPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
     );
-  }
-
-  if (qr.type === "password") {
-    return <PasswordGate config={config} redirectTo={qr.redirect_to} />;
   }
 
   if (qr.type === "multi-link") {
