@@ -48,6 +48,7 @@ const t = {
 
     qrTypeGoogleReview: "مراجعة Google",
     qrTypeMultiLink: "روابط متعددة",
+    qrTypeCatalog: "كتالوج",
 
     typeUrlDesc: "رابط لصفحة ويب",
 
@@ -478,6 +479,7 @@ const t = {
 
     qrTypeGoogleReview: "Google-Bewertung",
     qrTypeMultiLink: "Multi-Link",
+    qrTypeCatalog: "Katalog",
 
     typeUrlDesc: "Link zu einer Webseite",
 
@@ -908,6 +910,7 @@ const t = {
 
     qrTypeGoogleReview: "Κριτική Google",
     qrTypeMultiLink: "Πολλαπλοί σύνδεσμοι",
+    qrTypeCatalog: "Κατάλογος",
 
     typeUrlDesc: "Σύνδεσμος προς ιστοσελίδα",
 
@@ -1338,6 +1341,7 @@ const t = {
 
     qrTypeGoogleReview: "Google Review",
     qrTypeMultiLink: "Multi Link",
+    qrTypeCatalog: "Catalog",
 
     typeUrlDesc: "Link to a webpage",
 
@@ -1794,6 +1798,7 @@ const t = {
 
     qrTypeGoogleReview: "Reseña Google",
     qrTypeMultiLink: "Multi Enlace",
+    qrTypeCatalog: "Catálogo",
 
     typeUrlDesc: "Enlace a una página web",
 
@@ -2224,6 +2229,7 @@ const t = {
 
     qrTypeGoogleReview: "Avis Google",
     qrTypeMultiLink: "Multi lien",
+    qrTypeCatalog: "Catalogue",
 
     typeUrlDesc: "Lien vers une page web",
 
@@ -2654,6 +2660,7 @@ const t = {
 
     qrTypeGoogleReview: "Google समीक्षा",
     qrTypeMultiLink: "मल्टी लिंक",
+    qrTypeCatalog: "कैटलॉग",
 
     typeUrlDesc: "वेबपेज का लिंक",
 
@@ -3084,6 +3091,7 @@ const t = {
 
     qrTypeGoogleReview: "Ulasan Google",
     qrTypeMultiLink: "Multi Tautan",
+    qrTypeCatalog: "Katalog",
 
     typeUrlDesc: "Tautan ke halaman web",
 
@@ -3514,6 +3522,7 @@ const t = {
 
     qrTypeGoogleReview: "Recensione Google",
     qrTypeMultiLink: "Multi link",
+    qrTypeCatalog: "Catalogo",
 
     typeUrlDesc: "Collegamento a una pagina web",
 
@@ -3944,6 +3953,7 @@ const t = {
 
     qrTypeGoogleReview: "Googleレビュー",
     qrTypeMultiLink: "マルチリンク",
+    qrTypeCatalog: "カタログ",
 
     typeUrlDesc: "ウェブページへのリンク",
 
@@ -4374,6 +4384,7 @@ const t = {
 
     qrTypeGoogleReview: "Google 리뷰",
     qrTypeMultiLink: "멀티 링크",
+    qrTypeCatalog: "카탈로그",
 
     typeUrlDesc: "웹페이지 링크",
 
@@ -4804,6 +4815,7 @@ const t = {
 
     qrTypeGoogleReview: "Google-beoordeling",
     qrTypeMultiLink: "Multi-link",
+    qrTypeCatalog: "Catalogus",
 
     typeUrlDesc: "Link naar een webpagina",
 
@@ -5234,6 +5246,7 @@ const t = {
 
     qrTypeGoogleReview: "Recenzja Google",
     qrTypeMultiLink: "Multi link",
+    qrTypeCatalog: "Katalog",
 
     typeUrlDesc: "Link do strony internetowej",
 
@@ -5664,6 +5677,7 @@ const t = {
 
     qrTypeGoogleReview: "Avaliação Google",
     qrTypeMultiLink: "Multi link",
+    qrTypeCatalog: "Catálogo",
 
     typeUrlDesc: "Link para uma página web",
 
@@ -6093,6 +6107,7 @@ const t = {
     qrTypeTelegram: "Telegram",
     qrTypeGoogleReview: "Recenzie Google",
     qrTypeMultiLink: "Multi link",
+    qrTypeCatalog: "Catalog",
 
     typeUrlDesc: "Link către o pagină web",
 
@@ -6523,6 +6538,7 @@ const t = {
 
     qrTypeGoogleReview: "Отзыв Google",
     qrTypeMultiLink: "Мульти-ссылка",
+    qrTypeCatalog: "Каталог",
 
     typeUrlDesc: "Ссылка на веб-страницу",
 
@@ -6953,6 +6969,7 @@ const t = {
 
     qrTypeGoogleReview: "Google-recension",
     qrTypeMultiLink: "Multi-länk",
+    qrTypeCatalog: "Katalog",
 
     typeUrlDesc: "Länk till en webbsida",
 
@@ -7383,6 +7400,7 @@ const t = {
 
     qrTypeGoogleReview: "รีวิว Google",
     qrTypeMultiLink: "หลายลิงก์",
+    qrTypeCatalog: "แคตตาล็อก",
 
     typeUrlDesc: "ลิงก์ไปยังเว็บเพจ",
 
@@ -7813,6 +7831,7 @@ const t = {
 
     qrTypeGoogleReview: "Google Yorumu",
     qrTypeMultiLink: "Çoklu Bağlantı",
+    qrTypeCatalog: "Katalog",
 
     typeUrlDesc: "Bir web sayfasına bağlantı",
 
@@ -8243,6 +8262,7 @@ const t = {
 
     qrTypeGoogleReview: "Відгук Google",
     qrTypeMultiLink: "Мульти-посилання",
+    qrTypeCatalog: "Каталог",
 
     typeUrlDesc: "Посилання на веб-сторінку",
 
@@ -8673,6 +8693,7 @@ const t = {
 
     qrTypeGoogleReview: "Đánh giá Google",
     qrTypeMultiLink: "Nhiều liên kết",
+    qrTypeCatalog: "Danh mục",
 
     typeUrlDesc: "Liên kết đến trang web",
 
@@ -9103,6 +9124,7 @@ const t = {
 
     qrTypeGoogleReview: "Google评价",
     qrTypeMultiLink: "多链接",
+    qrTypeCatalog: "目录",
 
     typeUrlDesc: "链接到网页",
 
@@ -9533,6 +9555,7 @@ const t = {
 
     qrTypeGoogleReview: "Google評價",
     qrTypeMultiLink: "多連結",
+    qrTypeCatalog: "目錄",
 
     typeUrlDesc: "連結到網頁",
 

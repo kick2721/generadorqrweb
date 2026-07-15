@@ -274,12 +274,13 @@ export default function DashboardClient() {
       telegram: <FaTelegramPlane size={16} />,
       "google-review": <Star size={16} />,
       "multi-link": <Shuffle size={16} />,
+      catalog: <ImageIcon size={16} />,
     };
     return icons[type] || <FileText size={16} />;
   }
 
   function typeLabel(type: string) {
-    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", appstore: "App Store", googleplay: "Google Play", telegram: "Telegram", "google-review": "Google Review", "multi-link": "Multi-enlace" };
+    const labels: Record<string, string> = { url: "URL", text: "Texto", wifi: "WiFi", vcard: "vCard", email: "Email", image: "Imagen", whatsapp: "WhatsApp", phone: "Teléfono", sms: "SMS", location: "Ubicación", calendar: "Evento", appstore: "App Store", googleplay: "Google Play", telegram: "Telegram", "google-review": "Google Review", "multi-link": "Multi-enlace", catalog: "Catálogo" };
     return labels[type] || type;
   }
 
@@ -595,7 +596,8 @@ export default function DashboardClient() {
                         <span className="text-gray-300 dark:text-gray-700">|</span>
                       </>
                     )}
-                    {plan === "pro" && <button onClick={e => { e.stopPropagation(); setEditQR(qr); }} className="text-blue-400 hover:text-blue-600 text-sm px-2 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition duration-75 active:scale-[0.9]">✏️ {t("editQR")}</button>}
+                    {plan === "pro" && qr.type !== "catalog" && <button onClick={e => { e.stopPropagation(); setEditQR(qr); }} className="text-blue-400 hover:text-blue-600 text-sm px-2 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition duration-75 active:scale-[0.9]">✏️ {t("editQR")}</button>}
+                    {qr.type === "catalog" && <a href={`/catalog/${qr.id}/edit`} onClick={e => e.stopPropagation()} className="text-purple-400 hover:text-purple-600 text-sm px-2 py-1 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition duration-75">📦 Editar catálogo</a>}
                     <button onClick={e => { e.stopPropagation(); confirmDelete(qr.id); }} className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition duration-75 active:scale-[0.9]">{t("dashboardDelete")}</button>
                   </div>
                 </div>

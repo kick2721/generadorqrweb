@@ -12,7 +12,7 @@ import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay } from "react-
 import CountryCodeSelect from "./CountryCodeSelect";
 import { COUNTRY_CODES } from "@/data/country-codes";
 
-type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "googleplay" | "telegram" | "google-review" | "multi-link";
+type QrType = "url" | "text" | "wifi" | "vcard" | "email" | "image" | "whatsapp" | "phone" | "sms" | "location" | "calendar" | "appstore" | "googleplay" | "telegram" | "google-review" | "multi-link" | "catalog";
 
 interface QRFormInitialValues {
   type?: QrType;
@@ -141,6 +141,7 @@ const QR_TYPES: { value: QrType; key: any; icon: ReactNode }[] = [
   { value: "telegram", key: "qrTypeTelegram", icon: <FaTelegramPlane size={18} /> },
   { value: "google-review", key: "qrTypeGoogleReview", icon: <Star size={18} /> },
   { value: "multi-link", key: "qrTypeMultiLink", icon: <Shuffle size={18} /> },
+  { value: "catalog", key: "qrTypeCatalog", icon: <ImageIcon size={18} /> },
   { value: "image", key: "qrTypeImage", icon: <ImageIcon size={18} /> },
 ];
 
@@ -389,6 +390,7 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
         const tgDial = COUNTRY_CODES.find(c => c.code === telegramPrefix)?.dial || "";
         return `https://t.me/${tgDial}${telegramLocal}${telegramMsg ? "?text=" + encodeURIComponent(telegramMsg) : ""}`;
       }
+      case "catalog": return "qrwing — Catálogo";
       default: return "";
     }
   }, [qrType, url, text, wifiSsid, wifiPass, wifiEnc, vcardName, vcardPhone, vcardEmail, emailAddr, emailSubject, emailBody, imageUploadedUrl, whatsappPrefix, whatsappLocal, whatsappMsg, phoneNumber, smsPhone, smsMsg, locationQuery, calendarTitle, calendarDate, calendarLocation, calendarDesc, telegramPrefix, telegramLocal, telegramMsg, googlePlaceId, multiLinks]);
@@ -811,6 +813,16 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
             </div>
           ))}
           <button onClick={() => setMultiLinks(prev => [...prev, { url: "" }])} className="text-xs text-purple-600 hover:text-purple-700 font-medium">+ Añadir otra URL</button>
+        </div>
+      )}
+
+      {qrType === "catalog" && (
+        <div className="py-8 text-center space-y-4">
+          <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto">
+            <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2zm0 8a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2z" /></svg>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 text-sm max-w-xs mx-auto">Diseñá tu catálogo con bloques, imágenes, precios y más en el editor separado.</p>
+          <a href="/catalog/new" className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">Abrir editor de catálogo</a>
         </div>
       )}
 

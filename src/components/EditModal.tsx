@@ -74,6 +74,7 @@ function parseQRValues(qr: QRCodeData) {
       } catch { return { ...base, type: "telegram" as const, telegramUser: content }; }
     }
     case "google-review": return { ...base, type: "google-review" as const, googlePlaceId: config.googlePlaceId || "" };
+    case "catalog": return { ...base, type: "catalog" as const };
     default: return { ...base, type: "url" as const, url: content };
   }
 }

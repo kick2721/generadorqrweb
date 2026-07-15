@@ -3,7 +3,7 @@
 import QRGenerator from "@/components/QRGenerator";
 import { useLang } from "@/context/LangContext";
 import Link from "next/link";
-import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Shuffle, Palette, RefreshCw, BarChart3, Bot, Grid3X3, Code, GitBranch, Folder, Clock, Files, Download, Smartphone, UtensilsCrossed, Megaphone, PartyPopper, Hotel, GraduationCap, Briefcase } from "lucide-react";
+import { Globe, Wifi, UserRound, Mail, FileText, Phone, MessageSquareText, MapPin, Calendar, Star, Shuffle, Palette, RefreshCw, BarChart3, Bot, Grid3X3, Code, GitBranch, Folder, Clock, Files, Download, Smartphone, UtensilsCrossed, Megaphone, PartyPopper, Hotel, GraduationCap, Briefcase, ImageIcon } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane, FaAppStoreIos, FaGooglePlay, FaInstagram } from "react-icons/fa";
 
 const FEATURES = [
@@ -39,6 +39,7 @@ const TYPES = [
   { icon: <FaTelegramPlane size={24} />, label: "Telegram", href: "/qr-telegram" },
   { icon: <Star size={24} />, label: "Google Review", href: "/qr-google-review" },
   { icon: <Shuffle size={24} />, label: "Multi-enlace", href: "/qr-multi-link" },
+  { icon: <ImageIcon size={24} />, label: "Catálogo", href: "/catalog/new" },
 ];
 
 const USE_CASES = [
