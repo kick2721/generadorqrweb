@@ -49,6 +49,7 @@ const t = {
     qrTypeGoogleReview: "مراجعة Google",
     qrTypeMultiLink: "روابط متعددة",
     qrTypeCatalog: "كتالوج",
+    catalogEditorDesc: "صمم كتالوجك باستخدام الكتل والصور والأسعار والمزيد في المحرر المنفصل",
 
     typeUrlDesc: "رابط لصفحة ويب",
 
@@ -480,6 +481,7 @@ const t = {
     qrTypeGoogleReview: "Google-Bewertung",
     qrTypeMultiLink: "Multi-Link",
     qrTypeCatalog: "Katalog",
+    catalogEditorDesc: "Gestalte deinen Katalog mit Blöcken, Bildern, Preisen und mehr im separaten Editor.",
 
     typeUrlDesc: "Link zu einer Webseite",
 
@@ -911,6 +913,7 @@ const t = {
     qrTypeGoogleReview: "Κριτική Google",
     qrTypeMultiLink: "Πολλαπλοί σύνδεσμοι",
     qrTypeCatalog: "Κατάλογος",
+    catalogEditorDesc: "Σχεδιάστε τον κατάλογό σας με μπλοκ, εικόνες, τιμές και περισσότερα στον ξεχωριστό επεξεργαστή.",
 
     typeUrlDesc: "Σύνδεσμος προς ιστοσελίδα",
 
@@ -1342,6 +1345,7 @@ const t = {
     qrTypeGoogleReview: "Google Review",
     qrTypeMultiLink: "Multi Link",
     qrTypeCatalog: "Catalog",
+    catalogEditorDesc: "Design your catalog with blocks, images, prices and more in the separate editor.",
 
     typeUrlDesc: "Link to a webpage",
 
@@ -1799,6 +1803,7 @@ const t = {
     qrTypeGoogleReview: "Reseña Google",
     qrTypeMultiLink: "Multi Enlace",
     qrTypeCatalog: "Catálogo",
+    catalogEditorDesc: "Diseña tu catálogo con bloques, imágenes, precios y más en el editor separado.",
 
     typeUrlDesc: "Enlace a una página web",
 
@@ -2230,6 +2235,7 @@ const t = {
     qrTypeGoogleReview: "Avis Google",
     qrTypeMultiLink: "Multi lien",
     qrTypeCatalog: "Catalogue",
+    catalogEditorDesc: "Concevez votre catalogue avec des blocs, images, prix et plus dans l'éditeur séparé.",
 
     typeUrlDesc: "Lien vers une page web",
 
@@ -2661,6 +2667,7 @@ const t = {
     qrTypeGoogleReview: "Google समीक्षा",
     qrTypeMultiLink: "मल्टी लिंक",
     qrTypeCatalog: "कैटलॉग",
+    catalogEditorDesc: "अलग संपादक में ब्लॉक, छवियों, कीमतों और अधिक के साथ अपनी सूची डिज़ाइन करें।",
 
     typeUrlDesc: "वेबपेज का लिंक",
 
@@ -3092,6 +3099,7 @@ const t = {
     qrTypeGoogleReview: "Ulasan Google",
     qrTypeMultiLink: "Multi Tautan",
     qrTypeCatalog: "Katalog",
+    catalogEditorDesc: "Desain katalog Anda dengan blok, gambar, harga, dan lainnya di editor terpisah.",
 
     typeUrlDesc: "Tautan ke halaman web",
 
@@ -3523,6 +3531,7 @@ const t = {
     qrTypeGoogleReview: "Recensione Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Catalogo",
+    catalogEditorDesc: "Progetta il tuo catalogo con blocchi, immagini, prezzi e altro nell'editor separato.",
 
     typeUrlDesc: "Collegamento a una pagina web",
 
@@ -3954,6 +3963,7 @@ const t = {
     qrTypeGoogleReview: "Googleレビュー",
     qrTypeMultiLink: "マルチリンク",
     qrTypeCatalog: "カタログ",
+    catalogEditorDesc: "専用エディターでブロック、画像、価格などを使用してカタログをデザインします。",
 
     typeUrlDesc: "ウェブページへのリンク",
 
@@ -4385,6 +4395,7 @@ const t = {
     qrTypeGoogleReview: "Google 리뷰",
     qrTypeMultiLink: "멀티 링크",
     qrTypeCatalog: "카탈로그",
+    catalogEditorDesc: "별도 편집기에서 블록, 이미지, 가격 등으로 카탈로그를 디자인하세요.",
 
     typeUrlDesc: "웹페이지 링크",
 
@@ -4816,6 +4827,7 @@ const t = {
     qrTypeGoogleReview: "Google-beoordeling",
     qrTypeMultiLink: "Multi-link",
     qrTypeCatalog: "Catalogus",
+    catalogEditorDesc: "Ontwerp uw catalogus met blokken, afbeeldingen, prijzen en meer in de aparte editor.",
 
     typeUrlDesc: "Link naar een webpagina",
 
@@ -5247,6 +5259,7 @@ const t = {
     qrTypeGoogleReview: "Recenzja Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Katalog",
+    catalogEditorDesc: "Zaprojektuj swój katalog z blokami, obrazami, cenami i więcej w osobnym edytorze.",
 
     typeUrlDesc: "Link do strony internetowej",
 
@@ -5678,6 +5691,7 @@ const t = {
     qrTypeGoogleReview: "Avaliação Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Catálogo",
+    catalogEditorDesc: "Projete seu catálogo com blocos, imagens, preços e mais no editor separado.",
 
     typeUrlDesc: "Link para uma página web",
 
@@ -6108,6 +6122,7 @@ const t = {
     qrTypeGoogleReview: "Recenzie Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Catalog",
+    catalogEditorDesc: "Proiectați-vă catalogul cu blocuri, imagini, prețuri și multe altele în editorul separat.",
 
     typeUrlDesc: "Link către o pagină web",
 
@@ -6539,6 +6554,7 @@ const t = {
     qrTypeGoogleReview: "Отзыв Google",
     qrTypeMultiLink: "Мульти-ссылка",
     qrTypeCatalog: "Каталог",
+    catalogEditorDesc: "Создайте свой каталог с блоками, изображениями, ценами и многим другим в отдельном редакторе.",
 
     typeUrlDesc: "Ссылка на веб-страницу",
 
@@ -6970,6 +6986,7 @@ const t = {
     qrTypeGoogleReview: "Google-recension",
     qrTypeMultiLink: "Multi-länk",
     qrTypeCatalog: "Katalog",
+    catalogEditorDesc: "Designa din katalog med block, bilder, priser och mer i den separata redigeraren.",
 
     typeUrlDesc: "Länk till en webbsida",
 
@@ -7401,6 +7418,7 @@ const t = {
     qrTypeGoogleReview: "รีวิว Google",
     qrTypeMultiLink: "หลายลิงก์",
     qrTypeCatalog: "แคตตาล็อก",
+    catalogEditorDesc: "ออกแบบแคตตาล็อกของคุณด้วยบล็อก รูปภาพ ราคา และอื่นๆ ในโปรแกรมแก้ไขแยกต่างหาก",
 
     typeUrlDesc: "ลิงก์ไปยังเว็บเพจ",
 
@@ -7832,6 +7850,7 @@ const t = {
     qrTypeGoogleReview: "Google Yorumu",
     qrTypeMultiLink: "Çoklu Bağlantı",
     qrTypeCatalog: "Katalog",
+    catalogEditorDesc: "Ayrı düzenleyicide bloklar, görseller, fiyatlar ve daha fazlasıyla kataloğunuzu tasarlayın.",
 
     typeUrlDesc: "Bir web sayfasına bağlantı",
 
@@ -8263,6 +8282,7 @@ const t = {
     qrTypeGoogleReview: "Відгук Google",
     qrTypeMultiLink: "Мульти-посилання",
     qrTypeCatalog: "Каталог",
+    catalogEditorDesc: "Створіть свій каталог з блоками, зображеннями, цінами та багатьом іншим в окремому редакторі.",
 
     typeUrlDesc: "Посилання на веб-сторінку",
 
@@ -8694,6 +8714,7 @@ const t = {
     qrTypeGoogleReview: "Đánh giá Google",
     qrTypeMultiLink: "Nhiều liên kết",
     qrTypeCatalog: "Danh mục",
+    catalogEditorDesc: "Thiết kế danh mục của bạn với các khối, hình ảnh, giá cả và hơn thế nữa trong trình chỉnh sửa riêng biệt.",
 
     typeUrlDesc: "Liên kết đến trang web",
 
@@ -9125,6 +9146,7 @@ const t = {
     qrTypeGoogleReview: "Google评价",
     qrTypeMultiLink: "多链接",
     qrTypeCatalog: "目录",
+    catalogEditorDesc: "在单独的编辑器中使用块、图像、价格等设计您的目录。",
 
     typeUrlDesc: "链接到网页",
 
@@ -9556,6 +9578,7 @@ const t = {
     qrTypeGoogleReview: "Google評價",
     qrTypeMultiLink: "多連結",
     qrTypeCatalog: "目錄",
+    catalogEditorDesc: "在單獨的編輯器中使用區塊、圖像、價格等設計您的目錄。",
 
     typeUrlDesc: "連結到網頁",
 
