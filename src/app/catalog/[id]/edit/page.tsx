@@ -375,7 +375,7 @@ export default function CatalogEditPage() {
 
   return (
     <div className="h-screen flex flex-col" style={{ background: theme.bg }}>
-      <header className="px-4 py-3 flex items-center justify-between shrink-0" style={{ background: theme.cardBg, borderBottom: `1px solid ${theme.sectionBorder}` }}>
+      <header className="px-4 py-3 flex items-center justify-between shrink-0" style={{ background: theme.cardBg }}>
         <div className="flex items-center gap-3">
           <button onClick={() => router.push("/dashboard")} style={{ color: theme.textMuted }} className="hover:opacity-70 transition-opacity">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -393,7 +393,7 @@ export default function CatalogEditPage() {
         </div>
       </header>
 
-      <div className="px-4 py-2.5 shrink-0 flex gap-2 overflow-x-auto" style={{ background: theme.cardBg, borderBottom: isBlank ? "none" : `1px solid ${theme.sectionBorder}` }}>
+      <div className="px-4 py-2.5 shrink-0 flex gap-2 overflow-x-auto" style={{ background: theme.cardBg }}>
         {BUSINESS_TYPES.map(bt => (
           <button key={bt.id} onClick={() => applyTemplate(bt.id)}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all text-left whitespace-nowrap ${template === bt.id ? "shadow-sm" : "opacity-60 hover:opacity-90"}`}
@@ -417,7 +417,7 @@ export default function CatalogEditPage() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="w-52 overflow-y-auto shrink-0 p-3 space-y-4 hidden md:flex flex-col" style={{ background: theme.cardBg, borderRight: `1px solid ${theme.sectionBorder}` }}>
+        <aside className="w-52 overflow-y-auto shrink-0 p-3 space-y-4 hidden md:flex flex-col" style={{ background: theme.cardBg }}>
           <div>
             <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Tema visual</h3>
             <div className="grid grid-cols-2 gap-1">
@@ -465,7 +465,7 @@ export default function CatalogEditPage() {
           </div>
         </aside>
 
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-10 flex gap-1 overflow-x-auto p-2" style={{ background: theme.cardBg, borderTop: `1px solid ${theme.sectionBorder}` }}>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-10 flex gap-1 overflow-x-auto p-2" style={{ background: theme.cardBg }}>
           {["header","section","item","text","image","divider","contact"].map(t => (
             <button key={t} onClick={() => addBlock(t)} className="whitespace-nowrap text-xs px-3 py-1.5 rounded-full shrink-0" style={{ background: theme.accentLight, color: theme.accent }}>
               + {t}
