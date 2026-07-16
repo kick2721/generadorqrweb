@@ -2,6 +2,16 @@ import { auth } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { NextResponse } from "next/server";
 
+function parseData(raw: any) {
+  if (!raw) return { categories: [], info: null, theme: null };
+  if (Array.isArray(raw)) return { categories: raw, info: null, theme: null };
+  return {
+    categories: raw.categories || [],
+    info: raw.info || null,
+    theme: raw.theme || null,
+  };
+}
+
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -12,13 +22,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   if (rows.length === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const r = rows[0];
-  const config = typeof r.config === "string" ? JSON.parse(r.config) : (r.config || {});
+  const { categories, info, theme } = parseData(r.blocks);
   return NextResponse.json({
-    blocks: r.blocks,
+    categories,
+    info,
+    theme,
     template: r.template,
     fonts: r.fonts,
-    theme: config.theme || "claro",
-    accent: config.accent || "",
   });
 }
 
@@ -27,20 +37,18 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const qrRows = await query(`SELECT user_id, config FROM public.qrcodes WHERE id = $1`, [id]);
+  const qrRows = await query(`SELECT user_id FROM public.qrcodes WHERE id = $1`, [id]);
   if (qrRows.length === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (qrRows[0].user_id !== session.user.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const { blocks, template, fonts, theme, accent } = await req.json();
+  const { categories, template, fonts, info, theme } = await req.json();
 
-  const oldConfig = typeof qrRows[0].config === "string" ? JSON.parse(qrRows[0].config) : (qrRows[0].config || {});
-  const newConfig = { ...oldConfig, theme: theme || "claro", accent: accent || "" };
+  const payload = { categories: categories || [], info: info || null, theme: theme || null };
 
   await query(
     `UPDATE public.catalog_items SET blocks = $1, template = $2, fonts = $3, updated_at = now() WHERE qr_id = $4`,
-    [JSON.stringify(blocks || []), template || "blank", fonts || [], id]
+    [JSON.stringify(payload), template || "restaurant", fonts || [], id]
   );
-  await query(`UPDATE public.qrcodes SET config = $1 WHERE id = $2`, [JSON.stringify(newConfig), id]);
 
   return NextResponse.json({ ok: true });
 }

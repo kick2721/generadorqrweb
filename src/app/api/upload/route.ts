@@ -1,7 +1,7 @@
-import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getUserPlan } from "@/lib/plan";
+import { supabase } from "@/lib/supabase";
 
 const ALLOWED_MIME: Record<string, string> = {
   "image/png": "png",
@@ -26,7 +26,16 @@ export async function POST(request: Request) {
   const ext = ALLOWED_MIME[file.type];
   if (!ext) return NextResponse.json({ error: "Invalid file type (png, jpeg, gif, webp only)" }, { status: 400 });
 
-  const name = `qr-${session.user.id}-${Date.now()}.${ext}`;
-  const blob = await put(name, file, { access: "public" });
-  return NextResponse.json({ url: blob.url });
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const name = `uploads/${session.user.id}/${Date.now()}.${ext}`;
+
+  const { data, error } = await supabase.storage.from("catalog-images").upload(name, buffer, {
+    contentType: file.type,
+    upsert: false,
+  });
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const { data: urlData } = supabase.storage.from("catalog-images").getPublicUrl(data.path);
+  return NextResponse.json({ url: urlData.publicUrl });
 }
