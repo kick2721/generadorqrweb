@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { themes, accentPresets, getTheme } from "@/lib/themes";
+import { getTheme } from "@/lib/themes";
 
 interface Block {
   id: string;
@@ -14,14 +14,12 @@ interface CatalogData {
   blocks: Block[];
   template: string;
   fonts: string[];
-  theme: string;
-  accent: string;
 }
 
 const BUSINESS_TYPES = [
-  { id: "restaurant", icon: "🍽️", label: "Restaurante", desc: "Menú digital", theme: "natural" },
-  { id: "products", icon: "📦", label: "Productos", desc: "Catálogo en cuadrícula", theme: "vibrante" },
-  { id: "services", icon: "🛠️", label: "Servicios", desc: "Lista profesional", theme: "elegante" },
+  { id: "restaurant", icon: "🍽️", label: "Restaurante", desc: "Menú digital" },
+  { id: "products", icon: "📦", label: "Productos", desc: "Catálogo en cuadrícula" },
+  { id: "services", icon: "🛠️", label: "Servicios", desc: "Lista profesional" },
 ];
 
 function generateId() {
@@ -76,18 +74,6 @@ const TEMPLATE_BLOCKS: Record<string, Block[]> = {
     { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "Av. Ejemplo 789", hours: "Lun-Vie 9-18hs", mapsUrl: "" },
   ],
 };
-
-function AccentPicker({ value, onChange }: { value: string; onChange: (c: string) => void }) {
-  return (
-    <div className="grid grid-cols-8 gap-1.5">
-      {accentPresets.map(c => (
-        <button key={c} onClick={() => onChange(c)}
-          className={`w-6 h-6 rounded-full transition-all duration-100 ${value === c ? "ring-2 ring-offset-2 ring-purple-500 scale-110" : "ring-1 ring-gray-200 hover:scale-105"}`}
-          style={{ background: c }} />
-      ))}
-    </div>
-  );
-}
 
 function BlockPreview({ block, onSelect, theme, template }: { block: Block; onSelect: () => void; theme: ReturnType<typeof getTheme>; template: string }) {
   const s = (k: string) => block[k] as string | undefined;
@@ -279,8 +265,6 @@ export default function CatalogEditPage() {
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [template, setTemplate] = useState("");
   const [fonts, setFonts] = useState<string[]>([]);
-  const [themeId, setThemeId] = useState("claro");
-  const [accentColor, setAccentColor] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -293,17 +277,12 @@ export default function CatalogEditPage() {
         setBlocks(data.blocks || []);
         setTemplate(data.template || "");
         setFonts(data.fonts?.length ? data.fonts : []);
-        setThemeId(data.theme || "claro");
-        setAccentColor(data.accent || "");
         setLoaded(true);
       })
       .catch(() => { setError("No se pudo cargar el catálogo"); setLoaded(true); });
   }, [id]);
 
-  const theme = useMemo(() => {
-    const t = getTheme(themeId);
-    return accentColor ? { ...t, accent: accentColor } : t;
-  }, [themeId, accentColor]);
+  const theme = useMemo(() => getTheme(), []);
 
   const save = useCallback(async () => {
     setSaving(true);
@@ -315,8 +294,6 @@ export default function CatalogEditPage() {
           blocks,
           template,
           fonts: [theme.font, ...fonts.filter(f => f !== theme.font)],
-          theme: themeId,
-          accent: accentColor,
         }),
       });
       if (!res.ok) throw new Error("Save failed");
@@ -325,7 +302,7 @@ export default function CatalogEditPage() {
     } finally {
       setSaving(false);
     }
-  }, [id, blocks, template, themeId, accentColor, fonts, theme.font]);
+  }, [id, blocks, template, fonts, theme.font]);
 
   const addBlock = (type: string) => {
     const def = defaultBlocks[type];
@@ -359,11 +336,9 @@ export default function CatalogEditPage() {
   };
 
   const applyTemplate = (tid: string) => {
-    const bt = BUSINESS_TYPES.find(b => b.id === tid);
     const newBlocks = TEMPLATE_BLOCKS[tid] || [];
     setBlocks(newBlocks.map(b => ({ ...b, id: generateId() })));
     setTemplate(tid);
-    if (bt) setThemeId(bt.theme);
     setSelectedId(null);
   };
 
@@ -418,31 +393,6 @@ export default function CatalogEditPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <aside className="w-52 overflow-y-auto shrink-0 p-3 space-y-4 hidden md:flex flex-col" style={{ background: theme.cardBg }}>
-          <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Tema visual</h3>
-            <div className="grid grid-cols-2 gap-1">
-              {Object.keys(themes).map(tid => {
-                const t = themes[tid];
-                return (
-                  <button key={tid} onClick={() => setThemeId(tid)}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${themeId === tid ? "ring-2 ring-purple-500" : "hover:bg-black/5"}`}
-                    style={{ background: themeId === tid ? theme.accentLight : "transparent", color: themeId === tid ? theme.accent : theme.textMuted }}>
-                    <span className="w-3 h-3 rounded-full shrink-0" style={{ background: t.accent }} />
-                    <span className="truncate">{t.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Color de acento</h3>
-            <AccentPicker value={accentColor || theme.accent} onChange={setAccentColor} />
-            {accentColor && (
-              <button onClick={() => setAccentColor("")} className="text-[10px] mt-1 opacity-60 hover:opacity-100" style={{ color: theme.textMuted }}>Usar color del tema</button>
-            )}
-          </div>
-
           <div>
             <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Agregar bloque</h3>
             <div className="grid grid-cols-1 gap-0.5">
