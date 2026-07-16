@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getUserPlan } from "@/lib/plan";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 const ALLOWED_MIME: Record<string, string> = {
   "image/png": "png",
@@ -25,6 +25,13 @@ export async function POST(request: Request) {
 
   const ext = ALLOWED_MIME[file.type];
   if (!ext) return NextResponse.json({ error: "Invalid file type (png, jpeg, gif, webp only)" }, { status: 400 });
+
+  let supabase;
+  try {
+    supabase = getSupabase();
+  } catch {
+    return NextResponse.json({ error: "Storage service unavailable" }, { status: 503 });
+  }
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const name = `uploads/${session.user.id}/${Date.now()}.${ext}`;

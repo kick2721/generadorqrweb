@@ -1,11 +1,20 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+let cachedClient: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export function getSupabase(): SupabaseClient {
+  if (cachedClient) return cachedClient;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  }
+  cachedClient = createClient(supabaseUrl, supabaseAnonKey);
+  return cachedClient;
+}
 
-export function getPublicUrl(path: string) {
-  const { data } = supabase.storage.from("catalog-images").getPublicUrl(path);
+export function getPublicUrl(path: string): string {
+  const client = getSupabase();
+  const { data } = client.storage.from("catalog-images").getPublicUrl(path);
   return data.publicUrl;
 }
