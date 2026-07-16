@@ -49,7 +49,8 @@ const t = {
     qrTypeGoogleReview: "مراجعة Google",
     qrTypeMultiLink: "روابط متعددة",
     qrTypeCatalog: "كتالوج",
-    catalogEditorDesc: "صمم كتالوجك باستخدام الكتل والصور والأسعار والمزيد في المحرر المنفصل",
+    typeCatalogDesc: "قائمة رقمية، كتالوج منتجات أو خدمات. أضف الأسعار والصور والأقسام.",
+    catalogEditorDesc: "أنشئ قائمة رقمية لمطعمك، أو كتالوج منتجات، أو قائمة خدمات مهنية. اختر سمة بصرية وأضف المحتوى باستخدام الكتل.",
 
     typeUrlDesc: "رابط لصفحة ويب",
 
@@ -481,7 +482,8 @@ const t = {
     qrTypeGoogleReview: "Google-Bewertung",
     qrTypeMultiLink: "Multi-Link",
     qrTypeCatalog: "Katalog",
-    catalogEditorDesc: "Gestalte deinen Katalog mit Blöcken, Bildern, Preisen und mehr im separaten Editor.",
+    typeCatalogDesc: "Digitales Menü, Produkt- oder Dienstleistungskatalog. Preise, Bilder und Abschnitte hinzufügen.",
+    catalogEditorDesc: "Erstellen Sie ein digitales Menü für Ihr Restaurant, einen Produktkatalog oder eine Liste professioneller Dienstleistungen. Wählen Sie ein visuelles Thema und fügen Sie Inhalte mit Blöcken hinzu.",
 
     typeUrlDesc: "Link zu einer Webseite",
 
@@ -913,7 +915,8 @@ const t = {
     qrTypeGoogleReview: "Κριτική Google",
     qrTypeMultiLink: "Πολλαπλοί σύνδεσμοι",
     qrTypeCatalog: "Κατάλογος",
-    catalogEditorDesc: "Σχεδιάστε τον κατάλογό σας με μπλοκ, εικόνες, τιμές και περισσότερα στον ξεχωριστό επεξεργαστή.",
+    typeCatalogDesc: "Ψηφιακό μενού, κατάλογος προϊόντων ή υπηρεσιών. Προσθέστε τιμές, εικόνες και ενότητες.",
+    catalogEditorDesc: "Δημιουργήστε ένα ψηφιακό μενού για το εστιατόριό σας, έναν κατάλογο προϊόντων ή μια λίστα επαγγελματικών υπηρεσιών. Επιλέξτε ένα οπτικό θέμα και προσθέστε περιεχόμενο με μπλοκ.",
 
     typeUrlDesc: "Σύνδεσμος προς ιστοσελίδα",
 
@@ -1345,7 +1348,8 @@ const t = {
     qrTypeGoogleReview: "Google Review",
     qrTypeMultiLink: "Multi Link",
     qrTypeCatalog: "Catalog",
-    catalogEditorDesc: "Design your catalog with blocks, images, prices and more in the separate editor.",
+    typeCatalogDesc: "Digital menu, product or service catalog. Add prices, images and sections.",
+    catalogEditorDesc: "Create a digital menu for your restaurant, a product catalog, or a list of professional services. Pick a visual theme and add content with blocks.",
 
     typeUrlDesc: "Link to a webpage",
 
@@ -1803,7 +1807,8 @@ const t = {
     qrTypeGoogleReview: "Reseña Google",
     qrTypeMultiLink: "Multi Enlace",
     qrTypeCatalog: "Catálogo",
-    catalogEditorDesc: "Diseña tu catálogo con bloques, imágenes, precios y más en el editor separado.",
+    typeCatalogDesc: "Menú digital, catálogo de productos o servicios. Agregá precios, imágenes y secciones.",
+    catalogEditorDesc: "Creá un menú digital para tu restaurante, un catálogo de productos o una lista de servicios profesionales. Elegí un tema visual y agregá contenido con bloques.",
 
     typeUrlDesc: "Enlace a una página web",
 
@@ -2235,7 +2240,8 @@ const t = {
     qrTypeGoogleReview: "Avis Google",
     qrTypeMultiLink: "Multi lien",
     qrTypeCatalog: "Catalogue",
-    catalogEditorDesc: "Concevez votre catalogue avec des blocs, images, prix et plus dans l'éditeur séparé.",
+    typeCatalogDesc: "Menu numérique, catalogue de produits ou de services. Ajoutez prix, images et sections.",
+    catalogEditorDesc: "Créez un menu numérique pour votre restaurant, un catalogue de produits ou une liste de services professionnels. Choisissez un thème visuel et ajoutez du contenu avec des blocs.",
 
     typeUrlDesc: "Lien vers une page web",
 
@@ -2667,7 +2673,8 @@ const t = {
     qrTypeGoogleReview: "Google समीक्षा",
     qrTypeMultiLink: "मल्टी लिंक",
     qrTypeCatalog: "कैटलॉग",
-    catalogEditorDesc: "अलग संपादक में ब्लॉक, छवियों, कीमतों और अधिक के साथ अपनी सूची डिज़ाइन करें।",
+    typeCatalogDesc: "डिजिटल मेनू, उत्पाद या सेवा सूची। मूल्य, चित्र और अनुभाग जोड़ें।",
+    catalogEditorDesc: "अपने रेस्तरां के लिए डिजिटल मेनू, उत्पाद सूची या पेशेवर सेवाओं की सूची बनाएं। एक विज़ुअल थीम चुनें और ब्लॉक के साथ सामग्री जोड़ें।",
 
     typeUrlDesc: "वेबपेज का लिंक",
 
@@ -3099,7 +3106,8 @@ const t = {
     qrTypeGoogleReview: "Ulasan Google",
     qrTypeMultiLink: "Multi Tautan",
     qrTypeCatalog: "Katalog",
-    catalogEditorDesc: "Desain katalog Anda dengan blok, gambar, harga, dan lainnya di editor terpisah.",
+    typeCatalogDesc: "Menu digital, katalog produk atau layanan. Tambahkan harga, gambar, dan bagian.",
+    catalogEditorDesc: "Buat menu digital untuk restoran Anda, katalog produk, atau daftar layanan profesional. Pilih tema visual dan tambahkan konten dengan blok.",
 
     typeUrlDesc: "Tautan ke halaman web",
 
@@ -3531,7 +3539,8 @@ const t = {
     qrTypeGoogleReview: "Recensione Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Catalogo",
-    catalogEditorDesc: "Progetta il tuo catalogo con blocchi, immagini, prezzi e altro nell'editor separato.",
+    typeCatalogDesc: "Menu digitale, catalogo di prodotti o servizi. Aggiungi prezzi, immagini e sezioni.",
+    catalogEditorDesc: "Crea un menu digitale per il tuo ristorante, un catalogo prodotti o un elenco di servizi professionali. Scegli un tema visivo e aggiungi contenuti con blocchi.",
 
     typeUrlDesc: "Collegamento a una pagina web",
 
@@ -3963,7 +3972,8 @@ const t = {
     qrTypeGoogleReview: "Googleレビュー",
     qrTypeMultiLink: "マルチリンク",
     qrTypeCatalog: "カタログ",
-    catalogEditorDesc: "専用エディターでブロック、画像、価格などを使用してカタログをデザインします。",
+    typeCatalogDesc: "デジタルメニュー、商品・サービスカタログ。価格、画像、セクションを追加。",
+    catalogEditorDesc: "レストランのデジタルメニュー、商品カタログ、プロフェッショナルサービスのリストを作成。ビジュアルテーマを選んで、ブロックでコンテンツを追加。",
 
     typeUrlDesc: "ウェブページへのリンク",
 
@@ -4395,7 +4405,8 @@ const t = {
     qrTypeGoogleReview: "Google 리뷰",
     qrTypeMultiLink: "멀티 링크",
     qrTypeCatalog: "카탈로그",
-    catalogEditorDesc: "별도 편집기에서 블록, 이미지, 가격 등으로 카탈로그를 디자인하세요.",
+    typeCatalogDesc: "디지털 메뉴, 제품 또는 서비스 카탈로그. 가격, 이미지, 섹션을 추가하세요.",
+    catalogEditorDesc: "레스토랑의 디지털 메뉴, 제품 카탈로그 또는 전문 서비스 목록을 만드세요. 비주얼 테마를 선택하고 블록으로 콘텐츠를 추가하세요.",
 
     typeUrlDesc: "웹페이지 링크",
 
@@ -4827,7 +4838,8 @@ const t = {
     qrTypeGoogleReview: "Google-beoordeling",
     qrTypeMultiLink: "Multi-link",
     qrTypeCatalog: "Catalogus",
-    catalogEditorDesc: "Ontwerp uw catalogus met blokken, afbeeldingen, prijzen en meer in de aparte editor.",
+    typeCatalogDesc: "Digitaal menu, product- of dienstencatalogus. Prijzen, afbeeldingen en secties toevoegen.",
+    catalogEditorDesc: "Maak een digitaal menu voor uw restaurant, een productcatalogus of een lijst met professionele diensten. Kies een visueel thema en voeg inhoud toe met blokken.",
 
     typeUrlDesc: "Link naar een webpagina",
 
@@ -5259,7 +5271,8 @@ const t = {
     qrTypeGoogleReview: "Recenzja Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Katalog",
-    catalogEditorDesc: "Zaprojektuj swój katalog z blokami, obrazami, cenami i więcej w osobnym edytorze.",
+    typeCatalogDesc: "Cyfrowe menu, katalog produktów lub usług. Dodaj ceny, obrazy i sekcje.",
+    catalogEditorDesc: "Stwórz cyfrowe menu dla swojej restauracji, katalog produktów lub listę usług profesjonalnych. Wybierz motyw wizualny i dodaj treść za pomocą bloków.",
 
     typeUrlDesc: "Link do strony internetowej",
 
@@ -5691,7 +5704,8 @@ const t = {
     qrTypeGoogleReview: "Avaliação Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Catálogo",
-    catalogEditorDesc: "Projete seu catálogo com blocos, imagens, preços e mais no editor separado.",
+    typeCatalogDesc: "Cardápio digital, catálogo de produtos ou serviços. Adicione preços, imagens e seções.",
+    catalogEditorDesc: "Crie um cardápio digital para seu restaurante, um catálogo de produtos ou uma lista de serviços profissionais. Escolha um tema visual e adicione conteúdo com blocos.",
 
     typeUrlDesc: "Link para uma página web",
 
@@ -6122,7 +6136,8 @@ const t = {
     qrTypeGoogleReview: "Recenzie Google",
     qrTypeMultiLink: "Multi link",
     qrTypeCatalog: "Catalog",
-    catalogEditorDesc: "Proiectați-vă catalogul cu blocuri, imagini, prețuri și multe altele în editorul separat.",
+    typeCatalogDesc: "Meniu digital, catalog de produse sau servicii. Adăugați prețuri, imagini și secțiuni.",
+    catalogEditorDesc: "Creați un meniu digital pentru restaurantul dvs., un catalog de produse sau o listă de servicii profesionale. Alegeți o temă vizuală și adăugați conținut cu blocuri.",
 
     typeUrlDesc: "Link către o pagină web",
 
@@ -6554,7 +6569,8 @@ const t = {
     qrTypeGoogleReview: "Отзыв Google",
     qrTypeMultiLink: "Мульти-ссылка",
     qrTypeCatalog: "Каталог",
-    catalogEditorDesc: "Создайте свой каталог с блоками, изображениями, ценами и многим другим в отдельном редакторе.",
+    typeCatalogDesc: "Цифровое меню, каталог продуктов или услуг. Добавьте цены, изображения и разделы.",
+    catalogEditorDesc: "Создайте цифровое меню для ресторана, каталог товаров или список профессиональных услуг. Выберите визуальную тему и добавляйте контент блоками.",
 
     typeUrlDesc: "Ссылка на веб-страницу",
 
@@ -6986,7 +7002,8 @@ const t = {
     qrTypeGoogleReview: "Google-recension",
     qrTypeMultiLink: "Multi-länk",
     qrTypeCatalog: "Katalog",
-    catalogEditorDesc: "Designa din katalog med block, bilder, priser och mer i den separata redigeraren.",
+    typeCatalogDesc: "Digital meny, produkt- eller tjänstekatalog. Lägg till priser, bilder och avsnitt.",
+    catalogEditorDesc: "Skapa en digital meny för din restaurang, en produktkatalog eller en lista över professionella tjänster. Välj ett visuellt tema och lägg till innehåll med block.",
 
     typeUrlDesc: "Länk till en webbsida",
 
@@ -7418,7 +7435,8 @@ const t = {
     qrTypeGoogleReview: "รีวิว Google",
     qrTypeMultiLink: "หลายลิงก์",
     qrTypeCatalog: "แคตตาล็อก",
-    catalogEditorDesc: "ออกแบบแคตตาล็อกของคุณด้วยบล็อก รูปภาพ ราคา และอื่นๆ ในโปรแกรมแก้ไขแยกต่างหาก",
+    typeCatalogDesc: "เมนูดิจิทัล แคตตาล็อกผลิตภัณฑ์หรือบริการ เพิ่มราคา รูปภาพ และส่วนต่างๆ",
+    catalogEditorDesc: "สร้างเมนูดิจิทัลสำหรับร้านอาหารของคุณ แคตตาล็อกสินค้า หรือรายการบริการมืออาชีพ เลือกธีมภาพและเพิ่มเนื้อหาด้วยบล็อก",
 
     typeUrlDesc: "ลิงก์ไปยังเว็บเพจ",
 
@@ -7850,7 +7868,8 @@ const t = {
     qrTypeGoogleReview: "Google Yorumu",
     qrTypeMultiLink: "Çoklu Bağlantı",
     qrTypeCatalog: "Katalog",
-    catalogEditorDesc: "Ayrı düzenleyicide bloklar, görseller, fiyatlar ve daha fazlasıyla kataloğunuzu tasarlayın.",
+    typeCatalogDesc: "Dijital menü, ürün veya hizmet kataloğu. Fiyat, görsel ve bölüm ekleyin.",
+    catalogEditorDesc: "Restoranınız için dijital bir menü, ürün kataloğu veya profesyonel hizmet listesi oluşturun. Görsel bir tema seçin ve bloklarla içerik ekleyin.",
 
     typeUrlDesc: "Bir web sayfasına bağlantı",
 
@@ -8282,7 +8301,8 @@ const t = {
     qrTypeGoogleReview: "Відгук Google",
     qrTypeMultiLink: "Мульти-посилання",
     qrTypeCatalog: "Каталог",
-    catalogEditorDesc: "Створіть свій каталог з блоками, зображеннями, цінами та багатьом іншим в окремому редакторі.",
+    typeCatalogDesc: "Цифрове меню, каталог продуктів або послуг. Додайте ціни, зображення та розділи.",
+    catalogEditorDesc: "Створіть цифрове меню для ресторану, каталог продуктів або список професійних послуг. Виберіть візуальну тему та додавайте вміст блоками.",
 
     typeUrlDesc: "Посилання на веб-сторінку",
 
@@ -8714,7 +8734,8 @@ const t = {
     qrTypeGoogleReview: "Đánh giá Google",
     qrTypeMultiLink: "Nhiều liên kết",
     qrTypeCatalog: "Danh mục",
-    catalogEditorDesc: "Thiết kế danh mục của bạn với các khối, hình ảnh, giá cả và hơn thế nữa trong trình chỉnh sửa riêng biệt.",
+    typeCatalogDesc: "Thực đơn kỹ thuật số, danh mục sản phẩm hoặc dịch vụ. Thêm giá, hình ảnh và các phần.",
+    catalogEditorDesc: "Tạo thực đơn kỹ thuật số cho nhà hàng của bạn, danh mục sản phẩm hoặc danh sách dịch vụ chuyên nghiệp. Chọn một chủ đề trực quan và thêm nội dung bằng các khối.",
 
     typeUrlDesc: "Liên kết đến trang web",
 
@@ -9146,7 +9167,8 @@ const t = {
     qrTypeGoogleReview: "Google评价",
     qrTypeMultiLink: "多链接",
     qrTypeCatalog: "目录",
-    catalogEditorDesc: "在单独的编辑器中使用块、图像、价格等设计您的目录。",
+    typeCatalogDesc: "数字菜单、产品或服务目录。添加价格、图片和版块。",
+    catalogEditorDesc: "为您的餐厅创建数字菜单、产品目录或专业服务列表。选择视觉主题并通过块添加内容。",
 
     typeUrlDesc: "链接到网页",
 
@@ -9578,7 +9600,8 @@ const t = {
     qrTypeGoogleReview: "Google評價",
     qrTypeMultiLink: "多連結",
     qrTypeCatalog: "目錄",
-    catalogEditorDesc: "在單獨的編輯器中使用區塊、圖像、價格等設計您的目錄。",
+    typeCatalogDesc: "數字菜單、產品或服務目錄。添加價格、圖片和區塊。",
+    catalogEditorDesc: "為您的餐廳創建數字菜單、產品目錄或專業服務列表。選擇視覺主題並通過區塊添加內容。",
 
     typeUrlDesc: "連結到網頁",
 
