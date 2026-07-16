@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import PageShell from "@/components/PageShell";
 import CookieBanner from "@/components/CookieBanner";
 import { LangProvider } from "@/context/LangContext";
 import SessionProvider from "@/components/SessionProvider";
@@ -36,11 +35,11 @@ export default function RootLayout({
         <ThemeProvider>
         <SessionProvider>
           <LangProvider>
-            <Navbar />
-            <DashboardPrefetcher />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <CookieBanner />
+            <PageShell>
+              <DashboardPrefetcher />
+              <main className="flex-1">{children}</main>
+              <CookieBanner />
+            </PageShell>
           </LangProvider>
         </SessionProvider>
         </ThemeProvider>
