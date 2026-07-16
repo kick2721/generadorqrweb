@@ -244,10 +244,10 @@ function BlockEditor({ block, onChange, onDelete, onClose }: { block: Block; onC
             <label className="block text-xs text-gray-500 mb-1">{f.label}</label>
             {f.type === "textarea" ? (
               <textarea value={(block[f.key] as string) || ""} onChange={e => update(f.key, e.target.value)} placeholder={f.placeholder} rows={3}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-purple-400 resize-none" />
+                className="w-full text-sm text-gray-900 bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-purple-400 resize-none" />
             ) : (
               <input type={f.type} value={(block[f.key] as string) || ""} onChange={e => update(f.key, e.target.value)} placeholder={f.placeholder}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-purple-400" />
+                className="w-full text-sm text-gray-900 bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-purple-400" />
             )}
           </div>
         ))}
