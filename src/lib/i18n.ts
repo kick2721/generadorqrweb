@@ -1807,8 +1807,8 @@ const t = {
     qrTypeGoogleReview: "Reseña Google",
     qrTypeMultiLink: "Multi Enlace",
     qrTypeCatalog: "Catálogo",
-    typeCatalogDesc: "Menú digital, catálogo de productos o servicios. Agregá precios, imágenes y secciones.",
-    catalogEditorDesc: "Creá un menú digital para tu restaurante, un catálogo de productos o una lista de servicios profesionales. Elegí un tema visual y agregá contenido con bloques.",
+    typeCatalogDesc: "Menú digital, catálogo de productos o servicios. Agrega precios, imágenes y secciones.",
+    catalogEditorDesc: "Crea un menú digital para tu restaurante, un catálogo de productos o una lista de servicios profesionales. Elige un tema visual y agrega contenido con bloques.",
 
     typeUrlDesc: "Enlace a una página web",
 
