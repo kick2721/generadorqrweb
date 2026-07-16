@@ -1,3 +1,8 @@
+export type LayoutType = "list" | "grid";
+export type HeaderVariant = "centered" | "decorative" | "minimal";
+export type SectionVariant = "underline" | "bar" | "dotted";
+export type CardVariant = "default" | "prominent-image" | "minimal";
+
 export interface Theme {
   id: string;
   label: string;
@@ -15,6 +20,10 @@ export interface Theme {
   sectionBorder: string;
   divider: string;
   font: string;
+  layout: LayoutType;
+  headerVariant: HeaderVariant;
+  sectionVariant: SectionVariant;
+  cardVariant: CardVariant;
 }
 
 export const themes: Record<string, Theme> = {
@@ -35,6 +44,10 @@ export const themes: Record<string, Theme> = {
     sectionBorder: "#e5e7eb",
     divider: "#e5e7eb",
     font: "Inter",
+    layout: "list",
+    headerVariant: "centered",
+    sectionVariant: "underline",
+    cardVariant: "default",
   },
   oscuro: {
     id: "oscuro",
@@ -53,6 +66,10 @@ export const themes: Record<string, Theme> = {
     sectionBorder: "#2a2d3a",
     divider: "#2a2d3a",
     font: "Inter",
+    layout: "list",
+    headerVariant: "centered",
+    sectionVariant: "underline",
+    cardVariant: "default",
   },
   natural: {
     id: "natural",
@@ -71,6 +88,10 @@ export const themes: Record<string, Theme> = {
     sectionBorder: "#e8e0d6",
     divider: "#e8e0d6",
     font: "Lato",
+    layout: "list",
+    headerVariant: "decorative",
+    sectionVariant: "bar",
+    cardVariant: "default",
   },
   elegante: {
     id: "elegante",
@@ -89,6 +110,10 @@ export const themes: Record<string, Theme> = {
     sectionBorder: "#e5ddd0",
     divider: "#e5ddd0",
     font: "Playfair Display",
+    layout: "list",
+    headerVariant: "decorative",
+    sectionVariant: "dotted",
+    cardVariant: "minimal",
   },
   vibrante: {
     id: "vibrante",
@@ -107,6 +132,10 @@ export const themes: Record<string, Theme> = {
     sectionBorder: "rgba(255,255,255,0.1)",
     divider: "rgba(255,255,255,0.08)",
     font: "Space Grotesk",
+    layout: "grid",
+    headerVariant: "minimal",
+    sectionVariant: "underline",
+    cardVariant: "prominent-image",
   },
   minimal: {
     id: "minimal",
@@ -125,6 +154,10 @@ export const themes: Record<string, Theme> = {
     sectionBorder: "#e5e5e5",
     divider: "#e5e5e5",
     font: "DM Sans",
+    layout: "list",
+    headerVariant: "minimal",
+    sectionVariant: "underline",
+    cardVariant: "minimal",
   },
 };
 

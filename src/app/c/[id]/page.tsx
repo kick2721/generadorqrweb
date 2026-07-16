@@ -13,7 +13,7 @@ interface CatalogData {
   fonts: string[];
 }
 
-function BlockRenderer({ block, t }: { block: Block; t: ReturnType<typeof getTheme> }) {
+function BlockRenderer({ block, t, template }: { block: Block; t: ReturnType<typeof getTheme>; template: string }) {
   const s = (k: string) => block[k] as string | undefined;
   switch (block.type) {
     case "header":
@@ -21,18 +21,71 @@ function BlockRenderer({ block, t }: { block: Block; t: ReturnType<typeof getThe
         <div className="text-center mb-8">
           <h1 style={{ color: t.text }} className="text-3xl font-bold">{s("title")}</h1>
           {s("subtitle") && <p style={{ color: t.textMuted }} className="mt-1">{s("subtitle")}</p>}
+          {t.headerVariant === "decorative" && <div className="w-16 h-0.5 mx-auto mt-3 rounded-full" style={{ background: t.accent }} />}
         </div>
       );
     case "section":
       return (
-        <h2 style={{ color: t.text, borderColor: t.sectionBorder }} className="text-xl font-semibold mt-8 mb-4 pb-2 border-b">{s("title")}</h2>
+        <div className="flex items-center gap-2 mt-8 mb-4 pb-2"
+          style={{ color: t.text, borderBottom: t.sectionVariant === "dotted" ? `2px dotted ${t.sectionBorder}` : t.sectionVariant === "bar" ? "none" : `2px solid ${t.sectionBorder}` }}>
+          {t.sectionVariant === "bar" && <span className="w-1 h-5 rounded-sm shrink-0" style={{ background: t.accent }} />}
+          <h2 className="text-xl font-semibold">{s("title")}</h2>
+        </div>
       );
-    case "item":
+    case "item": {
+      const isProducts = template === "products";
+      const isServices = template === "services";
+      if (isProducts) {
+        return (
+          <div style={{ background: t.cardBg, border: t.cardBorder, boxShadow: t.cardShadow, borderRadius: t.radius }} className="flex flex-col overflow-hidden mb-4">
+            <div className="relative">
+              {s("image") ? (
+                <img src={s("image")} alt={s("name")} className="w-full h-36 object-cover" style={{ borderRadius: `${t.radius} ${t.radius} 0 0` }} />
+              ) : (
+                <div className="w-full h-32 flex items-center justify-center" style={{ background: t.cardBg }}>
+                  <svg className="w-10 h-10 opacity-20" style={{ color: t.textMuted }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                </div>
+              )}
+              {s("tag") && (
+                <span className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-sm" style={{ background: t.accent, color: t.accentText }}>
+                  {s("tag")}
+                </span>
+              )}
+              {s("price") && (
+                <span className="absolute bottom-2 left-2 text-xs font-bold px-2 py-1 rounded" style={{ background: t.accent, color: t.accentText }}>
+                  ${s("price")}
+                </span>
+              )}
+            </div>
+            <div className="p-3">
+              <h3 className="font-medium" style={{ color: t.text }}>{s("name")}</h3>
+              {s("desc") && <p className="text-sm mt-1" style={{ color: t.textMuted }}>{s("desc")}</p>}
+            </div>
+          </div>
+        );
+      }
+      if (isServices) {
+        return (
+          <div className="flex gap-3 py-3" style={{ borderBottom: `1px solid ${t.sectionBorder}` }}>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: t.accentLight }}>
+              <svg className="w-5 h-5" style={{ color: t.accent }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium" style={{ color: t.text }}>{s("name")}</h3>
+              {s("desc") && <p className="text-sm mt-0.5" style={{ color: t.textMuted }}>{s("desc")}</p>}
+            </div>
+          </div>
+        );
+      }
       return (
         <div style={{ background: t.cardBg, border: t.cardBorder, boxShadow: t.cardShadow, borderRadius: t.radius }} className="p-4 flex gap-4 mb-3">
-          {s("image") && (
-            <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-gray-50/50" style={{ borderRadius: t.radius }}>
+          {s("image") ? (
+            <div className="w-20 h-20 shrink-0 rounded-full overflow-hidden bg-gray-50/50">
               <img src={s("image")} alt={s("name")} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-16 h-16 shrink-0 rounded-full flex items-center justify-center" style={{ background: t.accentLight }}>
+              <span className="text-xl" style={{ color: t.accent }}>🍽</span>
             </div>
           )}
           <div className="flex-1 min-w-0">
@@ -47,6 +100,7 @@ function BlockRenderer({ block, t }: { block: Block; t: ReturnType<typeof getThe
           </div>
         </div>
       );
+    }
     case "text":
       return (
         <p style={{ color: t.textMuted }} className="text-sm leading-relaxed whitespace-pre-wrap my-4">{s("content")}</p>
@@ -91,15 +145,18 @@ export default async function CatalogPage({ params }: { params: Promise<{ id: st
   const overrideAccent = config.accent || t.accent;
   const theme = { ...t, accent: overrideAccent };
   const fonts = item.fonts || [theme.font];
+  const template = item.template || "";
+
+  const maxWClass = template === "products" ? "max-w-2xl" : "max-w-lg";
 
   return (
     <div className="min-h-screen" style={{ background: theme.bg }}>
       {fonts.length > 0 && (
-        <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=${fonts.map((f: string) => f.replace(" ", "+")).join("&family=")}&display=swap`} />
+        <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fonts.map((f: string) => `family=${f.replace(" ", "+")}`).join("&")}&display=swap`} />
       )}
-      <div className="max-w-lg mx-auto px-4 py-8" style={{ fontFamily: fonts[0] || "system-ui" }}>
+      <div className={`${maxWClass} mx-auto px-4 py-8`} style={{ fontFamily: fonts[0] || "system-ui" }}>
         {blocks.map((block, i) => (
-          <BlockRenderer key={i} block={block} t={theme} />
+          <BlockRenderer key={i} block={block} t={theme} template={template} />
         ))}
       </div>
     </div>

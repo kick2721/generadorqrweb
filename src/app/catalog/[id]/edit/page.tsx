@@ -18,11 +18,10 @@ interface CatalogData {
   accent: string;
 }
 
-const TEMPLATES = [
-  { id: "blank", label: "En blanco" },
-  { id: "restaurant", label: "Restaurante" },
-  { id: "products", label: "Productos" },
-  { id: "services", label: "Servicios" },
+const BUSINESS_TYPES = [
+  { id: "restaurant", icon: "🍽️", label: "Restaurante", desc: "Menú digital", theme: "natural" },
+  { id: "products", icon: "📦", label: "Productos", desc: "Catálogo en cuadrícula", theme: "vibrante" },
+  { id: "services", icon: "🛠️", label: "Servicios", desc: "Lista profesional", theme: "elegante" },
 ];
 
 function generateId() {
@@ -39,29 +38,44 @@ const defaultBlocks: Record<string, Record<string, unknown>> = {
   contact: { type: "contact", phone: "", address: "", hours: "", mapsUrl: "" },
 };
 
-function ThemeCard({ id, selected, onClick }: { id: string; selected: boolean; onClick: () => void }) {
-  const t = themes[id];
-  return (
-    <button onClick={onClick} className={`relative w-full rounded-xl overflow-hidden transition-all duration-150 ${selected ? "ring-2 ring-purple-500 shadow-md" : "ring-1 ring-gray-200 hover:ring-gray-300"}`}>
-      <div style={{ background: t.bg }} className="p-3">
-        <div className="flex gap-1.5 mb-2">
-          <div style={{ background: t.accent, borderRadius: t.radius }} className="w-1/3 h-1.5" />
-          <div style={{ background: t.cardBg, border: t.cardBorder }} className="w-2/3 h-1.5 rounded" />
-        </div>
-        <div style={{ background: t.cardBg, border: t.cardBorder, boxShadow: t.cardShadow, borderRadius: t.radius }} className="h-8 mb-1.5 flex items-center px-2 gap-1">
-          <div style={{ background: t.textMuted }} className="w-1/2 h-1.5 rounded-full opacity-40" />
-          <div className="w-4 h-2 rounded-sm ml-auto" style={{ background: t.accent, borderRadius: "2px" }} />
-        </div>
-        <div style={{ background: t.cardBg, border: t.cardBorder, boxShadow: t.cardShadow, borderRadius: t.radius }} className="h-6 flex items-center px-2 gap-1">
-          <div style={{ background: t.textMuted }} className="w-1/3 h-1 rounded-full opacity-30" />
-        </div>
-      </div>
-      <div className="bg-white px-3 py-1.5 text-left">
-        <span style={{ color: t.text }} className="text-xs font-medium">{t.label}</span>
-      </div>
-    </button>
-  );
-}
+const TEMPLATE_BLOCKS: Record<string, Block[]> = {
+  blank: [],
+  restaurant: [
+    { id: generateId(), type: "header", title: "Nuestro Menú", subtitle: "Sabores que enamoran" },
+    { id: generateId(), type: "section", title: "Entradas" },
+    { id: generateId(), type: "item", name: "Bruschetta", desc: "Pan tostado con tomate, albahaca y mozzarella", price: "12", image: "", tag: "Popular" },
+    { id: generateId(), type: "item", name: "Carpaccio", desc: "Res fina con rúcula y parmesano", price: "15", image: "", tag: "" },
+    { id: generateId(), type: "section", title: "Principales" },
+    { id: generateId(), type: "item", name: "Pasta Alfredo", desc: "Fettuccine en salsa cremosa con pollo", price: "22", image: "", tag: "" },
+    { id: generateId(), type: "item", name: "Salmón Grill", desc: "Salmón con verduras salteadas", price: "28", image: "", tag: "Chef" },
+    { id: generateId(), type: "divider" },
+    { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "Av. Principal 456", hours: "Mar-Dom 12-23hs", mapsUrl: "" },
+  ],
+  products: [
+    { id: generateId(), type: "header", title: "Nuestros Productos", subtitle: "Calidad y variedad" },
+    { id: generateId(), type: "text", content: "Explorá nuestra colección con los mejores precios." },
+    { id: generateId(), type: "divider" },
+    { id: generateId(), type: "section", title: "Destacados" },
+    { id: generateId(), type: "item", name: "Auriculares Pro", desc: "Cancelación de ruido, 30h batería", price: "89.99", image: "", tag: "Oferta" },
+    { id: generateId(), type: "item", name: "Smartwatch X200", desc: "Monitoreo cardíaco, GPS", price: "199.99", image: "", tag: "Nuevo" },
+    { id: generateId(), type: "item", name: "Cargador Inalámbrico", desc: "Carga rápida 15W, universal", price: "29.99", image: "", tag: "" },
+    { id: generateId(), type: "section", title: "Más Vendidos" },
+    { id: generateId(), type: "item", name: "Funda Premium", desc: "Cuero ecológico, protección 360°", price: "24.99", image: "", tag: "Popular" },
+    { id: generateId(), type: "item", name: "Base Adjustable", desc: "Altura regulable, soporte ergonómico", price: "59.99", image: "", tag: "" },
+    { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "", hours: "Lun-Vie 9-18hs", mapsUrl: "" },
+  ],
+  services: [
+    { id: generateId(), type: "header", title: "Nuestros Servicios", subtitle: "Profesionalismo y confianza" },
+    { id: generateId(), type: "text", content: "Ofrecemos soluciones integrales con más de 10 años de experiencia en el rubro." },
+    { id: generateId(), type: "section", title: "Servicios" },
+    { id: generateId(), type: "item", name: "Consultoría", desc: "Asesoramiento personalizado para tu negocio", price: "", image: "", tag: "" },
+    { id: generateId(), type: "item", name: "Desarrollo Web", desc: "Sitios y aplicaciones modernas", price: "", image: "", tag: "" },
+    { id: generateId(), type: "item", name: "Soporte Técnico", desc: "Asistencia remota y presencial 24/7", price: "", image: "", tag: "" },
+    { id: generateId(), type: "text", content: "Contactanos para recibir un presupuesto sin cargo." },
+    { id: generateId(), type: "section", title: "Contacto" },
+    { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "Av. Ejemplo 789", hours: "Lun-Vie 9-18hs", mapsUrl: "" },
+  ],
+};
 
 function AccentPicker({ value, onChange }: { value: string; onChange: (c: string) => void }) {
   return (
@@ -75,7 +89,7 @@ function AccentPicker({ value, onChange }: { value: string; onChange: (c: string
   );
 }
 
-function BlockPreview({ block, onSelect, theme }: { block: Block; onSelect: () => void; theme: ReturnType<typeof getTheme> }) {
+function BlockPreview({ block, onSelect, theme, template }: { block: Block; onSelect: () => void; theme: ReturnType<typeof getTheme>; template: string }) {
   const s = (k: string) => block[k] as string | undefined;
   switch (block.type) {
     case "header":
@@ -83,23 +97,78 @@ function BlockPreview({ block, onSelect, theme }: { block: Block; onSelect: () =
         <div className="text-center mb-6 cursor-pointer hover:ring-2 hover:ring-purple-400 rounded-lg p-2 transition" onClick={onSelect}>
           <div className="text-xl font-bold" style={{ color: theme.text }}>{s("title") || "Título"}</div>
           {s("subtitle") && <div className="text-xs mt-0.5" style={{ color: theme.textMuted }}>{s("subtitle")}</div>}
+          {theme.headerVariant === "decorative" && <div className="w-12 h-0.5 mx-auto mt-2 rounded-full" style={{ background: theme.accent }} />}
         </div>
       );
     case "section":
       return (
-        <div className="font-semibold text-sm mt-6 mb-3 pb-1.5 border-b cursor-pointer hover:ring-2 hover:ring-purple-400 rounded transition px-2" onClick={onSelect} style={{ color: theme.text, borderColor: theme.sectionBorder }}>
+        <div className="font-semibold text-sm mt-6 mb-3 pb-1.5 cursor-pointer hover:ring-2 hover:ring-purple-400 rounded transition px-2 flex items-center gap-2" onClick={onSelect}
+          style={{
+            color: theme.text,
+            borderBottom: theme.sectionVariant === "dotted" ? `2px dotted ${theme.sectionBorder}` : theme.sectionVariant === "bar" ? "none" : `2px solid ${theme.sectionBorder}`
+          }}>
+          {theme.sectionVariant === "bar" && <span className="w-1 h-4 rounded-sm shrink-0" style={{ background: theme.accent }} />}
           {s("title") || "Sección"}
         </div>
       );
-    case "item":
+    case "item": {
+      const isProducts = template === "products";
+      const isServices = template === "services";
+      if (isProducts) {
+        return (
+          <div className="flex flex-col overflow-hidden mb-3 cursor-pointer hover:ring-2 hover:ring-purple-400 transition" style={{ background: theme.cardBg, border: theme.cardBorder, boxShadow: theme.cardShadow, borderRadius: theme.radius }}>
+            <div className="relative">
+              {s("image") ? (
+                <img src={s("image")} alt="" className="w-full h-28 object-cover" style={{ borderRadius: `${theme.radius} ${theme.radius} 0 0` }} />
+              ) : (
+                <div className="w-full h-24 flex items-center justify-center" style={{ background: theme.cardBg }}>
+                  <svg className="w-8 h-8 opacity-20" style={{ color: theme.textMuted }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                </div>
+              )}
+              {s("tag") && (
+                <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-sm" style={{ background: theme.accent, color: theme.accentText }}>
+                  {s("tag")}
+                </span>
+              )}
+              {s("price") && (
+                <span className="absolute bottom-1.5 left-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: theme.accent, color: theme.accentText }}>
+                  ${s("price")}
+                </span>
+              )}
+            </div>
+            <div className="p-2.5">
+              <div className="font-medium text-xs" style={{ color: theme.text }}>{s("name")}</div>
+              {s("desc") && <p className="text-[10px] mt-0.5 line-clamp-2" style={{ color: theme.textMuted }}>{s("desc")}</p>}
+            </div>
+          </div>
+        );
+      }
+      if (isServices) {
+        return (
+          <div className="flex gap-3 mb-2.5 p-3 cursor-pointer hover:ring-2 hover:ring-purple-400 transition" onClick={onSelect}
+            style={{ borderBottom: `1px solid ${theme.sectionBorder}` }}>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: theme.accentLight }}>
+              <svg className="w-4 h-4" style={{ color: theme.accent }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="font-medium text-sm" style={{ color: theme.text }}>{s("name")}</div>
+              {s("desc") && <p className="text-xs mt-0.5" style={{ color: theme.textMuted }}>{s("desc")}</p>}
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="flex gap-3 mb-2.5 p-3 cursor-pointer hover:ring-2 hover:ring-purple-400 transition" onClick={onSelect}
           style={{ background: theme.cardBg, border: theme.cardBorder, boxShadow: theme.cardShadow, borderRadius: theme.radius }}>
           {s("image") ? (
-            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-gray-50/50" style={{ borderRadius: theme.radius }}>
+            <div className="w-16 h-16 shrink-0 rounded-full overflow-hidden bg-gray-50/50">
               <img src={s("image")} alt="" className="w-full h-full object-cover" />
             </div>
-          ) : null}
+          ) : (
+            <div className="w-14 h-14 shrink-0 rounded-full flex items-center justify-center" style={{ background: theme.accentLight }}>
+              <span className="text-lg" style={{ color: theme.accent }}>🍽</span>
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start gap-1">
               <span className="font-medium text-sm" style={{ color: theme.text }}>{s("name")}</span>
@@ -110,6 +179,7 @@ function BlockPreview({ block, onSelect, theme }: { block: Block; onSelect: () =
           </div>
         </div>
       );
+    }
     case "text":
       return (
         <p className="text-xs my-3 cursor-pointer hover:ring-2 hover:ring-purple-400 rounded p-2 transition" style={{ color: theme.textMuted }} onClick={onSelect}>
@@ -137,9 +207,7 @@ function BlockPreview({ block, onSelect, theme }: { block: Block; onSelect: () =
   }
 }
 
-function BlockEditor({ block, onChange, onDelete, onClose }: {
-  block: Block; onChange: (updated: Block) => void; onDelete: () => void; onClose: () => void;
-}) {
+function BlockEditor({ block, onChange, onDelete, onClose }: { block: Block; onChange: (updated: Block) => void; onDelete: () => void; onClose: () => void }) {
   const update = (key: string, value: unknown) => onChange({ ...block, [key]: value });
 
   const fields: { key: string; label: string; type: string; placeholder?: string }[] = (() => {
@@ -177,7 +245,7 @@ function BlockEditor({ block, onChange, onDelete, onClose }: {
   })();
 
   return (
-    <div className="bg-white border-l border-gray-200 w-full max-w-sm p-5 overflow-y-auto flex flex-col">
+    <div className="bg-white w-full max-w-sm p-5 overflow-y-auto flex flex-col border-l shrink-0" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
       <div className="flex items-center justify-between mb-5">
         <h3 className="font-semibold text-sm text-gray-800 capitalize">Editar {block.type}</h3>
         <button onClick={onClose} className="text-gray-300 hover:text-gray-500 transition-colors">
@@ -203,43 +271,13 @@ function BlockEditor({ block, onChange, onDelete, onClose }: {
   );
 }
 
-const TEMPLATE_BLOCKS: Record<string, Block[]> = {
-  blank: [],
-  restaurant: [
-    { id: generateId(), type: "header", title: "Nuestro Menú", subtitle: "Sabores que enamoran" },
-    { id: generateId(), type: "section", title: "Entradas" },
-    { id: generateId(), type: "item", name: "Bruschetta", desc: "Pan tostado con tomate, albahaca y mozzarella", price: "12", image: "", tag: "Popular" },
-    { id: generateId(), type: "item", name: "Carpaccio", desc: "Res fina con rúcula y parmesano", price: "15", image: "", tag: "" },
-    { id: generateId(), type: "section", title: "Principales" },
-    { id: generateId(), type: "item", name: "Pasta Alfredo", desc: "Fettuccine en salsa cremosa con pollo", price: "22", image: "", tag: "" },
-    { id: generateId(), type: "item", name: "Salmón Grill", desc: "Salmón con verduras salteadas", price: "28", image: "", tag: "Chef" },
-    { id: generateId(), type: "divider" },
-    { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "Av. Principal 456", hours: "Mar-Dom 12-23hs", mapsUrl: "" },
-  ],
-  products: [
-    { id: generateId(), type: "header", title: "Nuestros Productos", subtitle: "Calidad y confianza" },
-    { id: generateId(), type: "item", name: "Producto 1", desc: "Descripción del producto", price: "49.99", image: "", tag: "Más vendido" },
-    { id: generateId(), type: "item", name: "Producto 2", desc: "Descripción del producto", price: "79.99", image: "", tag: "" },
-    { id: generateId(), type: "item", name: "Producto 3", desc: "Descripción del producto", price: "99.99", image: "", tag: "Nuevo" },
-    { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "", hours: "Lun-Vie 9-18hs", mapsUrl: "" },
-  ],
-  services: [
-    { id: generateId(), type: "header", title: "Nuestros Servicios", subtitle: "Tu mejor opción" },
-    { id: generateId(), type: "text", content: "Ofrecemos soluciones profesionales con años de experiencia en el rubro." },
-    { id: generateId(), type: "section", title: "Servicios" },
-    { id: generateId(), type: "item", name: "Servicio 1", desc: "Descripción detallada del servicio", price: "", image: "", tag: "" },
-    { id: generateId(), type: "item", name: "Servicio 2", desc: "Descripción detallada del servicio", price: "", image: "", tag: "" },
-    { id: generateId(), type: "contact", phone: "+54 11 1234-5678", address: "Av. Ejemplo 789", hours: "Lun-Vie 9-18hs", mapsUrl: "" },
-  ],
-};
-
 export default function CatalogEditPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
 
   const [blocks, setBlocks] = useState<Block[]>([]);
-  const [template, setTemplate] = useState("blank");
+  const [template, setTemplate] = useState("");
   const [fonts, setFonts] = useState<string[]>([]);
   const [themeId, setThemeId] = useState("claro");
   const [accentColor, setAccentColor] = useState("");
@@ -253,7 +291,7 @@ export default function CatalogEditPage() {
       .then(res => res.json())
       .then((data: CatalogData) => {
         setBlocks(data.blocks || []);
-        setTemplate(data.template || "blank");
+        setTemplate(data.template || "");
         setFonts(data.fonts?.length ? data.fonts : []);
         setThemeId(data.theme || "claro");
         setAccentColor(data.accent || "");
@@ -321,12 +359,15 @@ export default function CatalogEditPage() {
   };
 
   const applyTemplate = (tid: string) => {
+    const bt = BUSINESS_TYPES.find(b => b.id === tid);
     const newBlocks = TEMPLATE_BLOCKS[tid] || [];
     setBlocks(newBlocks.map(b => ({ ...b, id: generateId() })));
     setTemplate(tid);
+    if (bt) setThemeId(bt.theme);
     setSelectedId(null);
   };
 
+  const isBlank = blocks.length === 0;
   const selectedBlock = blocks.find(b => b.id === selectedId) || null;
 
   if (error && !loaded) return <div className="min-h-screen flex items-center justify-center text-red-500 text-sm">{error}</div>;
@@ -345,63 +386,77 @@ export default function CatalogEditPage() {
           {error && <span className="text-xs text-red-500">{error}</span>}
           <button onClick={save} disabled={saving}
             className="px-5 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
-            style={{ background: theme.accent, color: accentColor ? "#ffffff" : "#ffffff" }}>
+            style={{ background: theme.accent, color: theme.accentText }}>
             {saving ? "Guardando..." : "Guardar"}
           </button>
           <a href={`/c/${id}`} target="_blank" rel="noopener noreferrer" className="text-xs font-medium" style={{ color: theme.accent }}>Ver →</a>
         </div>
       </header>
 
+      <div className="px-4 py-2.5 shrink-0 flex gap-2 overflow-x-auto" style={{ background: theme.cardBg, borderBottom: isBlank ? "none" : `1px solid ${theme.sectionBorder}` }}>
+        {BUSINESS_TYPES.map(bt => (
+          <button key={bt.id} onClick={() => applyTemplate(bt.id)}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all text-left whitespace-nowrap ${template === bt.id ? "shadow-sm" : "opacity-60 hover:opacity-90"}`}
+            style={{
+              background: template === bt.id ? theme.accentLight : "transparent",
+              border: template === bt.id ? `1px solid ${theme.accent}20` : "1px solid transparent",
+            }}>
+            <span className="text-lg">{bt.icon}</span>
+            <div>
+              <div className="text-xs font-semibold" style={{ color: template === bt.id ? theme.accent : theme.text }}>{bt.label}</div>
+              <div className="text-[10px] leading-tight" style={{ color: theme.textMuted }}>{bt.desc}</div>
+            </div>
+          </button>
+        ))}
+        <button onClick={() => applyTemplate("blank")}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all whitespace-nowrap ${template === "blank" ? "shadow-sm" : "opacity-50 hover:opacity-80"}`}
+          style={{ background: template === "blank" ? theme.accentLight : "transparent" }}>
+          <span className="text-base">📄</span>
+          <span className="text-xs font-medium" style={{ color: theme.textMuted }}>Vacío</span>
+        </button>
+      </div>
+
       <div className="flex flex-1 overflow-hidden">
-        <aside className="w-64 overflow-y-auto shrink-0 p-4 space-y-5 hidden md:block" style={{ background: theme.cardBg, borderRight: `1px solid ${theme.sectionBorder}` }}>
-          {/* Theme selector */}
+        <aside className="w-52 overflow-y-auto shrink-0 p-3 space-y-4 hidden md:flex flex-col" style={{ background: theme.cardBg, borderRight: `1px solid ${theme.sectionBorder}` }}>
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: theme.textMuted }}>Tema visual</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.keys(themes).map(tid => (
-                <ThemeCard key={tid} id={tid} selected={themeId === tid} onClick={() => setThemeId(tid)} />
-              ))}
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Tema visual</h3>
+            <div className="grid grid-cols-2 gap-1">
+              {Object.keys(themes).map(tid => {
+                const t = themes[tid];
+                return (
+                  <button key={tid} onClick={() => setThemeId(tid)}
+                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${themeId === tid ? "ring-2 ring-purple-500" : "hover:bg-black/5"}`}
+                    style={{ background: themeId === tid ? theme.accentLight : "transparent", color: themeId === tid ? theme.accent : theme.textMuted }}>
+                    <span className="w-3 h-3 rounded-full shrink-0" style={{ background: t.accent }} />
+                    <span className="truncate">{t.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Accent color */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: theme.textMuted }}>Color de acento</h3>
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Color de acento</h3>
             <AccentPicker value={accentColor || theme.accent} onChange={setAccentColor} />
             {accentColor && (
-              <button onClick={() => setAccentColor("")} className="text-[10px] mt-1.5 opacity-60 hover:opacity-100" style={{ color: theme.textMuted }}>Usar color del tema</button>
+              <button onClick={() => setAccentColor("")} className="text-[10px] mt-1 opacity-60 hover:opacity-100" style={{ color: theme.textMuted }}>Usar color del tema</button>
             )}
           </div>
 
-          {/* Template */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: theme.textMuted }}>Contenido</h3>
-            <div className="space-y-1">
-              {TEMPLATES.map(t => (
-                <button key={t.id} onClick={() => applyTemplate(t.id)}
-                  className="w-full text-left text-sm px-3 py-2 rounded-lg transition-colors"
-                  style={{ background: template === t.id ? theme.accentLight : "transparent", color: template === t.id ? theme.accent : theme.textMuted }}>
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Add blocks */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: theme.textMuted }}>Agregar bloque</h3>
-            <div className="grid grid-cols-1 gap-1">
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: theme.textMuted }}>Agregar bloque</h3>
+            <div className="grid grid-cols-1 gap-0.5">
               {[
                 { type: "header", label: "Encabezado" },
                 { type: "section", label: "Sección" },
-                { type: "item", label: "Producto/Servicio" },
+                { type: "item", label: "Producto" },
                 { type: "text", label: "Texto" },
                 { type: "image", label: "Imagen" },
                 { type: "divider", label: "Divisor" },
                 { type: "contact", label: "Contacto" },
               ].map(btn => (
                 <button key={btn.type} onClick={() => addBlock(btn.type)}
-                  className="text-left text-sm px-3 py-2 rounded-lg transition-colors hover:opacity-70"
+                  className="text-left text-[11px] px-2 py-1.5 rounded-lg transition-colors hover:opacity-70"
                   style={{ color: theme.textMuted }}>
                   + {btn.label}
                 </button>
@@ -419,30 +474,28 @@ export default function CatalogEditPage() {
         </div>
 
         <main className="flex-1 overflow-y-auto flex justify-center py-6 px-4 pb-20 md:pb-6">
-          <div className="w-full max-w-sm">
-            {blocks.length === 0 ? (
-              <div className="text-center py-20" style={{ color: theme.textMuted }}>
-                <p className="text-sm">Agregá bloques desde la barra lateral</p>
-                <p className="text-xs mt-1 opacity-60">Usá una plantilla para empezar rápido</p>
-              </div>
-            ) : (
-              <div style={{ fontFamily: theme.font === "Inter" ? "system-ui" : theme.font }}>
-                {blocks.map((block, i) => (
-                  <div key={block.id} className="relative group">
-                    <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">
-                      <button onClick={() => moveBlock(i, -1)} disabled={i === 0} className="p-0.5 disabled:opacity-20 hover:opacity-70" style={{ color: theme.textMuted }}>
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
-                      </button>
-                      <button onClick={() => moveBlock(i, 1)} disabled={i === blocks.length - 1} className="p-0.5 disabled:opacity-20 hover:opacity-70" style={{ color: theme.textMuted }}>
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                      </button>
-                    </div>
-                    <BlockPreview block={block} onSelect={() => setSelectedId(block.id)} theme={theme} />
+          {isBlank ? (
+            <div className="flex flex-col items-center justify-center py-20" style={{ color: theme.textMuted }}>
+              <p className="text-sm font-medium" style={{ color: theme.text }}>Seleccioná un tipo de negocio</p>
+              <p className="text-xs mt-1 opacity-60">Elegí una plantilla de la barra superior para empezar</p>
+            </div>
+          ) : (
+            <div className="w-full max-w-sm" style={{ fontFamily: theme.font === "Inter" ? "system-ui" : theme.font }}>
+              {blocks.map((block, i) => (
+                <div key={block.id} className="relative group">
+                  <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">
+                    <button onClick={() => moveBlock(i, -1)} disabled={i === 0} className="p-0.5 disabled:opacity-20 hover:opacity-70" style={{ color: theme.textMuted }}>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                    </button>
+                    <button onClick={() => moveBlock(i, 1)} disabled={i === blocks.length - 1} className="p-0.5 disabled:opacity-20 hover:opacity-70" style={{ color: theme.textMuted }}>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <BlockPreview block={block} onSelect={() => setSelectedId(block.id)} theme={theme} template={template} />
+                </div>
+              ))}
+            </div>
+          )}
         </main>
 
         {selectedBlock && (
