@@ -121,27 +121,27 @@ export default function NewCatalogPage() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
         {/* Band 1 — Restaurant (top, -5deg, warm amber tint, scrolls right at 50s) */}
         <div className="absolute top-[2%] left-[-5%] w-[160%] h-[160px]" style={{ transform: "rotate(-5deg)", transformOrigin: "center center" }}>
-          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 50s linear infinite", filter: "sepia(0.35) hue-rotate(-5deg) saturate(0.7) blur(1px)" }}>
+          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 50s linear infinite", filter: "sepia(0.20) hue-rotate(-5deg) saturate(0.7)" }}>
             {[...BAND_FOOD, ...BAND_FOOD, ...BAND_FOOD].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-[140px] h-[90px] object-cover rounded-xl shrink-0" style={{ opacity: 0.09 }} loading="lazy" />
+              <img key={i} src={url} alt="" className="w-[140px] h-[90px] object-cover rounded-xl shrink-0" style={{ opacity: 0.20 }} loading="lazy" />
             ))}
           </div>
         </div>
 
         {/* Band 2 — Products (middle, +3deg, green tint, scrolls left at 35s) */}
         <div className="absolute top-[35%] left-[-5%] w-[160%] h-[140px]" style={{ transform: "rotate(3deg)", transformOrigin: "center center" }}>
-          <div className="flex gap-3 animate-band-scroll-left" style={{ animation: "band-scroll-left 35s linear infinite", filter: "sepia(0.25) hue-rotate(60deg) saturate(0.5) blur(1px)" }}>
+          <div className="flex gap-3 animate-band-scroll-left" style={{ animation: "band-scroll-left 35s linear infinite", filter: "sepia(0.15) hue-rotate(60deg) saturate(0.5)" }}>
             {[...BAND_PROD, ...BAND_PROD, ...BAND_PROD, ...BAND_PROD].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-[130px] h-[85px] object-cover rounded-xl shrink-0" style={{ opacity: 0.07 }} loading="lazy" />
+              <img key={i} src={url} alt="" className="w-[130px] h-[85px] object-cover rounded-xl shrink-0" style={{ opacity: 0.18 }} loading="lazy" />
             ))}
           </div>
         </div>
 
         {/* Band 3 — Services (bottom, -3deg, indigo tint, scrolls right at 40s) */}
         <div className="absolute bottom-[8%] left-[-5%] w-[160%] h-[130px]" style={{ transform: "rotate(-3deg)", transformOrigin: "center center" }}>
-          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 40s linear infinite", filter: "sepia(0.3) hue-rotate(190deg) saturate(0.4) blur(1px)" }}>
+          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 40s linear infinite", filter: "sepia(0.15) hue-rotate(190deg) saturate(0.4)" }}>
             {[...BAND_SERV, ...BAND_SERV, ...BAND_SERV, ...BAND_SERV, ...BAND_SERV].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-[120px] h-[80px] object-cover rounded-xl shrink-0" style={{ opacity: 0.08 }} loading="lazy" />
+              <img key={i} src={url} alt="" className="w-[120px] h-[80px] object-cover rounded-xl shrink-0" style={{ opacity: 0.16 }} loading="lazy" />
             ))}
           </div>
         </div>
@@ -170,12 +170,6 @@ export default function NewCatalogPage() {
           <>
             {/* ====== HERO SECTION ====== */}
             <section className="text-center mb-10 sm:mb-14">
-              {/* Step indicator */}
-              <div className="inline-flex items-center gap-1.5 mb-5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm border border-neutral-200/60 shadow-sm">
-                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-[10px] font-bold text-white shadow-sm shadow-amber-400/30">1</span>
-                <span className="text-[10px] font-medium text-neutral-500">de 3</span>
-              </div>
-
               {/* Icon box */}
               <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white shadow-lg border border-neutral-100 mb-6" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.06)" }}>
                 {/* Decorative catalog icon SVG */}
@@ -298,20 +292,6 @@ export default function NewCatalogPage() {
                   </div>
                 </button>
               ))}
-            </section>
-
-            {/* ====== BOTTOM RECOMMENDATION BANNER ====== */}
-            <section className="text-center">
-              <div
-                className="inline-flex flex-col sm:flex-row items-center gap-3 px-5 py-3 rounded-2xl bg-white/70 backdrop-blur-sm border border-amber-200/60 shadow-sm"
-                style={{ boxShadow: "0 2px 16px rgba(245,158,11,0.06)" }}
-              >
-                <span className="text-lg">💡</span>
-                <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                  <span className="font-semibold text-amber-600">¿No sabes cuál elegir?</span>{" "}
-                  Prueba <span className="font-semibold">Restaurante</span> — es la plantilla más completa con menú de ejemplo y fotos profesionales.
-                </p>
-              </div>
             </section>
           </>
         )}
