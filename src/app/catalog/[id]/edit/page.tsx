@@ -163,6 +163,17 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }, [categories, info, theme]);
 
+  useEffect(() => {
+    if (!loaded || !previewRef.current) return;
+    const timer = setTimeout(() => {
+      previewRef.current?.contentWindow?.postMessage(
+        { type: "catalog-preview-update", categories, info, theme },
+        window.location.origin
+      );
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [loaded]);
+
   const handleImageUpload = async (file: File, catIndex: number) => {
     setUploading(`cat-${catIndex}`);
     setError("");
@@ -297,12 +308,12 @@ useEffect(() => {
                         <input
                           value={info.logo || ""}
                           onChange={(e) => setInfo({ ...info, logo: e.target.value })}
-                          placeholder="Paste an image URL..."
-                          className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600"
+placeholder="Image URL (.jpg, .png, .webp)..."
+                        className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600"
                         />
-                        <label title={plan === "pro" ? "Upload from device" : "Pro plan required for uploads"} className={`shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded ${plan === "pro" ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200" : "bg-neutral-100 text-neutral-300"}`}>
-                          🖼
-                          {plan === "pro" && (
+                        {plan === "pro" && (
+                          <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium">
+                            + Foto
                             <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
                               const f = e.target.files?.[0];
                               if (!f) return;
@@ -317,13 +328,16 @@ useEffect(() => {
                               } catch { setError("Logo upload failed (Pro plan required)"); }
                               finally { setUploading(null); }
                             }} />
-                          )}
-                        </label>
+                          </label>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <input value={info.name || ""} onChange={(e) => setInfo({ ...info, name: e.target.value })} placeholder="Business name" className="flex-1 text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800" />
-                      <input value={info.phone || ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} placeholder="Phone" className="w-36 text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
+                    <div className="space-y-1">
+                      <p className="text-[9px] text-neutral-400">Tip: right-click any web image → "Copy image address" to get a direct URL</p>
+                      <div className="flex items-center gap-3">
+                        <input value={info.name || ""} onChange={(e) => setInfo({ ...info, name: e.target.value })} placeholder="Business name" className="flex-1 text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800" />
+                        <input value={info.phone || ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} placeholder="Phone" className="w-36 text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
+                      </div>
                     </div>
                     <button onClick={() => setShowBusinessExtra(!showBusinessExtra)} className="flex items-center gap-1 text-[10px] text-neutral-400 hover:text-neutral-600">
                       {showBusinessExtra ? "− Hide details" : "+ Address, hours, about..."}
@@ -400,13 +414,15 @@ useEffect(() => {
                         <input
                           value={cat.image}
                           onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: e.target.value }; setCategories(next); }}
-                          placeholder="Paste an image URL..."
+                          placeholder="Cover image URL (.jpg, .png)..."
                           className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 min-w-[120px]"
                         />
-                        <label title={plan === "pro" ? "Upload from device" : "Pro plan required for uploads"} className={`shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded ${plan === "pro" ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200" : "bg-neutral-100 text-neutral-300"}`}>
-                          🖼 {plan === "pro" ? "Upload" : "Pro"}
-                          {plan === "pro" && <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />}
-                        </label>
+                        {plan === "pro" && (
+                          <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium">
+                            + Foto
+                            <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />
+                          </label>
+                        )}
                         {cat.image && (
                           <button onClick={() => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: "" }; setCategories(next); }} className="text-[10px] text-red-400 hover:text-red-600">Remove</button>
                         )}
@@ -468,14 +484,19 @@ useEffect(() => {
                                               <input
                                                 value={item.image}
                                                 onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].image = e.target.value; setCategories(next); }}
-                                                placeholder="Image URL (optional)"
+                                                placeholder="Image URL (.jpg, .png, .webp)"
                                                 className="flex-1 text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-1 outline-none focus:border-neutral-400 text-neutral-500"
                                               />
-                                              <label title={plan === "pro" ? "Upload from device" : "Pro plan required for uploads"} className={`shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded ${plan === "pro" ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200" : "bg-neutral-100 text-neutral-300"}`}>
-                                                🖼
-                                                {plan === "pro" && <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleItemImageUpload(f, catIdx, subIdx, itemIdx); }} />}
+                                              {plan === "pro" && (
+                                              <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium">
+                                                + Foto
+                                                <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleItemImageUpload(f, catIdx, subIdx, itemIdx); }} />
                                               </label>
+                                            )}
                                             </div>
+                                            {item.image && !item.image.match(/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/i) && (
+                                              <p className="text-[9px] text-amber-600 ml-1">This may not be a valid image URL</p>
+                                            )}
                                             <textarea
                                               value={item.desc}
                                               onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].desc = e.target.value; setCategories(next); }}
@@ -534,7 +555,7 @@ useEffect(() => {
                   <a href={`/c/${qrId}`} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title="Open in new tab">↗</a>
                 </div>
               </div>
-              <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center">
+              <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center" style={{ overflowX: "hidden" }}>
                 <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="no" onLoad={() => { if (previewRef.current) { previewRef.current.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin); } }} />
               </div>
             </aside>
