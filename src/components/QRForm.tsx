@@ -817,12 +817,13 @@ export default function QRForm({ initialValues, onChange, onSubmit, submitLabel,
       )}
 
       {qrType === "catalog" && (
-        <div className="py-8 text-center space-y-4">
-          <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2zm0 8a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2z" /></svg>
-          </div>
-          <p className="text-gray-600 dark:text-gray-400 text-sm max-w-xs mx-auto">{t("catalogEditorDesc")}</p>
-          <a href="/catalog/new" className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors">Abrir editor de catálogo</a>
+        <div className="py-3">
+          <a href="/catalog/new" className="flex items-center justify-center gap-2 w-full max-w-md mx-auto px-4 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors active:scale-[0.98]">
+            <ImageIcon size={18} />
+            <span>{t("qrTypeCatalog")}</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </a>
+          <p className="text-xs text-gray-400 text-center mt-2 max-w-xs mx-auto">{t("catalogEditorDesc")}</p>
         </div>
       )}
 
