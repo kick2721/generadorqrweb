@@ -8,52 +8,67 @@ import { useLang } from "@/context/LangContext";
 const OPTIONS = [
   {
     id: "restaurant",
-    icon: "🍽️",
+    emoji: "🍽️",
     key: "catalogOnboardingRestaurant",
     descKey: "catalogOnboardingRestaurantDesc",
     color: "#f59e0b",
-    colorLight: "#fef3c7",
-    glow: "rgba(245,158,11,0.25)",
-    gradient: "from-amber-50 to-orange-50",
-    border: "border-amber-200",
-    badge: "Menú, platos, precios y fotos",
+    colorBg: "#fef3c7",
+    gradient: "from-amber-500 via-orange-500 to-rose-500",
+    glow: "rgba(245,158,11,0.30)",
+    tag: "Más popular",
+    tagColor: "#f59e0b",
+    tagBg: "#fef3c7",
   },
   {
     id: "products",
-    icon: "📦",
+    emoji: "📦",
     key: "catalogOnboardingProducts",
     descKey: "catalogOnboardingProductsDesc",
     color: "#10b981",
-    colorLight: "#d1fae5",
-    glow: "rgba(16,185,129,0.25)",
-    gradient: "from-emerald-50 to-teal-50",
-    border: "border-emerald-200",
-    badge: "Artículos, descripciones y precios",
+    colorBg: "#d1fae5",
+    gradient: "from-emerald-500 via-teal-500 to-cyan-500",
+    glow: "rgba(16,185,129,0.30)",
+    tag: "Para tiendas",
+    tagColor: "#10b981",
+    tagBg: "#d1fae5",
   },
   {
     id: "services",
-    icon: "🛠️",
+    emoji: "💼",
     key: "catalogOnboardingServices",
     descKey: "catalogOnboardingServicesDesc",
     color: "#6366f1",
-    colorLight: "#e0e7ff",
-    glow: "rgba(99,102,241,0.25)",
-    gradient: "from-indigo-50 to-purple-50",
-    border: "border-indigo-200",
-    badge: "Lista de servicios profesionales",
+    colorBg: "#e0e7ff",
+    gradient: "from-indigo-500 via-purple-500 to-violet-500",
+    glow: "rgba(99,102,241,0.30)",
+    tag: "Para profesionales",
+    tagColor: "#6366f1",
+    tagBg: "#e0e7ff",
   },
   {
     id: "blank",
-    icon: "✨",
+    emoji: "✨",
     key: "catalogOnboardingBlank",
     descKey: "catalogOnboardingBlankDesc",
     color: "#6b7280",
-    colorLight: "#f3f4f6",
-    glow: "rgba(107,114,128,0.15)",
-    gradient: "from-neutral-50 to-stone-50",
-    border: "border-neutral-200",
-    badge: "Desde cero, sin contenido",
+    colorBg: "#f3f4f6",
+    gradient: "from-neutral-400 via-neutral-500 to-stone-500",
+    glow: "rgba(107,114,128,0.20)",
+    tag: "Desde cero",
+    tagColor: "#6b7280",
+    tagBg: "#f3f4f6",
   },
+];
+
+const FLOATING_ICONS = [
+  { emoji: "🍕", x: "8%", y: "5%", size: "32px", delay: "0s" },
+  { emoji: "🥗", x: "85%", y: "8%", size: "28px", delay: "0.5s" },
+  { emoji: "☕", x: "12%", y: "75%", size: "24px", delay: "1s" },
+  { emoji: "🍰", x: "90%", y: "70%", size: "30px", delay: "1.5s" },
+  { emoji: "📱", x: "5%", y: "35%", size: "22px", delay: "2s" },
+  { emoji: "⭐", x: "92%", y: "38%", size: "26px", delay: "0.8s" },
+  { emoji: "🛒", x: "15%", y: "88%", size: "24px", delay: "1.2s" },
+  { emoji: "🔧", x: "80%", y: "15%", size: "20px", delay: "1.8s" },
 ];
 
 export default function NewCatalogPage() {
@@ -61,7 +76,6 @@ export default function NewCatalogPage() {
   const { lang } = useLang();
   const t = getT(lang);
   const [creating, setCreating] = useState("");
-  const [hovered, setHovered] = useState("");
 
   const create = async (template: string) => {
     if (creating) return;
@@ -81,147 +95,208 @@ export default function NewCatalogPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center" style={{ background: "#f8f7f4" }}>
-      {/* Top gradient banner */}
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-amber-100/40 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-indigo-100/30 via-transparent to-transparent pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #fdfbf7 0%, #f7f3ed 30%, #f0ebe3 70%, #ede7dd 100%)" }}>
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.015, backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: "256px 256px" }} />
 
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
-        backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px), radial-gradient(circle, #f59e0b 1px, transparent 1px)",
-        backgroundSize: "40px 40px, 60px 60px",
-        backgroundPosition: "0 0, 20px 20px",
-      }} />
+      {/* Floating decorative emojis */}
+      {FLOATING_ICONS.map((icon, i) => (
+        <span
+          key={i}
+          className="absolute pointer-events-none select-none animate-float"
+          style={{
+            left: icon.x,
+            top: icon.y,
+            fontSize: icon.size,
+            opacity: 0.15,
+            animationDelay: icon.delay,
+            filter: "blur(0.5px)",
+          }}
+        >
+          {icon.emoji}
+        </span>
+      ))}
 
-      {/* Colorful floating orbs */}
-      <div className="absolute top-[10%] left-[10%] w-72 h-72 rounded-full opacity-[0.08] blur-3xl pointer-events-none" style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)" }} />
-      <div className="absolute bottom-[15%] right-[8%] w-80 h-80 rounded-full opacity-[0.07] blur-3xl pointer-events-none" style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }} />
-      <div className="absolute top-[50%] left-[50%] w-64 h-64 rounded-full opacity-[0.05] blur-3xl pointer-events-none" style={{ background: "linear-gradient(135deg, #10b981, #06b6d4)", transform: "translate(-50%, -50%)" }} />
+      {/* Gradient orbs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%)" }} />
+      <div className="absolute bottom-[-15%] right-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 70%)" }} />
+      <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%)" }} />
 
-      <div className="relative z-10 w-full max-w-2xl mx-auto px-4 py-12">
-        {creating ? (
-          <div className="flex flex-col items-center justify-center space-y-5">
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
+        {creating !== "" ? (
+          /* Loading state */
+          <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
             <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-white shadow-lg border border-neutral-100 flex items-center justify-center">
-                <span className="text-2xl animate-bounce">{OPTIONS.find(o => o.id === creating)?.icon || "✨"}</span>
+              <div className="w-20 h-20 rounded-3xl bg-white shadow-xl border border-neutral-100 flex items-center justify-center" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
+                <span className="text-3xl animate-bounce">{OPTIONS.find((o) => o.id === creating)?.emoji || "✨"}</span>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-green-400 border-2 border-white flex items-center justify-center">
-                <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
+              <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-emerald-400 border-[3px] border-white flex items-center justify-center shadow-md">
+                <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
               </div>
             </div>
-            <p className="text-sm text-neutral-500 animate-pulse">Creating your catalog...</p>
+            <p className="text-sm text-neutral-500 animate-pulse font-medium">Creando tu catálogo...</p>
           </div>
         ) : (
           <>
-            {/* Header */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-md border border-neutral-100 mb-6" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+            {/* ====== HERO SECTION ====== */}
+            <section className="text-center mb-10 sm:mb-14">
+              {/* Step indicator */}
+              <div className="inline-flex items-center gap-1.5 mb-5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm border border-neutral-200/60 shadow-sm">
+                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-[10px] font-bold text-white shadow-sm shadow-amber-400/30">1</span>
+                <span className="text-[10px] font-medium text-neutral-500">de 3</span>
+              </div>
+
+              {/* Icon box */}
+              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white shadow-lg border border-neutral-100 mb-6" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.06)" }}>
+                {/* Decorative catalog icon SVG */}
+                <svg className="w-10 h-10 sm:w-12 sm:h-12" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="4" width="17" height="17" rx="3" fill="url(#g1)" />
+                  <rect x="27" y="4" width="17" height="17" rx="3" fill="url(#g2)" />
+                  <rect x="4" y="27" width="17" height="17" rx="3" fill="url(#g3)" />
+                  <rect x="27" y="27" width="17" height="17" rx="3" fill="url(#g4)" />
+                  <defs>
+                    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f59e0b" /><stop offset="1" stopColor="#ef4444" /></linearGradient>
+                    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#10b981" /><stop offset="1" stopColor="#06b6d4" /></linearGradient>
+                    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#6366f1" /><stop offset="1" stopColor="#8b5cf6" /></linearGradient>
+                    <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ec4899" /><stop offset="1" stopColor="#f43f5e" /></linearGradient>
+                  </defs>
                 </svg>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 mb-2">{t.catalogOnboardingTitle}</h1>
-              <p className="text-sm text-neutral-500 max-w-md mx-auto leading-relaxed">{t.catalogOnboardingSubtitle}</p>
-            </div>
 
-            {/* Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {OPTIONS.map((opt) => {
-                const isHovered = hovered === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => create(opt.id)}
-                    onMouseEnter={() => setHovered(opt.id)}
-                    onMouseLeave={() => setHovered("")}
-                    className="group relative text-left p-5 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 active:scale-[0.98] overflow-hidden"
-                    style={{
-                      border: `1px solid ${isHovered ? opt.color + "40" : "#e5e7eb"}`,
-                      boxShadow: isHovered ? `0 8px 32px ${opt.glow}` : "0 2px 8px rgba(0,0,0,0.04)",
-                    }}
-                  >
-                    {/* Top accent stripe */}
-                    <div
-                      className="absolute top-0 left-0 right-0 transition-all duration-500"
-                      style={{ height: isHovered ? "3px" : "0px", background: opt.color }}
-                    />
+              {/* Title */}
+              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-neutral-900 mb-3 leading-tight">
+                {t.catalogOnboardingTitle}
+              </h1>
 
-                    {/* Background gradient on hover */}
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} transition-opacity duration-500 ${isHovered ? "opacity-100" : "opacity-0"}`}
-                    />
+              {/* Subtitle */}
+              <p className="text-sm sm:text-base text-neutral-500 max-w-lg mx-auto leading-relaxed mb-3">
+                {t.catalogOnboardingSubtitle}
+              </p>
 
-                    <div className="relative flex items-start gap-4">
-                      {/* Icon circle */}
-                      <div
-                        className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 relative"
-                        style={{
-                          background: isHovered ? opt.color : opt.colorLight,
-                          boxShadow: isHovered ? `0 4px 16px ${opt.glow}` : "0 1px 4px rgba(0,0,0,0.04)",
-                          transform: isHovered ? "scale(1.08)" : "scale(1)",
-                        }}
-                      >
-                        <span className="text-2xl transition-transform duration-300" style={{ transform: isHovered ? "scale(1.15)" : "scale(1)" }}>
-                          {opt.icon}
-                        </span>
+              {/* Divider */}
+              <div className="flex items-center justify-center gap-3 mt-2">
+                <div className="h-px w-12 bg-gradient-to-r from-transparent to-neutral-300" />
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-300" />
+                <div className="h-px w-12 bg-gradient-to-l from-transparent to-neutral-300" />
+              </div>
+            </section>
+
+            {/* ====== CARDS SECTION ====== */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-10">
+              {OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => create(opt.id)}
+                  className="group relative text-left p-5 sm:p-6 rounded-2xl bg-white/90 backdrop-blur-sm border border-white/80 hover:border-transparent transition-all duration-500 active:scale-[0.98] overflow-hidden"
+                  style={{
+                    boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 12px 40px ${opt.glow}, 0 2px 8px rgba(0,0,0,0.06)`;
+                    e.currentTarget.style.borderColor = opt.color + "40";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "0 2px 16px rgba(0,0,0,0.04)";
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  {/* Top gradient bar on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ backgroundImage: `linear-gradient(to right, transparent, ${opt.color}, transparent)` }} />
+
+                  {/* Decorative background shape */}
+                  <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-[0.04] group-hover:opacity-[0.08] transition-opacity duration-500 pointer-events-none" style={{ background: opt.color }} />
+                  <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-full opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500 pointer-events-none" style={{ background: opt.color }} />
+
+                  <div className="relative flex items-start gap-4 sm:gap-5">
+                    {/* Emoji circle with gradient ring */}
+                    <div className="relative shrink-0">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center transition-all duration-500" style={{ background: opt.colorBg }}>
+                        <span className="text-2xl sm:text-3xl transition-transform duration-500 group-hover:scale-110">{opt.emoji}</span>
                       </div>
+                      {/* Glow ring on hover */}
+                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: `0 0 0 3px ${opt.color}30, 0 0 20px ${opt.color}20` }} />
+                    </div>
 
-                      <div className="flex-1 min-w-0 pt-1">
-                        <h3 className="text-sm font-bold text-neutral-800 group-hover:text-neutral-900 transition-colors">
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-sm sm:text-base font-bold text-neutral-800 group-hover:text-neutral-900 transition-colors">
                           {(t as any)[opt.key]}
                         </h3>
-                        <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                          {(t as any)[opt.descKey]}
-                        </p>
-
-                        {/* Badge chip */}
-                        <span
-                          className="inline-block mt-2.5 text-[10px] font-medium px-2.5 py-1 rounded-full transition-all duration-300"
-                          style={{
-                            background: isHovered ? opt.color + "18" : "#f3f4f6",
-                            color: isHovered ? opt.color : "#9ca3af",
-                          }}
-                        >
-                          {opt.badge}
+                        {/* Tag badge */}
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: opt.tagBg, color: opt.tagColor }}>
+                          {opt.tag}
                         </span>
                       </div>
+                      <p className="text-xs sm:text-sm text-neutral-500 mt-1 leading-relaxed line-clamp-2">
+                        {(t as any)[opt.descKey]}
+                      </p>
 
-                      {/* Arrow */}
-                      <div
-                        className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 mt-1"
-                        style={{
-                          background: isHovered ? opt.color + "12" : "#f9fafb",
-                        }}
-                      >
-                        <svg
-                          className="w-4 h-4 transition-all duration-300"
-                          style={{
-                            color: isHovered ? opt.color : "#d1d5db",
-                            transform: isHovered ? "translateX(2px)" : "translateX(0)",
-                          }}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                      {/* Feature dots */}
+                      <div className="flex items-center gap-3 mt-3">
+                        {opt.id === "restaurant" && (
+                          <>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> Fotos incluidas</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 86 platos</span>
+                          </>
+                        )}
+                        {opt.id === "products" && (
+                          <>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 2 categorías</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 14 productos</span>
+                          </>
+                        )}
+                        {opt.id === "services" && (
+                          <>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 2 categorías</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 12 servicios</span>
+                          </>
+                        )}
+                        {opt.id === "blank" && (
+                          <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> Tú decides el contenido</span>
+                        )}
                       </div>
                     </div>
-                  </button>
-                );
-              })}
-            </div>
 
-            {/* Bottom branding */}
-            <p className="text-center text-[11px] text-neutral-400 mt-8">
-              Los datos de ejemplo se pueden modificar o eliminar después
-            </p>
+                    {/* Arrow indicator */}
+                    <div className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-500 mt-1" style={{ background: "#f9fafb" }}>
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-all duration-500 text-neutral-300 group-hover:translate-x-1" style={{ color: "#d1d5db" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </section>
+
+            {/* ====== BOTTOM RECOMMENDATION BANNER ====== */}
+            <section className="text-center">
+              <div
+                className="inline-flex flex-col sm:flex-row items-center gap-3 px-5 py-3 rounded-2xl bg-white/70 backdrop-blur-sm border border-amber-200/60 shadow-sm"
+                style={{ boxShadow: "0 2px 16px rgba(245,158,11,0.06)" }}
+              >
+                <span className="text-lg">💡</span>
+                <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                  <span className="font-semibold text-amber-600">¿No sabes cuál elegir?</span>{" "}
+                  Prueba <span className="font-semibold">Restaurante</span> — es la plantilla más completa con menú de ejemplo y fotos profesionales.
+                </p>
+              </div>
+            </section>
           </>
         )}
       </div>
+
+      {/* Keyframes for floating animation */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 }
