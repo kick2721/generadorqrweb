@@ -53,8 +53,6 @@ export default function CatalogPage() {
   const [openCatId, setOpenCatId] = useState<string | null>(null);
   const [activeSub, setActiveSub] = useState<string>("");
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const pillRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
-  const pillsScrollRef = useRef<HTMLDivElement>(null);
   const modalSubsScrollRef = useRef<HTMLDivElement>(null);
   const modalSectionRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const modalPillRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
@@ -114,10 +112,6 @@ export default function CatalogPage() {
     if (el) cardRefs.current.set(id, el);
     else cardRefs.current.delete(id);
   }, []);
-  const setPillRef = useCallback((id: string, el: HTMLAnchorElement | null) => {
-    if (el) pillRefs.current.set(id, el);
-    else pillRefs.current.delete(id);
-  }, []);
   const setModalSectionRef = useCallback((id: string, el: HTMLDivElement | null) => {
     if (el) modalSectionRefs.current.set(id, el);
     else modalSectionRefs.current.delete(id);
@@ -136,7 +130,6 @@ export default function CatalogPage() {
             const id = entry.target.getAttribute("data-cat-id");
             if (id) {
               setActiveCat(id);
-              pillRefs.current.get(id)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
             }
           }
         }
@@ -229,40 +222,6 @@ export default function CatalogPage() {
                 {info.name}
               </span>
             ) : null}
-          </div>
-          <div ref={pillsScrollRef} className="flex-1 overflow-x-auto whitespace-nowrap">
-            <nav className="flex gap-2" aria-label="Categories">
-              {cats.map((c) => (
-                <a
-                  key={c.id}
-                  ref={(el) => setPillRef(c.id, el)}
-                  href={`#cat-${c.id}`}
-                  onClick={() => {
-                    setActiveCat(c.id);
-                    const el = cardRefs.current.get(c.id);
-                    if (el) {
-                      if (openCatId) {
-                        closeCat();
-                        setTimeout(() => {
-                          el.scrollIntoView({ behavior: "smooth", block: "start" });
-                          setActiveCat(c.id);
-                        }, 80);
-                      } else {
-                        el.scrollIntoView({ behavior: "smooth", block: "start" });
-                      }
-                    }
-                  }}
-                  className="px-3 py-1.5 text-xs font-medium rounded-full transition-all whitespace-nowrap"
-                  style={{
-                    background: (c.id === activeCat && !openCatId) ? t.pillActiveBg : t.pillBg,
-                    color: (c.id === activeCat && !openCatId) ? t.pillActiveText : t.pillText,
-                    border: (c.id === activeCat && !openCatId) ? "none" : `1px solid ${t.border}`,
-                  }}
-                >
-                  {c.name}
-                </a>
-              ))}
-            </nav>
           </div>
         </div>
       </header>

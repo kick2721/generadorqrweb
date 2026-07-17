@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase.storage.from("catalog-images").upload(name, buffer, {
     contentType: file.type,
-    upsert: false,
+    upsert: true,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

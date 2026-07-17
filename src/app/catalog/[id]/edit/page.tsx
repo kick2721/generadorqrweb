@@ -87,7 +87,15 @@ export default function CatalogEditPage() {
   const [previewDevice, setPreviewDevice] = useState<"mobile" | "desktop">("mobile");
   const [showBusinessExtra, setShowBusinessExtra] = useState(false);
   const [showThemePopover, setShowThemePopover] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [editingItem, setEditingItem] = useState<{
+    catIdx: number;
+    subIdx: number;
+    itemIdx: number;
+    data: Item;
+    useTag: boolean;
+    useKcal: boolean;
+    useTime: boolean;
+  } | null>(null);
   const previewRef = useRef<HTMLIFrameElement>(null);
 
 useEffect(() => {
@@ -181,15 +189,15 @@ useEffect(() => {
       const form = new FormData();
       form.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: form });
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
       const { url } = await res.json();
       setCategories((prev) => {
         const next = [...prev];
         next[catIndex] = { ...next[catIndex], image: url };
         return next;
       });
-    } catch {
-      setError("Upload failed (Pro plan required)");
+    } catch (e: any) {
+      setError(e.message || "Upload failed");
     } finally {
       setUploading(null);
     }
@@ -202,15 +210,15 @@ useEffect(() => {
       const form = new FormData();
       form.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: form });
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
       const { url } = await res.json();
       setCategories((prev) => {
         const next = structuredClone(prev) as Category[];
         next[catIndex].subcategories[subIndex].items[itemIndex].image = url;
         return next;
       });
-    } catch {
-      setError("Upload failed (Pro plan required)");
+    } catch (e: any) {
+      setError(e.message || "Upload failed");
     } finally {
       setUploading(null);
     }
@@ -224,12 +232,32 @@ useEffect(() => {
     );
   }
 
-  const toggleItemExpanded = (itemKey: string) => {
-    setExpandedItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(itemKey)) next.delete(itemKey); else next.add(itemKey);
+  const openItemEdit = (catIdx: number, subIdx: number, itemIdx: number) => {
+    const it = categories[catIdx]?.subcategories[subIdx]?.items[itemIdx];
+    if (!it) return;
+    setEditingItem({
+      catIdx, subIdx, itemIdx,
+      data: { ...it },
+      useTag: !!it.tag,
+      useKcal: !!it.kcal,
+      useTime: !!it.time,
+    });
+  };
+
+  const saveItemEdit = () => {
+    if (!editingItem) return;
+    const { catIdx, subIdx, itemIdx, data, useTag, useKcal, useTime } = editingItem;
+    setCategories((prev) => {
+      const next = structuredClone(prev) as Category[];
+      next[catIdx].subcategories[subIdx].items[itemIdx] = {
+        ...data,
+        tag: useTag ? (data.tag || "") : "",
+        kcal: useKcal ? (data.kcal || "") : "",
+        time: useTime ? (data.time || "") : "",
+      };
       return next;
     });
+    setEditingItem(null);
   };
 
   return (
@@ -325,7 +353,7 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                                 const { url } = await res.json();
                                 setInfo({ ...info, logo: url });
                                 setTheme(theme ? { ...theme, showLogo: true } : null);
-                              } catch { setError("Logo upload failed (Pro plan required)"); }
+                              } catch (e: any) { setError(e.message || "Logo upload failed"); }
                               finally { setUploading(null); }
                             }} />
                           </label>
@@ -336,6 +364,23 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                       <p className="text-[9px] text-neutral-400">Tip: right-click any web image → "Copy image address" to get a direct URL</p>
                       <div className="flex items-center gap-3">
                         <input value={info.name || ""} onChange={(e) => setInfo({ ...info, name: e.target.value })} placeholder="Business name" className="flex-1 text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800" />
+                        <select
+                          value={info.currency || "$"}
+                          onChange={(e) => setInfo({ ...info, currency: e.target.value })}
+                          className="text-xs bg-neutral-50 outline-none border border-neutral-200 rounded px-2 py-1 text-neutral-700 cursor-pointer hover:border-neutral-400"
+                          title="Currency"
+                        >
+                          <option value="$">$ USD</option>
+                          <option value="€">€ EUR</option>
+                          <option value="£">£ GBP</option>
+                          <option value="kr">kr SEK</option>
+                          <option value="¥">¥ JPY</option>
+                          <option value="₹">₹ INR</option>
+                          <option value="R$">R$ BRL</option>
+                          <option value="د.أ">د.أ JOD</option>
+                          <option value="₪">₪ ILS</option>
+                          <option value="AED">AED</option>
+                        </select>
                         <input value={info.phone || ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} placeholder="Phone" className="w-36 text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
                       </div>
                     </div>
@@ -350,7 +395,6 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                         </div>
                         <div className="flex gap-2">
                           <input value={info.mapsUrl || ""} onChange={(e) => setInfo({ ...info, mapsUrl: e.target.value })} placeholder="Google Maps URL" className="flex-1 bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
-                          <input value={info.currency || "$"} onChange={(e) => setInfo({ ...info, currency: e.target.value })} placeholder="$" className="w-20 bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
                         </div>
                         <textarea value={info.about || ""} onChange={(e) => setInfo({ ...info, about: e.target.value })} rows={2} placeholder="About your business (shown in the menu header)" className="w-full text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 resize-none" />
                       </div>
@@ -449,68 +493,33 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                                 </div>
 
                                 {/* Items list */}
-                                <div className="space-y-1.5 ml-2 border-l-2 border-neutral-100 pl-3">
+                                <div className="space-y-1 ml-2 border-l-2 border-neutral-100 pl-3">
                                   {sub.items.map((item, itemIdx) => {
                                     const itemKey = `${catIdx}-${subIdx}-${itemIdx}`;
-                                    const isExpanded = expandedItems.has(itemKey);
                                     return (
-                                      <div key={item.id} className="group">
-<div className="flex items-center gap-2 py-0.5">
-                                          <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto] gap-1 items-center">
-                                            <input
-                                              value={item.name}
-                                              onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].name = e.target.value; setCategories(next); }}
-                                              placeholder="Item name"
-                                              className="w-full text-[11px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-0.5 text-neutral-800 font-medium"
-                                            />
-                                            <input
-                                              value={item.price}
-                                              onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].price = e.target.value; setCategories(next); }}
-                                              placeholder="$0.00"
-                                              className="w-16 text-right text-[11px] font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-0.5 text-neutral-600"
-                                            />
-                                          </div>
-                                          <button onClick={() => toggleItemExpanded(itemKey)} className="text-neutral-300 hover:text-neutral-500 shrink-0" title="More options">
-                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                                          </button>
-                                          <button onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.splice(itemIdx, 1); setCategories(next); }} className="text-red-300 hover:text-red-500 shrink-0 opacity-0 group-hover:opacity-100 transition">
-                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                                          </button>
-                                        </div>
-                                        {/* Expanded: image URL, description, tag, kcal, time */}
-                                        {isExpanded && (
-                                          <div className="ml-0 mb-1.5 space-y-1.5">
-                                            <div className="flex items-center gap-1">
-                                              <input
-                                                value={item.image}
-                                                onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].image = e.target.value; setCategories(next); }}
-                                                placeholder="Image URL (.jpg, .png, .webp)"
-                                                className="flex-1 text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-1 outline-none focus:border-neutral-400 text-neutral-500"
-                                              />
-                                              {plan === "pro" && (
-                                              <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium">
-                                                + Foto
-                                                <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleItemImageUpload(f, catIdx, subIdx, itemIdx); }} />
-                                              </label>
-                                            )}
-                                            </div>
-                                            {item.image && !item.image.match(/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/i) && (
-                                              <p className="text-[9px] text-amber-600 ml-1">This may not be a valid image URL</p>
-                                            )}
-                                            <textarea
-                                              value={item.desc}
-                                              onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].desc = e.target.value; setCategories(next); }}
-                                              placeholder="Description"
-                                              rows={2}
-                                              className="w-full text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-1 resize-none outline-none focus:border-neutral-400 text-neutral-500"
-                                            />
-                                            <div className="flex gap-2 flex-wrap">
-                                              <input value={item.tag || ""} onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].tag = e.target.value; setCategories(next); }} placeholder="Tag (e.g. Popular)" className="text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-0.5 outline-none focus:border-neutral-400 w-28 text-neutral-500" />
-                                              <input value={item.kcal || ""} onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].kcal = e.target.value; setCategories(next); }} placeholder="kcal" className="text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-0.5 outline-none focus:border-neutral-400 w-16 text-neutral-500" />
-                                              <input value={item.time || ""} onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].time = e.target.value; setCategories(next); }} placeholder="min" className="text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-0.5 outline-none focus:border-neutral-400 w-14 text-neutral-500" />
-                                            </div>
-                                          </div>
+                                      <div key={item.id} className="group flex items-center gap-2 py-0.5">
+                                        <span className="flex-1 truncate text-[11px] font-medium text-neutral-800" title={item.name || "Untitled"}>
+                                          {item.name || <span className="text-neutral-400 italic">Untitled item</span>}
+                                        </span>
+                                        {item.price && (
+                                          <span className="text-[11px] font-semibold text-neutral-600 whitespace-nowrap">
+                                            {(info?.currency || "$")}{item.price}
+                                          </span>
                                         )}
+                                        <button
+                                          onClick={() => openItemEdit(catIdx, subIdx, itemIdx)}
+                                          className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shrink-0"
+                                          title="Edit item"
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          onClick={() => { if (!confirm("Delete this item?")) return; const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.splice(itemIdx, 1); setCategories(next); }}
+                                          className="text-red-300 hover:text-red-500 shrink-0 opacity-0 group-hover:opacity-100 transition"
+                                          title="Delete"
+                                        >
+                                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
                                       </div>
                                     );
                                   })}
@@ -558,8 +567,96 @@ placeholder="Image URL (.jpg, .png, .webp)..."
               <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center" style={{ overflowX: "hidden" }}>
                 <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="no" onLoad={() => { if (previewRef.current) { previewRef.current.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin); } }} />
               </div>
-            </aside>
+             </aside>
       </div>
+
+      {/* Item edit modal */}
+      {editingItem && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 pb-8 px-4 bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-full overflow-y-auto p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-sm text-neutral-800">Edit item</h3>
+              <button onClick={() => setEditingItem(null)} className="text-neutral-400 hover:text-neutral-600">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex-1 space-y-1">
+                <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Name</label>
+                <input value={editingItem.data.name} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, name: e.target.value } })} placeholder="Item name" className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-800" />
+              </div>
+              <div className="w-28 space-y-1">
+                <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Price</label>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-neutral-500">{info?.currency || "$"}</span>
+                  <input value={editingItem.data.price} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, price: e.target.value } })} placeholder="0.00" className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-800" />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Description</label>
+              <textarea value={editingItem.data.desc} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, desc: e.target.value } })} placeholder="Describe the item..." rows={3} className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700 resize-none" />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Image URL</label>
+              <div className="flex items-center gap-2">
+                <input value={editingItem.data.image} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, image: e.target.value } })} placeholder="Direct image URL (.jpg, .png, .webp)" className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700" />
+                {plan === "pro" && (
+                  <label title="Upload from device" className="shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200">
+                    + Foto
+                    <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      setUploading("item-modal");
+                      try {
+                        const form = new FormData(); form.append("file", f);
+                        const res = await fetch("/api/upload", { method: "POST", body: form });
+                        if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
+                        const { url } = await res.json();
+                        setEditingItem({ ...editingItem, data: { ...editingItem.data, image: url } });
+                      } catch (e: any) { setError(e.message || "Upload failed"); }
+                      finally { setUploading(null); }
+                    }} />
+                  </label>
+                )}
+              </div>
+            </div>
+
+            <div className="border-t border-neutral-100 pt-3 space-y-2">
+              <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">Optional fields</p>
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-600">
+                <input type="checkbox" checked={editingItem.useTag} onChange={(e) => setEditingItem({ ...editingItem, useTag: e.target.checked })} className="rounded border-neutral-300 text-neutral-800" />
+                Tag (e.g. Popular, Chef's Special, Vegan...)
+              </label>
+              {editingItem.useTag && (
+                <input value={editingItem.data.tag || ""} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, tag: e.target.value } })} placeholder="e.g. Signature" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 outline-none focus:border-neutral-400 text-neutral-700" />
+              )}
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-600">
+                <input type="checkbox" checked={editingItem.useKcal} onChange={(e) => setEditingItem({ ...editingItem, useKcal: e.target.checked })} className="rounded border-neutral-300 text-neutral-800" />
+                Calories (kcal)
+              </label>
+              {editingItem.useKcal && (
+                <input value={editingItem.data.kcal || ""} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, kcal: e.target.value } })} placeholder="e.g. 350" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 outline-none focus:border-neutral-400 text-neutral-700" />
+              )}
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-600">
+                <input type="checkbox" checked={editingItem.useTime} onChange={(e) => setEditingItem({ ...editingItem, useTime: e.target.checked })} className="rounded border-neutral-300 text-neutral-800" />
+                Preparation time (min)
+              </label>
+              {editingItem.useTime && (
+                <input value={editingItem.data.time || ""} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, time: e.target.value } })} placeholder="e.g. 15" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 outline-none focus:border-neutral-400 text-neutral-700" />
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setEditingItem(null)} className="px-4 py-2 text-xs font-medium rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200">Cancel</button>
+              <button onClick={saveItemEdit} className="px-4 py-2 text-xs font-semibold rounded-lg bg-neutral-900 text-white hover:bg-neutral-800">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
