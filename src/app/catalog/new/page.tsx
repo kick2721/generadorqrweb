@@ -60,16 +60,34 @@ const OPTIONS = [
   },
 ];
 
-const FLOATING_ICONS = [
-  { emoji: "🍕", x: "8%", y: "5%", size: "32px", delay: "0s" },
-  { emoji: "🥗", x: "85%", y: "8%", size: "28px", delay: "0.5s" },
-  { emoji: "☕", x: "12%", y: "75%", size: "24px", delay: "1s" },
-  { emoji: "🍰", x: "90%", y: "70%", size: "30px", delay: "1.5s" },
-  { emoji: "📱", x: "5%", y: "35%", size: "22px", delay: "2s" },
-  { emoji: "⭐", x: "92%", y: "38%", size: "26px", delay: "0.8s" },
-  { emoji: "🛒", x: "15%", y: "88%", size: "24px", delay: "1.2s" },
-  { emoji: "🔧", x: "80%", y: "15%", size: "20px", delay: "1.8s" },
-];
+const B = "https://hreqqnwsivtzewpjcwcs.supabase.co/storage/v1/object/public/catalog-images/seed";
+
+const BAND_FOOD = [
+  "main-course-5.webp", "a-close-up-of-a-burger-with-beef-patty-with-vegeta-2024-11-26-10-45-47-utc-1.webp",
+  "chicken-burger-with-bacon-on-wooden-board-front-v-2025-01-10-04-01-23-utc-1.webp",
+  "mansaf-jordanian-national-dish-2025-03-08-00-34-30-utc-1.webp",
+  "breaded-torpedo-shrimps-2024-10-18-09-19-13-utc.webp",
+  "tomato-soup-with-tortellini-2025-03-07-16-01-07-utc.webp",
+  "vegetable-salad-with-cheese-mozzarella-tomatoes-2025-02-09-22-46-39-utc.webp",
+  "pizza-margherita-homemade-2024-09-23-13-51-43-utc.webp",
+  "Panna-cotta.webp", "coffee-latte-art-2025-03-25-16-22-03-utc.webp",
+  "a-wooden-cutting-board-topped-with-three-pastries-2025-02-11-19-43-21-utc-1.webp",
+  "karak-tea.webp",
+].map((f) => `${B}/${f}`);
+
+const BAND_PROD = [
+  "categorize-design-v1-1.webp", "categorize-design-v1.webp",
+  "cup-of-espresso-with-coconut-cookies-on-a-plate-2025-03-12-20-36-13-utc.webp",
+  "matcha-latte-with-latte-art-a-cup-of-japanese-gre-2024-12-02-03-17-00-utc.webp",
+  "Cappuccino-white-coffee-cup-with-heart-shape-art-2024-12-10-01-18-55-utc.webp",
+  "Panna-cotta.webp", "Affogato-al-Caffe.webp", "Tiramisu-1.webp",
+].map((f) => `${B}/${f}`);
+
+const BAND_SERV = [
+  "categorize-design-v1-2.webp", "categorize-design-v1-3.webp",
+  "Gelati-Misti.webp", "Tortino-di-Mele-con-Gelato.webp",
+  "Coppa-di-Fragole-e-Gelato.webp", "ice-cream-and-berry-fruits-with-chocolate-sauce-an-2024-12-13-05-40-08-utc-1.webp",
+].map((f) => `${B}/${f}`);
 
 export default function NewCatalogPage() {
   const router = useRouter();
@@ -97,25 +115,37 @@ export default function NewCatalogPage() {
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #fdfbf7 0%, #f7f3ed 30%, #f0ebe3 70%, #ede7dd 100%)" }}>
       {/* Noise texture overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.015, backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: "256px 256px" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.012, backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: "256px 256px" }} />
 
-      {/* Floating decorative emojis */}
-      {FLOATING_ICONS.map((icon, i) => (
-        <span
-          key={i}
-          className="absolute pointer-events-none select-none animate-float"
-          style={{
-            left: icon.x,
-            top: icon.y,
-            fontSize: icon.size,
-            opacity: 0.15,
-            animationDelay: icon.delay,
-            filter: "blur(0.5px)",
-          }}
-        >
-          {icon.emoji}
-        </span>
-      ))}
+      {/* ===== DIAGONAL IMAGE BANDS ===== */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        {/* Band 1 — Restaurant (top, -5deg, warm amber tint, scrolls right at 50s) */}
+        <div className="absolute top-[2%] left-[-5%] w-[160%] h-[160px]" style={{ transform: "rotate(-5deg)", transformOrigin: "center center" }}>
+          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 50s linear infinite", filter: "sepia(0.35) hue-rotate(-5deg) saturate(0.7) blur(1px)" }}>
+            {[...BAND_FOOD, ...BAND_FOOD, ...BAND_FOOD].map((url, i) => (
+              <img key={i} src={url} alt="" className="w-[140px] h-[90px] object-cover rounded-xl shrink-0" style={{ opacity: 0.09 }} loading="lazy" />
+            ))}
+          </div>
+        </div>
+
+        {/* Band 2 — Products (middle, +3deg, green tint, scrolls left at 35s) */}
+        <div className="absolute top-[35%] left-[-5%] w-[160%] h-[140px]" style={{ transform: "rotate(3deg)", transformOrigin: "center center" }}>
+          <div className="flex gap-3 animate-band-scroll-left" style={{ animation: "band-scroll-left 35s linear infinite", filter: "sepia(0.25) hue-rotate(60deg) saturate(0.5) blur(1px)" }}>
+            {[...BAND_PROD, ...BAND_PROD, ...BAND_PROD, ...BAND_PROD].map((url, i) => (
+              <img key={i} src={url} alt="" className="w-[130px] h-[85px] object-cover rounded-xl shrink-0" style={{ opacity: 0.07 }} loading="lazy" />
+            ))}
+          </div>
+        </div>
+
+        {/* Band 3 — Services (bottom, -3deg, indigo tint, scrolls right at 40s) */}
+        <div className="absolute bottom-[8%] left-[-5%] w-[160%] h-[130px]" style={{ transform: "rotate(-3deg)", transformOrigin: "center center" }}>
+          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 40s linear infinite", filter: "sepia(0.3) hue-rotate(190deg) saturate(0.4) blur(1px)" }}>
+            {[...BAND_SERV, ...BAND_SERV, ...BAND_SERV, ...BAND_SERV, ...BAND_SERV].map((url, i) => (
+              <img key={i} src={url} alt="" className="w-[120px] h-[80px] object-cover rounded-xl shrink-0" style={{ opacity: 0.08 }} loading="lazy" />
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Gradient orbs */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%)" }} />
@@ -287,14 +317,25 @@ export default function NewCatalogPage() {
         )}
       </div>
 
-      {/* Keyframes for floating animation */}
+      {/* Keyframes */}
       <style jsx global>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-12px) rotate(3deg); }
+        @keyframes band-scroll-left {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.33%); }
         }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
+        @keyframes band-scroll-right {
+          0% { transform: translateX(-33.33%); }
+          100% { transform: translateX(0); }
+        }
+        .animate-band-scroll-left {
+          display: flex;
+          width: max-content;
+          will-change: transform;
+        }
+        .animate-band-scroll-right {
+          display: flex;
+          width: max-content;
+          will-change: transform;
         }
       `}</style>
     </div>
