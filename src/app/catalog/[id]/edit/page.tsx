@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { SEEDS_BY_KIND, type CatalogTheme } from "@/lib/seed-data";
 import { PRESET_THEMES } from "@/lib/catalog-theme";
 import { getT } from "@/lib/i18n";
@@ -64,17 +65,12 @@ function reseedIds<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj), (key, val) => key === "id" ? genId() : val);
 }
 
-const ONBOARDING_OPTIONS = [
-  { id: "restaurant", icon: "🍽️", key: "catalogOnboardingRestaurant", descKey: "catalogOnboardingRestaurantDesc", count: "86 items" },
-  { id: "products", icon: "📦", key: "catalogOnboardingProducts", descKey: "catalogOnboardingProductsDesc", count: "14 items" },
-  { id: "services", icon: "🛠️", key: "catalogOnboardingServices", descKey: "catalogOnboardingServicesDesc", count: "12 items" },
-  { id: "blank", icon: "📄", key: "catalogOnboardingBlank", descKey: "catalogOnboardingBlankDesc" },
-];
-
 export default function CatalogEditPage() {
   const params = useParams();
   const router = useRouter();
   const { lang } = useLang();
+  const { data: session } = useSession();
+  const [plan, setPlan] = useState("free");
   const t = getT(lang);
   const qrId = params.id as string;
 
@@ -94,9 +90,7 @@ export default function CatalogEditPage() {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const previewRef = useRef<HTMLIFrameElement>(null);
 
-  const showOnboarding = template === "blank" && categories.length === 0;
-
-  useEffect(() => {
+useEffect(() => {
     fetch(`/api/catalog/${qrId}`)
       .then((r) => r.json())
       .then((data) => {
@@ -112,6 +106,11 @@ export default function CatalogEditPage() {
         setLoaded(true);
       });
   }, [qrId]);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/user/plan").then(r => r.json()).then(d => { if (d.plan) setPlan(d.plan); }).catch(() => {});
+  }, [session]);
 
   const save = useCallback(async () => {
     setSaving(true);
@@ -239,7 +238,7 @@ export default function CatalogEditPage() {
           <div className="relative">
             <button
               onClick={() => setShowThemePopover(!showThemePopover)}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg border border-neutral-200 hover:bg-neutral-50 transition"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition"
             >
               <span className="w-3.5 h-3.5 rounded-sm border border-neutral-300" style={{ background: theme?.accent || "#c97b5e" }} />
               Theme
@@ -278,39 +277,7 @@ export default function CatalogEditPage() {
       {/* 2-COLUMN BODY */}
       <div className="flex-1 flex overflow-hidden">
         {/* Onboarding (full-width if shown) */}
-        {showOnboarding ? (
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-md mx-auto p-8 space-y-4">
-              <div className="text-center mb-6">
-                <h2 className="text-lg font-bold text-neutral-800">{t.catalogOnboardingTitle}</h2>
-                <p className="text-sm text-neutral-500 mt-1">{t.catalogOnboardingSubtitle}</p>
-              </div>
-              <div className="space-y-3">
-                {ONBOARDING_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.id}
-                    onClick={() => applyTemplate(opt.id)}
-                    className="w-full text-left p-4 rounded-xl border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 transition-all active:scale-[0.98] group bg-white"
-                  >
-                    <div className="flex items-start gap-4">
-                      <span className="text-3xl shrink-0">{opt.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-semibold text-neutral-800">{(t as any)[opt.key]}</p>
-                          {opt.count && <span className="text-[10px] font-medium text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">{opt.count}</span>}
-                        </div>
-                        <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">{(t as any)[opt.descKey]}</p>
-                      </div>
-                      <svg className="w-4 h-4 text-neutral-300 group-hover:text-neutral-500 shrink-0 mt-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* LEFT COLUMN — EDITOR */}
+        {/* LEFT COLUMN — EDITOR */}
             <div className="flex-1 overflow-y-auto">
               <div className="max-w-2xl mx-auto px-4 py-4 space-y-5">
                 {/* BUSINESS INFO — always visible */}
@@ -318,41 +285,45 @@ export default function CatalogEditPage() {
                   <div className="bg-white rounded-xl border border-neutral-200 p-4 space-y-3">
                     <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">{t.catalogSetupBusiness}</h3>
                     <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" id="logo-upload-main" onChange={async (e) => {
-                          const f = e.target.files?.[0];
-                          if (!f) return;
-                          setUploading("logo");
-                          try {
-                            const form = new FormData(); form.append("file", f);
-                            const res = await fetch("/api/upload", { method: "POST", body: form });
-                            if (!res.ok) throw new Error("Upload failed");
-                            const { url } = await res.json();
-                            setInfo({ ...info, logo: url });
-                            setTheme(theme ? { ...theme, showLogo: true } : null);
-                          } catch { setError("Logo upload failed (Pro plan required)"); }
-                          finally { setUploading(null); }
-                        }} />
-                        <label htmlFor="logo-upload-main" className="cursor-pointer">
-                          {info.logo ? (
-                            <img src={info.logo} alt="" className="w-10 h-10 rounded-full object-cover border border-neutral-200" />
-                          ) : (
-                            <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-400 text-xs">Logo</div>
+                      <div className="flex items-center gap-1.5">
+                        {info.logo ? (
+                          <img src={info.logo} alt="" className="w-10 h-10 rounded-full object-cover border border-neutral-200" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-400 text-xs">Logo</div>
+                        )}
+                        <button onClick={() => setInfo({ ...info, logo: "" })} className="text-[9px] text-red-400 hover:text-red-600" title="Remove logo">✕</button>
+                      </div>
+                      <div className="flex-1 flex items-center gap-1">
+                        <input
+                          value={info.logo || ""}
+                          onChange={(e) => setInfo({ ...info, logo: e.target.value })}
+                          placeholder="Paste an image URL..."
+                          className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600"
+                        />
+                        <label title={plan === "pro" ? "Upload from device" : "Pro plan required for uploads"} className={`shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded ${plan === "pro" ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200" : "bg-neutral-100 text-neutral-300"}`}>
+                          🖼
+                          {plan === "pro" && (
+                            <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
+                              const f = e.target.files?.[0];
+                              if (!f) return;
+                              setUploading("logo");
+                              try {
+                                const form = new FormData(); form.append("file", f);
+                                const res = await fetch("/api/upload", { method: "POST", body: form });
+                                if (!res.ok) throw new Error("Upload failed");
+                                const { url } = await res.json();
+                                setInfo({ ...info, logo: url });
+                                setTheme(theme ? { ...theme, showLogo: true } : null);
+                              } catch { setError("Logo upload failed (Pro plan required)"); }
+                              finally { setUploading(null); }
+                            }} />
                           )}
                         </label>
                       </div>
-                      <input
-                        value={info.name || ""}
-                        onChange={(e) => setInfo({ ...info, name: e.target.value })}
-                        placeholder="Business name"
-                        className="flex-1 text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800"
-                      />
-                      <input
-                        value={info.phone || ""}
-                        onChange={(e) => setInfo({ ...info, phone: e.target.value })}
-                        placeholder="Phone"
-                        className="w-36 text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600"
-                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <input value={info.name || ""} onChange={(e) => setInfo({ ...info, name: e.target.value })} placeholder="Business name" className="flex-1 text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800" />
+                      <input value={info.phone || ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} placeholder="Phone" className="w-36 text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
                     </div>
                     <button onClick={() => setShowBusinessExtra(!showBusinessExtra)} className="flex items-center gap-1 text-[10px] text-neutral-400 hover:text-neutral-600">
                       {showBusinessExtra ? "− Hide details" : "+ Address, hours, about..."}
@@ -425,10 +396,16 @@ export default function CatalogEditPage() {
                           <img src={cat.image} alt="" className="h-24 w-full object-cover rounded-lg" />
                         </div>
                       )}
-                      <div className="px-3 pb-3 flex items-center gap-2">
-                        <label className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 cursor-pointer hover:bg-neutral-200">
-                          {uploading === `cat-${catIdx}` ? "..." : cat.image ? "Change image" : "Add cover image"}
-                          <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />
+                      <div className="px-3 pb-3 flex items-center gap-2 flex-wrap">
+                        <input
+                          value={cat.image}
+                          onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: e.target.value }; setCategories(next); }}
+                          placeholder="Paste an image URL..."
+                          className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 min-w-[120px]"
+                        />
+                        <label title={plan === "pro" ? "Upload from device" : "Pro plan required for uploads"} className={`shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded ${plan === "pro" ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200" : "bg-neutral-100 text-neutral-300"}`}>
+                          🖼 {plan === "pro" ? "Upload" : "Pro"}
+                          {plan === "pro" && <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />}
                         </label>
                         {cat.image && (
                           <button onClick={() => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: "" }; setCategories(next); }} className="text-[10px] text-red-400 hover:text-red-600">Remove</button>
@@ -462,18 +439,7 @@ export default function CatalogEditPage() {
                                     const isExpanded = expandedItems.has(itemKey);
                                     return (
                                       <div key={item.id} className="group">
-                                        <div className="flex items-center gap-2 py-0.5">
-                                          {/* Item image thumbnail */}
-                                          <label className="cursor-pointer shrink-0">
-                                            <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleItemImageUpload(f, catIdx, subIdx, itemIdx); }} />
-                                            {item.image ? (
-                                              <img src={item.image} alt="" className="w-8 h-8 rounded object-cover border border-neutral-200" />
-                                            ) : (
-                                              <div className="w-8 h-8 rounded bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-300">
-                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                              </div>
-                                            )}
-                                          </label>
+<div className="flex items-center gap-2 py-0.5">
                                           <div className="flex-1 min-w-0 grid grid-cols-[1fr_auto] gap-1 items-center">
                                             <input
                                               value={item.name}
@@ -495,9 +461,21 @@ export default function CatalogEditPage() {
                                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                           </button>
                                         </div>
-                                        {/* Expanded: description, tag, kcal, time */}
+                                        {/* Expanded: image URL, description, tag, kcal, time */}
                                         {isExpanded && (
-                                          <div className="ml-10 mb-1.5 space-y-1.5">
+                                          <div className="ml-0 mb-1.5 space-y-1.5">
+                                            <div className="flex items-center gap-1">
+                                              <input
+                                                value={item.image}
+                                                onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].image = e.target.value; setCategories(next); }}
+                                                placeholder="Image URL (optional)"
+                                                className="flex-1 text-[10px] bg-neutral-50 border border-neutral-200 rounded px-2 py-1 outline-none focus:border-neutral-400 text-neutral-500"
+                                              />
+                                              <label title={plan === "pro" ? "Upload from device" : "Pro plan required for uploads"} className={`shrink-0 cursor-pointer text-[10px] px-2 py-1 rounded ${plan === "pro" ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200" : "bg-neutral-100 text-neutral-300"}`}>
+                                                🖼
+                                                {plan === "pro" && <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleItemImageUpload(f, catIdx, subIdx, itemIdx); }} />}
+                                              </label>
+                                            </div>
                                             <textarea
                                               value={item.desc}
                                               onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items[itemIdx].desc = e.target.value; setCategories(next); }}
@@ -557,11 +535,9 @@ export default function CatalogEditPage() {
                 </div>
               </div>
               <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center">
-                <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" />
+                <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="no" onLoad={() => { if (previewRef.current) { previewRef.current.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin); } }} />
               </div>
             </aside>
-          </>
-        )}
       </div>
     </div>
   );
