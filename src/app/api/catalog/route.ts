@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { Pool } from "pg";
 import { getUserPlan } from "@/lib/plan";
+import { SEEDS_BY_KIND } from "@/lib/seed-data";
 import { NextResponse } from "next/server";
 
 const pool = new Pool({
@@ -35,9 +36,12 @@ export async function POST(req: Request) {
     await client.query(`UPDATE public.qrcodes SET content = $1, redirect_to = $1, label = $2 WHERE id = $3`,
       [redirectUrl, `Catálogo`, qr.id]);
 
+    const seed = template !== "blank" ? SEEDS_BY_KIND[template] : null;
+    const initialBlocks = seed ? { categories: seed.categories, info: seed.info, theme: seed.theme } : blocks;
+
     await client.query(
       `INSERT INTO public.catalog_items (qr_id, blocks, template, fonts) VALUES ($1, $2, $3, $4)`,
-      [qr.id, JSON.stringify(blocks), template || "blank", fonts || []]
+      [qr.id, JSON.stringify(initialBlocks), template || "blank", fonts || []]
     );
 
     await client.query("COMMIT");
