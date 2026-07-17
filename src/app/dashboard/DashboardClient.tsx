@@ -569,7 +569,7 @@ export default function DashboardClient() {
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-semibold">{t("dashboardMyQRs")}</h2>
             {filteredQrs.map(qr => (
-              <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id && !selectMode ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => selectMode ? toggleSelect(qr.id) : viewStats(qr.id)}>
+              <div key={qr.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors cursor-pointer hover:border-purple-300 dark:hover:border-purple-700 ${selectedQR === qr.id && !selectMode ? "border-purple-500" : "border-gray-200 dark:border-gray-800"}`} onClick={() => { if (selectMode) { toggleSelect(qr.id); return; } if (qr.type === "catalog") { router.push(`/catalog/${qr.id}/edit`); return; } viewStats(qr.id); }}>
                 <div className="flex items-center gap-4">
                   {selectMode && (
                     <div onClick={e => e.stopPropagation()} className="shrink-0">

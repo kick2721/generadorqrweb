@@ -22,6 +22,7 @@ export async function GET() {
        (SELECT COALESCE(COUNT(*), 0) FROM public.scans s WHERE s.qr_id = q.id) AS scan_count
      FROM public.qrcodes q
      WHERE q.user_id = $1
+       AND NOT (q.type = 'catalog' AND q.config->>'status' = 'draft')
      ORDER BY q.created_at DESC`,
     [session.user.id]
   );

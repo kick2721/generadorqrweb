@@ -50,5 +50,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     [JSON.stringify(payload), template || "restaurant", fonts || [], id]
   );
 
+  await query(
+    `UPDATE public.qrcodes SET config = $1, updated_at = now() WHERE id = $2`,
+    [JSON.stringify({ status: "active" }), id]
+  );
+
   return NextResponse.json({ ok: true });
 }

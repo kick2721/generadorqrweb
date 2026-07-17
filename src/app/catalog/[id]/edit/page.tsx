@@ -130,12 +130,13 @@ useEffect(() => {
         body: JSON.stringify({ categories, info, theme, template, fonts }),
       });
       if (!res.ok) throw new Error("Save failed");
+      router.push("/dashboard");
     } catch {
       setError("Failed to save");
     } finally {
       setSaving(false);
     }
-  }, [qrId, categories, info, theme, template, fonts]);
+  }, [qrId, categories, info, theme, template, fonts, router]);
 
   const applyTemplate = (tid: string) => {
     setError("");

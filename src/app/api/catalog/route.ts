@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     await client.query("BEGIN");
     const qrResult = await client.query(
       `INSERT INTO public.qrcodes (user_id, type, content, label, config) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [session.user.id, "catalog", "", "", JSON.stringify({})]
+      [session.user.id, "catalog", "", "", JSON.stringify({ status: "draft" })]
     );
     const qr = qrResult.rows[0];
     const redirectUrl = `${baseUrl}/c/${qr.id}`;
