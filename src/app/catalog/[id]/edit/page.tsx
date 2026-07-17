@@ -426,60 +426,70 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                   const totalItems = cat.subcategories.reduce((s, sc) => s + sc.items.length, 0);
                   return (
                     <div key={cat.id} className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
-                      {/* Category header */}
-                      <div className="flex items-center gap-3 p-3 cursor-pointer" onClick={() => setExpandedCat(expandedCat === cat.id ? null : cat.id)}>
+                      {/* Category header — full row clickable (image + name text + chevron) */}
+                      <div className="flex items-start gap-3 p-3 cursor-pointer" onClick={() => setExpandedCat(expandedCat === cat.id ? null : cat.id)}>
+                        {cat.image ? (
+                          <img src={cat.image} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0 border border-neutral-200" />
+                        ) : (
+                          <div className="w-14 h-14 rounded-lg bg-neutral-100 border border-neutral-200 shrink-0 flex items-center justify-center text-neutral-300">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
-                          <input
-                            value={cat.name}
-                            onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], name: e.target.value }; setCategories(next); }}
-                            placeholder="Category name"
-                            className="w-full text-sm font-semibold bg-transparent outline-none text-neutral-800"
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                          <input
-                            value={cat.desc}
-                            onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], desc: e.target.value }; setCategories(next); }}
-                            placeholder="Short description"
-                            className="w-full text-[11px] mt-0.5 bg-transparent outline-none text-neutral-400"
-                            onClick={(e) => e.stopPropagation()}
-                          />
+                          <div className="text-sm font-semibold text-neutral-800 truncate">{cat.name || <span className="text-neutral-400 font-normal">Category name</span>}</div>
+                          {cat.desc && <div className="text-[11px] text-neutral-400 truncate mt-0.5">{cat.desc}</div>}
                         </div>
-                        <span className="text-[10px] text-neutral-400">{cat.subcategories.length} sub · {totalItems} items</span>
-                        <button onClick={(e) => { e.stopPropagation(); if (!confirm("Delete this category?")) return; setCategories((prev) => prev.filter((_, i) => i !== catIdx)); if (expandedCat === cat.id) setExpandedCat(null); }} className="text-red-400 hover:text-red-600 transition shrink-0">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                        </button>
-                        <svg className={`w-3.5 h-3.5 text-neutral-400 transition-transform shrink-0 ${expandedCat === cat.id ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                          <span className="text-[10px] text-neutral-400 whitespace-nowrap">{totalItems} items</span>
+                          <button onClick={(e) => { e.stopPropagation(); setCategories((prev) => prev.filter((_, i) => i !== catIdx)); if (expandedCat === cat.id) setExpandedCat(null); }} className="text-red-400 hover:text-red-600 transition">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                          <svg className={`w-3.5 h-3.5 text-neutral-400 transition-transform ${expandedCat === cat.id ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        </div>
                       </div>
 
-                      {/* Category image */}
-                      {cat.image && (
-                        <div className="px-3 pb-1">
-                          <img src={cat.image} alt="" className="h-24 w-full object-cover rounded-lg" />
-                        </div>
-                      )}
-                      <div className="px-3 pb-3 flex items-center gap-2 flex-wrap">
-                        <input
-                          value={cat.image}
-                          onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: e.target.value }; setCategories(next); }}
-                          placeholder="Cover image URL (.jpg, .png)..."
-                          className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 min-w-[120px]"
-                        />
-                        {plan === "pro" && (
-                          <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium">
-                            + Foto
-                            <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />
-                          </label>
-                        )}
-                        {cat.image && (
-                          <button onClick={() => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: "" }; setCategories(next); }} className="text-[10px] text-red-400 hover:text-red-600">Remove</button>
-                        )}
-                      </div>
-
-                      {/* Subcategories — always visible when category expanded */}
+                      {/* Expanded content */}
                       {expandedCat === cat.id && (
                         <div className="border-t border-neutral-200">
-                          <div className="p-3 space-y-4">
-                            {cat.subcategories.map((sub, subIdx) => (
+                          {/* Image URL + upload — stopPropagation so it doesn't toggle */}
+                          <div className="px-3 pt-3 pb-1 flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              value={cat.image}
+                              onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: e.target.value }; setCategories(next); }}
+                              placeholder="Cover image URL (.jpg, .png)..."
+                              className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 min-w-[120px]"
+                            />
+                            {plan === "pro" && (
+                              <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium" onClick={(e) => e.stopPropagation()}>
+                                + Foto
+                                <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />
+                              </label>
+                            )}
+                            {cat.image && (
+                              <button onClick={() => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: "" }; setCategories(next); }} className="text-[10px] text-red-400 hover:text-red-600">Remove</button>
+                            )}
+                          </div>
+
+                          {/* Name + Desc inputs */}
+                          <div className="px-3 pb-2 space-y-1" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              value={cat.name}
+                              onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], name: e.target.value }; setCategories(next); }}
+                              placeholder="Category name"
+                              className="w-full text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800"
+                            />
+                            <input
+                              value={cat.desc}
+                              onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], desc: e.target.value }; setCategories(next); }}
+                              placeholder="Short description"
+                              className="w-full text-[11px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-400"
+                            />
+                          </div>
+
+                          {/* Sections */}
+                          <div className="border-t border-neutral-200">
+                            <div className="p-3 space-y-4">
+                              {cat.subcategories.map((sub, subIdx) => (
                               <div key={sub.id}>
                                 <div className="flex items-center gap-2 mb-2">
                                   <input
@@ -490,7 +500,7 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                                   />
                                   <span className="text-[10px] text-neutral-400">{sub.items.length}</span>
                                   <button onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.push(newItem()); setCategories(next); }} className="text-[10px] font-medium px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shrink-0">+ Item</button>
-                                  <button onClick={() => { if (!confirm("Delete section?")) return; const next = structuredClone(categories) as Category[]; next[catIdx].subcategories.splice(subIdx, 1); setCategories(next); }} className="text-red-400 hover:text-red-600 shrink-0">
+                                  <button onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories.splice(subIdx, 1); setCategories(next); }} className="text-red-400 hover:text-red-600 shrink-0">
                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                   </button>
                                 </div>
@@ -517,7 +527,7 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                                           Edit
                                         </button>
                                         <button
-                                          onClick={() => { if (!confirm("Delete this item?")) return; const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.splice(itemIdx, 1); setCategories(next); }}
+                                          onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.splice(itemIdx, 1); setCategories(next); }}
                                           className="text-red-300 hover:text-red-500 shrink-0 opacity-0 group-hover:opacity-100 transition"
                                           title="Delete"
                                         >
@@ -548,14 +558,15 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                             </button>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
+          </div>
 
-            {/* RIGHT COLUMN — PREVIEW */}
+          {/* RIGHT COLUMN — PREVIEW */}
             <aside className="w-[40%] shrink-0 overflow-hidden border-l border-neutral-200 bg-white flex-col hidden lg:flex">
               <div className="shrink-0 h-10 flex items-center justify-between px-3 border-b border-neutral-200 bg-neutral-50">
                 <div className="flex items-center gap-1">
@@ -568,7 +579,7 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                 </div>
               </div>
               <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center" style={{ overflowX: "hidden" }}>
-                <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="no" onLoad={() => { if (previewRef.current) { previewRef.current.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin); } }} />
+                <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="yes" onLoad={() => { if (previewRef.current) { previewRef.current.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin); } }} />
               </div>
              </aside>
       </div>
