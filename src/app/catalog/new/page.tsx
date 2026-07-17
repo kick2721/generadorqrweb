@@ -76,18 +76,24 @@ const BAND_FOOD = [
 ].map((f) => `${B}/${f}`);
 
 const BAND_PROD = [
-  "categorize-design-v1-1.webp", "categorize-design-v1.webp",
-  "cup-of-espresso-with-coconut-cookies-on-a-plate-2025-03-12-20-36-13-utc.webp",
-  "matcha-latte-with-latte-art-a-cup-of-japanese-gre-2024-12-02-03-17-00-utc.webp",
-  "Cappuccino-white-coffee-cup-with-heart-shape-art-2024-12-10-01-18-55-utc.webp",
-  "Panna-cotta.webp", "Affogato-al-Caffe.webp", "Tiramisu-1.webp",
-].map((f) => `${B}/${f}`);
+  "1498049791950-5f9b8f4b5b5b", "1523275335684-37898b6baf30",
+  "1505740420928-0e8e9d1d9b5b", "1608043152269-423dbba4e2e1",
+  "1517336714731-489689fd1ca8", "1496188138207-0e7a0b5e6e7b",
+  "1445205547730-8f4b5b5b5b5b", "1491553895911-0055f5c1e0e6",
+  "1548036329-9f4b7e2e17a0", "1572635196237-14b5f281503a",
+  "1553062407-98e00164d4e6", "1556909114-5b5b5b5b5b5b",
+  "1476480862126-209bfaa8edc8", "1460353581545-07a743c9fc2a",
+  "1546868871-af0c3f3bcf84", "1588426428427-7b8f5b5b5b5b",
+].map((id) => `https://images.unsplash.com/photo-${id}?w=400&h=400&fit=crop&auto=format`);
 
 const BAND_SERV = [
-  "categorize-design-v1-2.webp", "categorize-design-v1-3.webp",
-  "Gelati-Misti.webp", "Tortino-di-Mele-con-Gelato.webp",
-  "Coppa-di-Fragole-e-Gelato.webp", "ice-cream-and-berry-fruits-with-chocolate-sauce-an-2024-12-13-05-40-08-utc-1.webp",
-].map((f) => `${B}/${f}`);
+  "1552664215-5f5b5b5b5b5b", "1486312338219-ce68d2c6f44d",
+  "1517245386807-bb43f82c33c4", "1522071820081-009f0129c71c",
+  "1522202176988-66273c2b55e9", "1454165804606-c3d57bc86b40",
+  "1561076751-5b5b5b5b5b5b", "1519389950473-47ba0277781c",
+  "1537512237128-4b5b5b5b5b5b", "1542744094-9b5b5b5b5b5b",
+  "1521737609893-9b5b5b5b5b5b", "1618766000857-5b5b5b5b5b5b",
+].map((id) => `https://images.unsplash.com/photo-${id}?w=400&h=400&fit=crop&auto=format`);
 
 export default function NewCatalogPage() {
   const router = useRouter();
@@ -153,6 +159,14 @@ export default function NewCatalogPage() {
       <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%)" }} />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
+        {/* Back button */}
+        <div className="mb-4">
+          <button onClick={() => router.push("/")} className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition" title="Back to home">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            Back
+          </button>
+        </div>
+
         {creating !== "" ? (
           /* Loading state */
           <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
@@ -267,14 +281,14 @@ export default function NewCatalogPage() {
                         )}
                         {opt.id === "products" && (
                           <>
-                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 2 categorías</span>
-                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 14 productos</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 4 categorías</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 46 productos</span>
                           </>
                         )}
                         {opt.id === "services" && (
                           <>
-                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 2 categorías</span>
-                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 12 servicios</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 4 categorías</span>
+                            <span className="flex items-center gap-1 text-[10px] text-neutral-400"><span className="w-1 h-1 rounded-full" style={{ background: opt.color }} /> 43 servicios</span>
                           </>
                         )}
                         {opt.id === "blank" && (
