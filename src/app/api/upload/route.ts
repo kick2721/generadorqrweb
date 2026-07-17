@@ -1,7 +1,7 @@
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getUserPlan } from "@/lib/plan";
-import { getSupabase } from "@/lib/supabase";
 
 const ALLOWED_MIME: Record<string, string> = {
   "image/png": "png",
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   let supabase;
   try {
-    supabase = getSupabase();
+    supabase = getSupabaseAdmin();
   } catch {
     return NextResponse.json({ error: "Storage service unavailable" }, { status: 503 });
   }
