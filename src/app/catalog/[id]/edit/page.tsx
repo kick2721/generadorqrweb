@@ -247,10 +247,12 @@ useEffect(() => {
   const saveItemEdit = () => {
     if (!editingItem) return;
     const { catIdx, subIdx, itemIdx, data, useTag, useKcal, useTime } = editingItem;
+    const cleanPrice = String(data.price).replace(/[^0-9.,]/g, '');
     setCategories((prev) => {
       const next = structuredClone(prev) as Category[];
       next[catIdx].subcategories[subIdx].items[itemIdx] = {
         ...data,
+        price: cleanPrice,
         tag: useTag ? (data.tag || "") : "",
         kcal: useKcal ? (data.kcal || "") : "",
         time: useTime ? (data.time || "") : "",
@@ -349,7 +351,7 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                               try {
                                 const form = new FormData(); form.append("file", f);
                                 const res = await fetch("/api/upload", { method: "POST", body: form });
-                                if (!res.ok) throw new Error("Upload failed");
+                                if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
                                 const { url } = await res.json();
                                 setInfo({ ...info, logo: url });
                                 setTheme(theme ? { ...theme, showLogo: true } : null);
@@ -380,6 +382,7 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                           <option value="د.أ">د.أ JOD</option>
                           <option value="₪">₪ ILS</option>
                           <option value="AED">AED</option>
+                          <option value="Kz">Kz AOA</option>
                         </select>
                         <input value={info.phone || ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} placeholder="Phone" className="w-36 text-xs bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600" />
                       </div>
@@ -581,12 +584,12 @@ placeholder="Image URL (.jpg, .png, .webp)..."
               </button>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 space-y-1">
                 <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Name</label>
                 <input value={editingItem.data.name} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, name: e.target.value } })} placeholder="Item name" className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-800" />
               </div>
-              <div className="w-28 space-y-1">
+              <div className="sm:w-28 space-y-1">
                 <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Price</label>
                 <div className="flex items-center gap-1">
                   <span className="text-sm text-neutral-500">{info?.currency || "$"}</span>
