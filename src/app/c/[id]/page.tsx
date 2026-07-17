@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getTheme, themeToCssVars } from "@/lib/catalog-theme";
 
@@ -42,6 +42,8 @@ interface CatalogInfo {
 export default function CatalogPage() {
   const params = useParams();
   const qrId = params.id as string;
+  const searchParams = useSearchParams();
+  const isPreview = searchParams.get("preview") === "1";
   const [cats, setCats] = useState<CatalogCategory[]>([]);
   const [info, setInfo] = useState<CatalogInfo | null>(null);
   const [theme, setTheme] = useState<any>(null);
@@ -58,6 +60,10 @@ export default function CatalogPage() {
   const modalPillRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   useEffect(() => {
+    if (isPreview) {
+      setLoaded(true);
+      return;
+    }
     fetch(`/api/catalog/${qrId}`)
       .then((r) => r.json())
       .then((data) => {
@@ -72,7 +78,25 @@ export default function CatalogPage() {
           if (subs[0].subcategories?.length) setActiveSub(subs[0].subcategories[0].id);
         }
       });
-  }, [qrId]);
+  }, [qrId, isPreview]);
+
+  useEffect(() => {
+    if (!isPreview) return;
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === "catalog-preview-update") {
+        setCats(e.data.categories || []);
+        setInfo(e.data.info || null);
+        setTheme(e.data.theme || null);
+        const subs = e.data.categories || [];
+        if (subs.length) {
+          setActiveCat(subs[0].id);
+          if (subs[0].subcategories?.length) setActiveSub(subs[0].subcategories[0].id);
+        }
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [isPreview]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
