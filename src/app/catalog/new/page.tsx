@@ -76,24 +76,18 @@ const BAND_FOOD = [
 ].map((f) => `${B}/${f}`);
 
 const BAND_PROD = [
-  "1498049791950-5f9b8f4b5b5b", "1523275335684-37898b6baf30",
-  "1505740420928-0e8e9d1d9b5b", "1608043152269-423dbba4e2e1",
-  "1517336714731-489689fd1ca8", "1496188138207-0e7a0b5e6e7b",
-  "1445205547730-8f4b5b5b5b5b", "1491553895911-0055f5c1e0e6",
-  "1548036329-9f4b7e2e17a0", "1572635196237-14b5f281503a",
-  "1553062407-98e00164d4e6", "1556909114-5b5b5b5b5b5b",
-  "1476480862126-209bfaa8edc8", "1460353581545-07a743c9fc2a",
-  "1546868871-af0c3f3bcf84", "1588426428427-7b8f5b5b5b5b",
-].map((id) => `https://images.unsplash.com/photo-${id}?w=400&h=400&fit=crop&auto=format`);
+  "electronics.jpg", "fashion.jpg", "home-kitchen.jpg", "sports-outdoors.jpg",
+  "headphones.jpg", "smartwatch.jpg", "laptop.jpg", "speaker.jpg",
+  "sneakers.jpg", "shoe.jpg", "bag.jpg", "backpack.jpg", "jewelry.jpg",
+  "tshirt.jpg", "camera.jpg", "headphones.jpg",
+].map((f) => `${B}/${f}`);
 
 const BAND_SERV = [
-  "1552664215-5f5b5b5b5b5b", "1486312338219-ce68d2c6f44d",
-  "1517245386807-bb43f82c33c4", "1522071820081-009f0129c71c",
-  "1522202176988-66273c2b55e9", "1454165804606-c3d57bc86b40",
-  "1561076751-5b5b5b5b5b5b", "1519389950473-47ba0277781c",
-  "1537512237128-4b5b5b5b5b5b", "1542744094-9b5b5b5b5b5b",
-  "1521737609893-9b5b5b5b5b5b", "1618766000857-5b5b5b5b5b5b",
-].map((id) => `https://images.unsplash.com/photo-${id}?w=400&h=400&fit=crop&auto=format`);
+  "marketing.jpg", "design.jpg", "development.jpg", "consulting.jpg",
+  "seo.jpg", "social-media.jpg", "branding.jpg", "web-design.jpg",
+  "mobile-app.jpg", "cloud.jpg", "analytics.jpg", "startup.jpg",
+  "office.jpg", "creative.jpg", "strategy.jpg", "consulting.jpg",
+].map((f) => `${B}/${f}`);
 
 export default function NewCatalogPage() {
   const router = useRouter();
@@ -161,8 +155,8 @@ export default function NewCatalogPage() {
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         {/* Back button */}
         <div className="mb-4">
-          <button onClick={() => router.push("/")} className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition" title="Back to home">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          <button onClick={() => router.push("/")} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-600 hover:text-neutral-800 hover:bg-white/60 rounded-xl transition" title="Back to home">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             Back
           </button>
         </div>

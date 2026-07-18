@@ -172,16 +172,33 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }, [categories, info, theme]);
 
+  const sendPreview = useCallback(() => {
+    previewRef.current?.contentWindow?.postMessage(
+      { type: "catalog-preview-update", categories, info, theme },
+      window.location.origin
+    );
+  }, [categories, info, theme]);
+
   useEffect(() => {
-    if (!loaded || !previewRef.current) return;
-    const timer = setTimeout(() => {
-      previewRef.current?.contentWindow?.postMessage(
-        { type: "catalog-preview-update", categories, info, theme },
-        window.location.origin
-      );
+    if (!loaded) return;
+    const iframe = previewRef.current;
+    if (!iframe) return;
+
+    const onNativeLoad = () => sendPreview();
+    iframe.addEventListener("load", onNativeLoad);
+
+    const attempt = setInterval(() => {
+      if (iframe.contentWindow) {
+        sendPreview();
+        clearInterval(attempt);
+      }
     }, 200);
-    return () => clearTimeout(timer);
-  }, [loaded]);
+
+    return () => {
+      iframe.removeEventListener("load", onNativeLoad);
+      clearInterval(attempt);
+    };
+  }, [loaded, sendPreview]);
 
   const handleImageUpload = async (file: File, catIndex: number) => {
     setUploading(`cat-${catIndex}`);
@@ -268,8 +285,9 @@ useEffect(() => {
       {/* HEADER */}
       <header className="shrink-0 h-12 flex items-center justify-between px-4 bg-white border-b border-neutral-200 z-20">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.push("/catalog/new")} className="text-neutral-400 hover:text-neutral-600 transition" title="Back">
+          <button onClick={() => router.push("/catalog/new")} className="flex items-center gap-1 px-3 py-1.5 text-sm text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition" title="Back">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            Back
           </button>
           <h1 className="font-semibold text-sm text-neutral-800 truncate max-w-[200px]">{info?.name || "Catalog"}</h1>
         </div>
@@ -575,12 +593,12 @@ placeholder="Image URL (.jpg, .png, .webp)..."
                   <button onClick={() => setPreviewDevice("desktop")} className={`text-[10px] px-2 py-1 rounded ${previewDevice === "desktop" ? "bg-neutral-200 text-neutral-800 font-medium" : "text-neutral-400 hover:text-neutral-600"}`}>Desktop</button>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => previewRef.current?.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin)} className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title="Refresh">↻</button>
+                  <button onClick={() => sendPreview()} className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title="Refresh">↻</button>
                   <a href={`/c/${qrId}`} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title="Open in new tab">↗</a>
                 </div>
               </div>
               <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center" style={{ overflowX: "hidden" }}>
-                <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="yes" onLoad={() => { if (previewRef.current) { previewRef.current.contentWindow?.postMessage({ type: "catalog-preview-update", categories, info, theme }, window.location.origin); } }} />
+                <iframe ref={previewRef} src={`/c/${qrId}?preview=1`} className="w-full h-full bg-white" style={{ maxWidth: previewDevice === "mobile" ? "380px" : "100%" }} title="Preview" scrolling="yes" />
               </div>
              </aside>
       </div>
