@@ -60,34 +60,11 @@ const OPTIONS = [
   },
 ];
 
-const B = "https://hreqqnwsivtzewpjcwcs.supabase.co/storage/v1/object/public/catalog-images/seed";
-
-const BAND_FOOD = [
-  "main-course-5.webp", "a-close-up-of-a-burger-with-beef-patty-with-vegeta-2024-11-26-10-45-47-utc-1.webp",
-  "chicken-burger-with-bacon-on-wooden-board-front-v-2025-01-10-04-01-23-utc-1.webp",
-  "mansaf-jordanian-national-dish-2025-03-08-00-34-30-utc-1.webp",
-  "breaded-torpedo-shrimps-2024-10-18-09-19-13-utc.webp",
-  "tomato-soup-with-tortellini-2025-03-07-16-01-07-utc.webp",
-  "vegetable-salad-with-cheese-mozzarella-tomatoes-2025-02-09-22-46-39-utc.webp",
-  "pizza-margherita-homemade-2024-09-23-13-51-43-utc.webp",
-  "Panna-cotta.webp", "coffee-latte-art-2025-03-25-16-22-03-utc.webp",
-  "a-wooden-cutting-board-topped-with-three-pastries-2025-02-11-19-43-21-utc-1.webp",
-  "karak-tea.webp",
-].map((f) => `${B}/${f}`);
-
-const BAND_PROD = [
-  "electronics.jpg", "fashion.jpg", "home-kitchen.jpg", "sports-outdoors.jpg",
-  "headphones.jpg", "smartwatch.jpg", "laptop.jpg", "speaker.jpg",
-  "sneakers.jpg", "shoe.jpg", "bag.jpg", "backpack.jpg", "jewelry.jpg",
-  "tshirt.jpg", "camera.jpg", "headphones.jpg",
-].map((f) => `${B}/${f}`);
-
-const BAND_SERV = [
-  "marketing.jpg", "design.jpg", "development.jpg", "consulting.jpg",
-  "seo.jpg", "social-media.jpg", "branding.jpg", "web-design.jpg",
-  "mobile-app.jpg", "cloud.jpg", "analytics.jpg", "startup.jpg",
-  "office.jpg", "creative.jpg", "strategy.jpg", "consulting.jpg",
-].map((f) => `${B}/${f}`);
+const BANDS = [
+  { top: "2%", height: "160px", rotate: "-5deg", bg: "linear-gradient(90deg, #fef3c7, #fde68a, #fcd34d)", opacity: 0.08, anim: "band-scroll-right 50s linear infinite" },
+  { top: "35%", height: "140px", rotate: "3deg", bg: "linear-gradient(90deg, #d1fae5, #a7f3d0, #6ee7b7)", opacity: 0.07, anim: "band-scroll-left 35s linear infinite" },
+  { top: "auto", bottom: "8%", height: "130px", rotate: "-3deg", bg: "linear-gradient(90deg, #e0e7ff, #c7d2fe, #a5b4fc)", opacity: 0.06, anim: "band-scroll-right 40s linear infinite" },
+];
 
 export default function NewCatalogPage() {
   const router = useRouter();
@@ -117,34 +94,13 @@ export default function NewCatalogPage() {
       {/* Noise texture overlay */}
       <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.012, backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: "256px 256px" }} />
 
-      {/* ===== DIAGONAL IMAGE BANDS ===== */}
+      {/* ===== DIAGONAL DECORATIVE BANDS (gradient-only, no images) ===== */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-        {/* Band 1 — Restaurant (top, -5deg, warm amber tint, scrolls right at 50s) */}
-        <div className="absolute top-[2%] left-[-5%] w-[160%] h-[160px]" style={{ transform: "rotate(-5deg)", transformOrigin: "center center" }}>
-          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 50s linear infinite", filter: "sepia(0.20) hue-rotate(-5deg) saturate(0.7)" }}>
-            {[...BAND_FOOD, ...BAND_FOOD, ...BAND_FOOD].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-[140px] h-[90px] object-cover rounded-xl shrink-0" style={{ opacity: 0.20 }} loading="lazy" />
-            ))}
+        {BANDS.map((band, bi) => (
+          <div key={bi} className="absolute left-[-5%] w-[160%]" style={{ top: band.top, bottom: band.bottom, height: band.height, transform: `rotate(${band.rotate})`, transformOrigin: "center center" }}>
+            <div className="w-full h-full" style={{ background: band.bg, opacity: band.opacity, borderRadius: "999px" }} />
           </div>
-        </div>
-
-        {/* Band 2 — Products (middle, +3deg, green tint, scrolls left at 35s) */}
-        <div className="absolute top-[35%] left-[-5%] w-[160%] h-[140px]" style={{ transform: "rotate(3deg)", transformOrigin: "center center" }}>
-          <div className="flex gap-3 animate-band-scroll-left" style={{ animation: "band-scroll-left 35s linear infinite", filter: "sepia(0.15) hue-rotate(60deg) saturate(0.5)" }}>
-            {[...BAND_PROD, ...BAND_PROD, ...BAND_PROD, ...BAND_PROD].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-[130px] h-[85px] object-cover rounded-xl shrink-0" style={{ opacity: 0.18 }} loading="lazy" />
-            ))}
-          </div>
-        </div>
-
-        {/* Band 3 — Services (bottom, -3deg, indigo tint, scrolls right at 40s) */}
-        <div className="absolute bottom-[8%] left-[-5%] w-[160%] h-[130px]" style={{ transform: "rotate(-3deg)", transformOrigin: "center center" }}>
-          <div className="flex gap-3 animate-band-scroll-right" style={{ animation: "band-scroll-right 40s linear infinite", filter: "sepia(0.15) hue-rotate(190deg) saturate(0.4)" }}>
-            {[...BAND_SERV, ...BAND_SERV, ...BAND_SERV, ...BAND_SERV, ...BAND_SERV].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-[120px] h-[80px] object-cover rounded-xl shrink-0" style={{ opacity: 0.16 }} loading="lazy" />
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Gradient orbs */}
@@ -305,27 +261,7 @@ export default function NewCatalogPage() {
         )}
       </div>
 
-      {/* Keyframes */}
-      <style jsx global>{`
-        @keyframes band-scroll-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33.33%); }
-        }
-        @keyframes band-scroll-right {
-          0% { transform: translateX(-33.33%); }
-          100% { transform: translateX(0); }
-        }
-        .animate-band-scroll-left {
-          display: flex;
-          width: max-content;
-          will-change: transform;
-        }
-        .animate-band-scroll-right {
-          display: flex;
-          width: max-content;
-          will-change: transform;
-        }
-      `}</style>
+
     </div>
   );
 }
