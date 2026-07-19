@@ -60,7 +60,7 @@ const OPTIONS = [
   },
 ];
 
-const B = "https://hreqqnwsivtzewpjcwcs.supabase.co/storage/v1/render/image/public/catalog-images/seed";
+const B = "https://hreqqnwsivtzewpjcwcs.supabase.co/storage/v1/object/public/catalog-images/seed";
 
 const BAND_FOOD = [
   "main-course-5.webp", "a-close-up-of-a-burger-with-beef-patty-with-vegeta-2024-11-26-10-45-47-utc-1.webp",
@@ -73,21 +73,21 @@ const BAND_FOOD = [
   "Panna-cotta.webp", "coffee-latte-art-2025-03-25-16-22-03-utc.webp",
   "a-wooden-cutting-board-topped-with-three-pastries-2025-02-11-19-43-21-utc-1.webp",
   "karak-tea.webp",
-].map((f) => `${B}/${f}?width=200&quality=20`);
+].map((f) => `${B}/${f}`);
 
 const BAND_PROD = [
-  "electronics.jpg", "fashion.jpg", "home-kitchen.jpg", "sports-outdoors.jpg",
-  "headphones.jpg", "smartwatch.jpg", "laptop.jpg", "speaker.jpg",
-  "sneakers.jpg", "shoe.jpg", "bag.jpg", "backpack.jpg", "jewelry.jpg",
-  "tshirt.jpg", "camera.jpg", "headphones.jpg",
-].map((f) => `${B}/${f}?width=200&quality=20`);
+  "thumb-electronics.jpg", "thumb-fashion.jpg", "thumb-home-kitchen.jpg", "thumb-sports-outdoors.jpg",
+  "thumb-headphones.jpg", "thumb-smartwatch.jpg", "thumb-laptop.jpg", "thumb-speaker.jpg",
+  "thumb-sneakers.jpg", "thumb-shoe.jpg", "thumb-bag.jpg", "thumb-backpack.jpg", "thumb-jewelry.jpg",
+  "thumb-tshirt.jpg",
+].map((f) => `${B}/${f}`);
 
 const BAND_SERV = [
-  "marketing.jpg", "design.jpg", "development.jpg", "consulting.jpg",
-  "seo.jpg", "social-media.jpg", "branding.jpg", "web-design.jpg",
-  "mobile-app.jpg", "cloud.jpg", "analytics.jpg", "startup.jpg",
-  "office.jpg", "creative.jpg", "strategy.jpg", "consulting.jpg",
-].map((f) => `${B}/${f}?width=200&quality=20`);
+  "thumb-marketing.jpg", "thumb-design.jpg", "thumb-development.jpg", "thumb-consulting.jpg",
+  "thumb-seo.jpg", "thumb-social-media.jpg", "thumb-branding.jpg", "thumb-web-design.jpg",
+  "thumb-mobile-app.jpg", "thumb-cloud.jpg", "thumb-analytics.jpg",
+  "thumb-creative.jpg", "thumb-strategy.jpg",
+].map((f) => `${B}/${f}`);
 
 export default function NewCatalogPage() {
   const router = useRouter();
