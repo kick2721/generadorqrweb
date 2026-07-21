@@ -206,6 +206,8 @@ export default function CatalogPage() {
               <img
                 src={info.logo}
                 alt={info?.name || "Logo"}
+                loading="lazy"
+                decoding="async"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
                 style={{ border: `1px solid ${t.border}` }}
               />
@@ -266,7 +268,7 @@ export default function CatalogPage() {
                   aria-label={`Open ${cat.name}`}
                 >
                   {cat.image ? (
-                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <img src={cat.image} alt={cat.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: t.bg, opacity: 0.5 }}>
                       <svg className="w-10 h-10 opacity-30" style={{ color: t.accent }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -349,7 +351,7 @@ export default function CatalogPage() {
         <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: t.bg, fontFamily: t.font || "system-ui" }}>
           <div className="relative h-44 sm:h-56 overflow-hidden">
             {openCatObj.image ? (
-              <img src={openCatObj.image} alt={openCatObj.name} className="w-full h-full object-cover" />
+              <img src={openCatObj.image} alt={openCatObj.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full" style={{ background: t.accent, opacity: 0.3 }} />
             )}
@@ -431,7 +433,7 @@ export default function CatalogPage() {
                     >
                       {item.image ? (
                         <div className="w-20 h-20 shrink-0 overflow-hidden" style={{ borderRadius: "10px" }}>
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         </div>
                       ) : null}
                       <div className="flex-1 min-w-0 flex flex-col justify-center">

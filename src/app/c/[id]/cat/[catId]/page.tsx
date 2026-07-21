@@ -132,7 +132,7 @@ export default function CategoryPage() {
       )}
       <div className="relative h-44 overflow-hidden">
           {cat.image ? (
-            <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+            <img src={cat.image} alt={cat.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
           ) : null}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <Link
@@ -192,7 +192,7 @@ export default function CategoryPage() {
                   >
                     {item.image ? (
                       <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                       </div>
                     ) : null}
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
