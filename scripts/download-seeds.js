@@ -97,7 +97,7 @@ const FILES = {
   "marketing.jpg": 6483592,
   "mobile-app.jpg": 6608248,
   "operations-audit.jpg": 9064799,
-  "packaging-design.jpg": 8066785,
+  "packaging-design.jpg": 4219132,
   "pixel-watch-3.jpg": 31541471,
   "resistance-bands.jpg": 14925384,
   "retargeting.jpg": 7605981,
@@ -132,7 +132,7 @@ const FILES = {
   "water-bottle.jpg": 7879832,
   "web-design.jpg": 6373045,
   "web-perf.jpg": 14690386,
-  "website-design.jpg": 18105,
+  "website-design.jpg": 326503,
   "wool-coat.jpg": 19768568,
   "yoga-mat.jpg": 36833317,
 };
