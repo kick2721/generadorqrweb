@@ -52,6 +52,7 @@ export default function CategoryPage() {
   const [theme, setTheme] = useState<any>(null);
   const [fonts, setFonts] = useState<string[]>([]);
   const [activeSub, setActiveSub] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [loaded, setLoaded] = useState(false);
   const sectionRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const pillRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
@@ -171,62 +172,93 @@ export default function CategoryPage() {
           </div>
         </div>
 
+        <div className="max-w-4xl mx-auto px-4 pt-3 pb-1">
+          <div className="relative">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: t.muted }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar en el menú..."
+              className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all"
+              style={{ background: t.cardBg, borderColor: t.border, color: t.text }}
+            />
+            {searchQuery ? (
+              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: t.muted }}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            ) : null}
+          </div>
+        </div>
+
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
-          {cat.subcategories.map((sub) => (
-            <div key={sub.id} id={`sub-${sub.id}`} ref={(el) => setRef(sub.id, el)} data-sub-id={sub.id}>
-              <h2 className="text-sm font-semibold mb-3 px-1" style={{ color: t.text }}>
-                {sub.name}
-                <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{sub.items.length} items</span>
-              </h2>
-              <div className="space-y-3">
-                {sub.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex gap-3 p-3 rounded-2xl border transition-all"
-                    style={{
-                      backgroundColor: t.cardBg,
-                      borderColor: t.border,
-                      borderRadius: t.radius,
-                      boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                    }}
-                  >
-                    {item.image ? (
-                      <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden">
-                        <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-                      </div>
-                    ) : null}
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold text-sm" style={{ color: t.text }}>{item.name}</h3>
-                        {item.price ? (
-                          <span className="font-semibold text-xs whitespace-nowrap" style={{ color: t.accent }}>{currency}{item.price}</span>
-                        ) : null}
-                      </div>
-                      {item.desc ? (
-                        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: t.muted }}>{item.desc}</p>
+          {cat.subcategories.map((sub) => {
+            const q = searchQuery.toLowerCase().trim();
+            const matchingItems = q ? sub.items.filter((item) => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q)) : sub.items;
+            if (q && matchingItems.length === 0) return null;
+            return (
+              <div key={sub.id} id={`sub-${sub.id}`} ref={(el) => setRef(sub.id, el)} data-sub-id={sub.id}>
+                <h2 className="text-sm font-semibold mb-3 px-1" style={{ color: t.text }}>
+                  {sub.name}
+                  <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{matchingItems.length} items</span>
+                </h2>
+                <div className="space-y-3">
+                  {(q ? matchingItems : sub.items).map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex gap-3 p-3 rounded-2xl border transition-all"
+                      style={{
+                        backgroundColor: t.cardBg,
+                        borderColor: t.border,
+                        borderRadius: t.radius,
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      {item.image ? (
+                        <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden">
+                          <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                        </div>
                       ) : null}
-                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                        {item.kcal ? (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} kcal</span>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-semibold text-sm" style={{ color: t.text }}>{item.name}</h3>
+                          {item.price ? (
+                            <span className="font-semibold text-xs whitespace-nowrap" style={{ color: t.accent }}>{currency}{item.price}</span>
+                          ) : null}
+                        </div>
+                        {item.desc ? (
+                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: t.muted }}>{item.desc}</p>
                         ) : null}
-                        {item.time ? (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} min</span>
-                        ) : null}
-                        {item.tag ? (
-                          <span
-                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            style={{ backgroundColor: t.accent + "22", color: t.accent }}
-                          >
-                            {item.tag}
-                          </span>
-                        ) : null}
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                          {item.kcal ? (
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} kcal</span>
+                          ) : null}
+                          {item.time ? (
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} min</span>
+                          ) : null}
+                          {item.tag ? (
+                            <span
+                              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                              style={{ backgroundColor: t.accent + "22", color: t.accent }}
+                            >
+                              {item.tag}
+                            </span>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
+            );
+          })}
+          {searchQuery.trim() && cat.subcategories.every((sub) => {
+            const q = searchQuery.toLowerCase().trim();
+            return !sub.items.some((item) => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
+          }) ? (
+            <div className="text-center py-12">
+              <p className="text-sm" style={{ color: t.muted }}>Sin resultados para "{searchQuery.trim()}"</p>
             </div>
-          ))}
+          ) : null}
         </div>
 
         {info && (info.phone || info.address || info.hours || info.mapsUrl) && (
