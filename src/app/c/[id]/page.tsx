@@ -50,6 +50,8 @@ export default function CatalogPage() {
   const [fonts, setFonts] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [activeCat, setActiveCat] = useState<string>("");
+  const [mainSearchQuery, setMainSearchQuery] = useState("");
+  const [modalSearchQuery, setModalSearchQuery] = useState("");
   const [openCatId, setOpenCatId] = useState<string | null>(null);
   const [activeSub, setActiveSub] = useState<string>("");
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -240,8 +242,42 @@ export default function CatalogPage() {
           ) : null}
         </div>
 
+        <div className="relative mb-6">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: t.muted }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          <input
+            value={mainSearchQuery}
+            onChange={(e) => setMainSearchQuery(e.target.value)}
+            placeholder="Buscar en el menú..."
+            className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all"
+            style={{ background: t.cardBg, borderColor: t.border, color: t.text }}
+          />
+          {mainSearchQuery ? (
+            <button onClick={() => setMainSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: t.muted }}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          ) : null}
+        </div>
+
+        {cats.filter((cat) => {
+          if (!mainSearchQuery.trim()) return true;
+          const q = mainSearchQuery.toLowerCase().trim();
+          if (cat.name.toLowerCase().includes(q)) return true;
+          if (cat.desc.toLowerCase().includes(q)) return true;
+          return cat.subcategories.some((sc) => sc.items.some((it) => it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q)));
+        }).length === 0 && mainSearchQuery.trim() ? (
+          <div className="text-center py-16">
+            <p className="text-sm" style={{ color: t.muted }}>Sin resultados para "{mainSearchQuery.trim()}"</p>
+          </div>
+        ) : null}
+
         <div className="grid grid-cols-2 gap-4">
-          {cats.map((cat) => {
+          {cats.filter((cat) => {
+            if (!mainSearchQuery.trim()) return true;
+            const q = mainSearchQuery.toLowerCase().trim();
+            if (cat.name.toLowerCase().includes(q)) return true;
+            if (cat.desc.toLowerCase().includes(q)) return true;
+            return cat.subcategories.some((sc) => sc.items.some((it) => it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q)));
+          }).map((cat) => {
             const totalItems = cat.subcategories.reduce((s, sc) => s + sc.items.length, 0);
             return (
               <div
@@ -407,67 +443,98 @@ export default function CatalogPage() {
             </div>
           </div>
 
+          <div className="max-w-4xl mx-auto px-4 pt-3 pb-1">
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: t.muted }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input
+                value={modalSearchQuery}
+                onChange={(e) => setModalSearchQuery(e.target.value)}
+                placeholder="Buscar en el menú..."
+                className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all"
+                style={{ background: t.cardBg, borderColor: t.border, color: t.text }}
+              />
+              {modalSearchQuery ? (
+                <button onClick={() => setModalSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: t.muted }}>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              ) : null}
+            </div>
+          </div>
+
           <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
-            {openCatObj.subcategories.map((sub) => (
-              <div
-                key={sub.id}
-                id={`modal-sub-${sub.id}`}
-                ref={(el) => setModalSectionRef(sub.id, el)}
-                data-modal-sub-id={sub.id}
-              >
-                <h2 className="text-sm font-semibold mb-3 px-1" style={{ color: t.text }}>
-                  {sub.name}
-                  <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{sub.items.length} items</span>
-                </h2>
-                <div className="space-y-3">
-                  {sub.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex gap-3 p-3 border transition-all"
-                      style={{
-                        backgroundColor: t.cardBg,
-                        borderColor: t.border,
-                        borderRadius: t.radius,
-                        boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                      }}
-                    >
-                      {item.image ? (
-                        <div className="w-20 h-20 shrink-0 overflow-hidden" style={{ borderRadius: "10px" }}>
-                          <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-                        </div>
-                      ) : null}
-                      <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-semibold text-sm" style={{ color: t.text }}>{item.name}</h3>
-                          {item.price ? (
-                            <span className="font-semibold text-xs whitespace-nowrap" style={{ color: t.accent }}>{currency}{item.price}</span>
-                          ) : null}
-                        </div>
-                        {item.desc ? (
-                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: t.muted }}>{item.desc}</p>
+            {openCatObj.subcategories.map((sub) => {
+              const q = modalSearchQuery.toLowerCase().trim();
+              const matchingItems = q ? sub.items.filter((item) => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q)) : sub.items;
+              if (q && matchingItems.length === 0) return null;
+              return (
+                <div
+                  key={sub.id}
+                  id={`modal-sub-${sub.id}`}
+                  ref={(el) => setModalSectionRef(sub.id, el)}
+                  data-modal-sub-id={sub.id}
+                >
+                  <h2 className="text-sm font-semibold mb-3 px-1" style={{ color: t.text }}>
+                    {sub.name}
+                    <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{matchingItems.length} items</span>
+                  </h2>
+                  <div className="space-y-3">
+                    {(q ? matchingItems : sub.items).map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex gap-3 p-3 border transition-all"
+                        style={{
+                          backgroundColor: t.cardBg,
+                          borderColor: t.border,
+                          borderRadius: t.radius,
+                          boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+                        }}
+                      >
+                        {item.image ? (
+                          <div className="w-20 h-20 shrink-0 overflow-hidden" style={{ borderRadius: "10px" }}>
+                            <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                          </div>
                         ) : null}
-                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                          {item.kcal ? (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} kcal</span>
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-semibold text-sm" style={{ color: t.text }}>{item.name}</h3>
+                            {item.price ? (
+                              <span className="font-semibold text-xs whitespace-nowrap" style={{ color: t.accent }}>{currency}{item.price}</span>
+                            ) : null}
+                          </div>
+                          {item.desc ? (
+                            <p className="text-xs mt-0.5 leading-relaxed" style={{ color: t.muted }}>{item.desc}</p>
                           ) : null}
-                          {item.time ? (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} min</span>
-                          ) : null}
-                          {item.tag ? (
-                            <span
-                              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                              style={{ backgroundColor: t.accent + "22", color: t.accent }}
-                            >
-                              {item.tag}
-                            </span>
-                          ) : null}
+                          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                            {item.kcal ? (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} kcal</span>
+                            ) : null}
+                            {item.time ? (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} min</span>
+                            ) : null}
+                            {item.tag ? (
+                              <span
+                                className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                                style={{ backgroundColor: t.accent + "22", color: t.accent }}
+                              >
+                                {item.tag}
+                              </span>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+              );
+            })}
+            {modalSearchQuery.trim() && openCatObj.subcategories.every((sub) => {
+              const q = modalSearchQuery.toLowerCase().trim();
+              return !sub.items.some((item) => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
+            }) ? (
+              <div className="text-center py-12">
+                <p className="text-sm" style={{ color: t.muted }}>Sin resultados para "{modalSearchQuery.trim()}"</p>
               </div>
-            ))}
+            ) : null}
           </div>
         </div>
       )}
