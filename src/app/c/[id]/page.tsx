@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getTheme, themeToCssVars } from "@/lib/catalog-theme";
+import { getT, type Lang } from "@/lib/i18n";
 
 interface CatalogItem {
   id: string;
@@ -194,6 +195,7 @@ export default function CatalogPage() {
   const t = getTheme(theme);
   const cssVars = themeToCssVars(t);
   const currency = info?.currency || "$";
+  const tCat = getT((info?.language as Lang) || "en");
   const openCatObj = openCatId ? cats.find((c) => c.id === openCatId) || null : null;
 
   return (
@@ -233,7 +235,7 @@ export default function CatalogPage() {
       <main className="max-w-4xl mx-auto px-4 py-6">
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: t.text }}>
-            {info?.name ? `${info.name}` : "Our Menu"}
+            {info?.name ? `${info.name}` : tCat.catalogOurMenu}
           </h1>
           {info?.about ? (
             <p className="mt-2 text-sm max-w-xl mx-auto" style={{ color: t.muted }}>
@@ -247,7 +249,7 @@ export default function CatalogPage() {
           <input
             value={mainSearchQuery}
             onChange={(e) => setMainSearchQuery(e.target.value)}
-            placeholder="Buscar en el menú..."
+            placeholder={tCat.catalogSearch}
             className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all"
             style={{ background: t.cardBg, borderColor: t.border, color: t.text }}
           />
@@ -266,7 +268,7 @@ export default function CatalogPage() {
           return cat.subcategories.some((sc) => sc.items.some((it) => it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q)));
         }).length === 0 && mainSearchQuery.trim() ? (
           <div className="text-center py-16">
-            <p className="text-sm" style={{ color: t.muted }}>Sin resultados para "{mainSearchQuery.trim()}"</p>
+            <p className="text-sm" style={{ color: t.muted }}>{tCat.catalogNoResults.replace("{query}", mainSearchQuery.trim())}</p>
           </div>
         ) : null}
 
@@ -315,7 +317,7 @@ export default function CatalogPage() {
                     className="absolute bottom-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full shadow"
                     style={{ backgroundColor: t.accent, color: t.accentText }}
                   >
-                    {totalItems} items
+                    {tCat.catalogItems.replace("{n}", String(totalItems))}
                   </span>
                 </button>
                 <div className="p-3.5 flex items-center justify-between gap-2">
@@ -331,7 +333,7 @@ export default function CatalogPage() {
                     className="text-xs font-medium whitespace-nowrap"
                     style={{ color: t.accent }}
                   >
-                    Open →
+                    {tCat.catalogOpen}
                   </button>
                 </div>
               </div>
@@ -375,7 +377,7 @@ export default function CatalogPage() {
                 className="inline-flex items-center gap-1.5 mt-3 font-medium text-xs tracking-wide uppercase"
                 style={{ color: t.accent }}
               >
-                Open in Google Maps
+                {tCat.catalogOpenMaps}
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </a>
             )}
@@ -407,7 +409,7 @@ export default function CatalogPage() {
               style={{ background: "rgba(255,255,255,0.25)", backdropFilter: "blur(4px)", color: "#fff" }}
               title="Open in dedicated page"
             >
-              Full page →
+              {tCat.catalogFullPage}
             </Link>
             <div className="absolute bottom-4 left-4">
               <h1 className="text-xl sm:text-2xl font-bold text-white">{openCatObj.name}</h1>
@@ -449,7 +451,7 @@ export default function CatalogPage() {
               <input
                 value={modalSearchQuery}
                 onChange={(e) => setModalSearchQuery(e.target.value)}
-                placeholder="Buscar en el menú..."
+                placeholder={tCat.catalogSearch}
                 className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all"
                 style={{ background: t.cardBg, borderColor: t.border, color: t.text }}
               />
@@ -475,7 +477,7 @@ export default function CatalogPage() {
                 >
                   <h2 className="text-sm font-semibold mb-3 px-1" style={{ color: t.text }}>
                     {sub.name}
-                    <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{matchingItems.length} items</span>
+                    <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{tCat.catalogItems.replace("{n}", String(matchingItems.length))}</span>
                   </h2>
                   <div className="space-y-3">
                     {(q ? matchingItems : sub.items).map((item) => (
@@ -532,7 +534,7 @@ export default function CatalogPage() {
               return !sub.items.some((item) => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
             }) ? (
               <div className="text-center py-12">
-                <p className="text-sm" style={{ color: t.muted }}>Sin resultados para "{modalSearchQuery.trim()}"</p>
+                <p className="text-sm" style={{ color: t.muted }}>{tCat.catalogNoResults.replace("{query}", modalSearchQuery.trim())}</p>
               </div>
             ) : null}
           </div>

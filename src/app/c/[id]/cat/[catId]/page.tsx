@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getTheme, themeToCssVars } from "@/lib/catalog-theme";
+import { getT, type Lang } from "@/lib/i18n";
 
 interface Item {
   id: string;
@@ -113,11 +114,13 @@ export default function CategoryPage() {
     );
   }
 
+  const tCat = getT((info?.language as Lang) || "en");
+
   if (!cat) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "#f5f0eb" }}>
-        <p className="text-sm" style={{ color: "#8a7a64" }}>Category not found</p>
-        <Link href={`/c/${qrId}`} className="text-xs font-medium" style={{ color: "#c97b5e" }}>← Back to menu</Link>
+        <p className="text-sm" style={{ color: "#8a7a64" }}>{tCat.catalogCategoryNotFound}</p>
+        <Link href={`/c/${qrId}`} className="text-xs font-medium" style={{ color: "#c97b5e" }}>{tCat.catalogBackToMenu}</Link>
       </div>
     );
   }
@@ -178,7 +181,7 @@ export default function CategoryPage() {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar en el menú..."
+              placeholder={tCat.catalogSearch}
               className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all"
               style={{ background: t.cardBg, borderColor: t.border, color: t.text }}
             />
@@ -199,7 +202,7 @@ export default function CategoryPage() {
               <div key={sub.id} id={`sub-${sub.id}`} ref={(el) => setRef(sub.id, el)} data-sub-id={sub.id}>
                 <h2 className="text-sm font-semibold mb-3 px-1" style={{ color: t.text }}>
                   {sub.name}
-                  <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{matchingItems.length} items</span>
+                  <span className="ml-2 text-xs font-normal" style={{ color: t.muted }}>{tCat.catalogItems.replace("{n}", String(matchingItems.length))}</span>
                 </h2>
                 <div className="space-y-3">
                   {(q ? matchingItems : sub.items).map((item) => (
@@ -256,7 +259,7 @@ export default function CategoryPage() {
             return !sub.items.some((item) => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
           }) ? (
             <div className="text-center py-12">
-              <p className="text-sm" style={{ color: t.muted }}>Sin resultados para "{searchQuery.trim()}"</p>
+              <p className="text-sm" style={{ color: t.muted }}>{tCat.catalogNoResults.replace("{query}", searchQuery.trim())}</p>
             </div>
           ) : null}
         </div>
@@ -292,7 +295,7 @@ export default function CategoryPage() {
               )}
               {info.mapsUrl && (
                 <a href={info.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 font-medium text-xs tracking-wide uppercase" style={{ color: t.accent }}>
-                  Open in Google Maps
+                  {tCat.catalogOpenMaps}
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </a>
               )}
