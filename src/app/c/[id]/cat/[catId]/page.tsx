@@ -233,10 +233,10 @@ export default function CategoryPage() {
                         ) : null}
                         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                           {item.kcal ? (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} kcal</span>
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} {tCat.catalogKcal}</span>
                           ) : null}
                           {item.time ? (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} min</span>
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} {tCat.catalogMin}</span>
                           ) : null}
                           {item.tag ? (
                             <span

@@ -209,7 +209,7 @@ export default function CatalogPage() {
             {(info?.logo) ? (
               <img
                 src={info.logo}
-                alt={info?.name || "Logo"}
+                alt={info?.name || tCat.catalogOurMenu}
                 loading="lazy"
                 decoding="async"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
@@ -220,7 +220,7 @@ export default function CatalogPage() {
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white text-sm font-bold"
                 style={{ background: t.accent }}
               >
-                {(info?.name || "M").charAt(0).toUpperCase()}
+                {(info?.name || tCat.catalogOurMenu).charAt(0).toUpperCase()}
               </div>
             )}
             {info?.name ? (
@@ -303,7 +303,7 @@ export default function CatalogPage() {
                   }}
                   className="relative overflow-hidden block aspect-[4/3] w-full"
                   style={{ cursor: "zoom-in" }}
-                  aria-label={`Open ${cat.name}`}
+                  aria-label={`${tCat.catalogOpen} ${cat.name}`}
                 >
                   {cat.image ? (
                     <img src={cat.image} alt={cat.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -399,7 +399,7 @@ export default function CatalogPage() {
               onClick={closeCat}
               className="absolute top-4 left-4 w-9 h-9 rounded-full flex items-center justify-center transition-colors"
               style={{ background: "rgba(255,255,255,0.25)", backdropFilter: "blur(4px)" }}
-              aria-label="Back"
+              aria-label={tCat.catalogBack}
             >
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
@@ -407,7 +407,7 @@ export default function CatalogPage() {
               href={`/c/${qrId}/cat/${openCatObj.id}`}
               className="absolute top-4 right-4 text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
               style={{ background: "rgba(255,255,255,0.25)", backdropFilter: "blur(4px)", color: "#fff" }}
-              title="Open in dedicated page"
+              title={tCat.catalogOpenPage}
             >
               {tCat.catalogFullPage}
             </Link>
@@ -508,10 +508,10 @@ export default function CatalogPage() {
                           ) : null}
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                             {item.kcal ? (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} kcal</span>
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.kcal} {tCat.catalogKcal}</span>
                             ) : null}
                             {item.time ? (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} min</span>
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: t.bg, color: t.muted }}>{item.time} {tCat.catalogMin}</span>
                             ) : null}
                             {item.tag ? (
                               <span

@@ -110,7 +110,7 @@ useEffect(() => {
         setLoaded(true);
       })
       .catch(() => {
-        setError("Failed to load catalog");
+        setError(t.editorErrorLoad);
         setLoaded(true);
       });
   }, [qrId]);
@@ -132,7 +132,7 @@ useEffect(() => {
       if (!res.ok) throw new Error("Save failed");
       router.push("/dashboard");
     } catch {
-      setError("Failed to save");
+      setError(t.editorErrorSave);
     } finally {
       setSaving(false);
     }
@@ -207,7 +207,7 @@ useEffect(() => {
       const form = new FormData();
       form.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: form });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error || t.editorErrorUpload); }
       const { url } = await res.json();
       setCategories((prev) => {
         const next = [...prev];
@@ -215,7 +215,7 @@ useEffect(() => {
         return next;
       });
     } catch (e: any) {
-      setError(e.message || "Upload failed");
+      setError(e.message || t.editorErrorUpload);
     } finally {
       setUploading(null);
     }
@@ -228,7 +228,7 @@ useEffect(() => {
       const form = new FormData();
       form.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: form });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error || t.editorErrorUpload); }
       const { url } = await res.json();
       setCategories((prev) => {
         const next = structuredClone(prev) as Category[];
@@ -236,7 +236,7 @@ useEffect(() => {
         return next;
       });
     } catch (e: any) {
-      setError(e.message || "Upload failed");
+      setError(e.message || t.editorErrorUpload);
     } finally {
       setUploading(null);
     }
@@ -244,8 +244,8 @@ useEffect(() => {
 
   if (!loaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-sm animate-pulse bg-neutral-50 text-neutral-400">
-        Loading...
+        <div className="min-h-screen flex items-center justify-center text-sm animate-pulse bg-neutral-50 text-neutral-400">
+        {t.editorLoading}
       </div>
     );
   }
@@ -285,11 +285,11 @@ useEffect(() => {
       {/* HEADER */}
       <header className="shrink-0 h-12 flex items-center justify-between px-4 bg-white border-b border-neutral-200 z-20">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.push("/catalog/new")} className="flex items-center gap-1 px-3 py-1.5 text-sm text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition" title="Back">
+          <button onClick={() => router.push("/catalog/new")} className="flex items-center gap-1 px-3 py-1.5 text-sm text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition" title={t.editorBack}>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Back
+            {t.editorBack}
           </button>
-          <h1 className="font-semibold text-sm text-neutral-800 truncate max-w-[200px]">{info?.name || "Catalog"}</h1>
+          <h1 className="font-semibold text-sm text-neutral-800 truncate max-w-[200px]">{info?.name || t.catalogOurMenu}</h1>
         </div>
         <div className="flex items-center gap-2">
           {error && <span className="text-xs text-red-500 mr-1">{error}</span>}
@@ -301,7 +301,7 @@ useEffect(() => {
               className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition"
             >
               <span className="w-3.5 h-3.5 rounded-sm border border-neutral-300" style={{ background: theme?.accent || "#c97b5e" }} />
-              Theme
+              {t.editorTheme}
               <svg className="w-3 h-3 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </button>
             {showThemePopover && (
@@ -329,7 +329,7 @@ useEffect(() => {
           </div>
 
           <button onClick={save} disabled={saving} className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 transition disabled:opacity-50">
-            {saving ? "..." : "Save"}
+            {saving ? t.editorSaving : t.editorSave}
           </button>
         </div>
       </header>
@@ -361,7 +361,7 @@ useEffect(() => {
                           </div>
                         )}
                         {info.logo && (
-                          <button onClick={() => setInfo({ ...info, logo: "" })} className="text-[10px] text-red-400 hover:text-red-600 p-0.5" title="Remove logo">✕</button>
+                          <button onClick={() => setInfo({ ...info, logo: "" })} className="text-[10px] text-red-400 hover:text-red-600 p-0.5" title={t.editorRemove}>✕</button>
                         )}
                       </div>
                       <div className="flex-1 flex items-center gap-1.5">
@@ -374,8 +374,8 @@ useEffect(() => {
                         {plan === "pro" && (
                           <label title="Upload from device" className={`shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-700 transition border border-neutral-200 ${uploading === "logo" ? "pointer-events-none opacity-60" : ""}`}>
                             {uploading === "logo" ? (
-                              <span className="flex items-center gap-1.5"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Subiendo...</span>
-                            ) : "+ Foto"}
+                              <span className="flex items-center gap-1.5"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>{t.editorUploading}</span>
+                            ) : t.editorUploadPhoto}
                             <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
                               const f = e.target.files?.[0];
                               if (!f) return;
@@ -383,11 +383,11 @@ useEffect(() => {
                               try {
                                 const form = new FormData(); form.append("file", f);
                                 const res = await fetch("/api/upload", { method: "POST", body: form });
-                                if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
+                                if (!res.ok) { const err = await res.json(); throw new Error(err.error || t.editorErrorUpload); }
                                 const { url } = await res.json();
                                 setInfo({ ...info, logo: url });
                                 setTheme(theme ? { ...theme, showLogo: true } : null);
-                              } catch (e: any) { setError(e.message || "Logo upload failed"); }
+                              } catch (e: any) { setError(e.message || t.editorErrorUpload); }
                               finally { setUploading(null); }
                             }} />
                           </label>
@@ -407,7 +407,7 @@ useEffect(() => {
                         />
                       </div>
                       <div className="w-full sm:w-28">
-                        <label className="text-[10px] text-neutral-400 font-medium mb-1 block">Moneda</label>
+                        <label className="text-[10px] text-neutral-400 font-medium mb-1 block">{t.editorCurrency}</label>
                         <select
                           value={info.currency || "$"}
                           onChange={(e) => setInfo({ ...info, currency: e.target.value })}
@@ -427,7 +427,7 @@ useEffect(() => {
                         </select>
                       </div>
                       <div className="w-full sm:w-40">
-                        <label className="text-[10px] text-neutral-400 font-medium mb-1 block">Teléfono</label>
+                        <label className="text-[10px] text-neutral-400 font-medium mb-1 block">{t.editorPhone}</label>
                         <input
                           value={info.phone || ""}
                           onChange={(e) => setInfo({ ...info, phone: e.target.value })}
@@ -439,7 +439,7 @@ useEffect(() => {
 
                     {/* Tip + Expand */}
                     <div className="space-y-1">
-                      <p className="text-[10px] text-neutral-400 leading-relaxed">Consejo: haz clic derecho en cualquier imagen web → "Copiar dirección de imagen" para obtener una URL directa</p>
+                      <p className="text-[10px] text-neutral-400 leading-relaxed">{t.editorTipImageUrl}</p>
                     </div>
 
                     <button
@@ -447,27 +447,27 @@ useEffect(() => {
                       className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 hover:text-neutral-700 transition px-3 py-2 rounded-lg bg-neutral-50 border border-neutral-200 hover:bg-neutral-100 w-full"
                     >
                       <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${showBusinessExtra ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                      {showBusinessExtra ? "Ocultar detalles" : "+ Dirección, horario, mapa, descripción..."}
+                      {showBusinessExtra ? t.editorHideDetails : t.editorShowDetails}
                     </button>
                     {showBusinessExtra && (
                       <div className="space-y-3 pt-1">
                         <div className="flex flex-col sm:flex-row gap-2">
                           <div className="flex-1">
-                            <label className="text-[10px] text-neutral-400 font-medium mb-1 block">Dirección</label>
+                            <label className="text-[10px] text-neutral-400 font-medium mb-1 block">{t.editorAddress}</label>
                             <input value={info.address || ""} onChange={(e) => setInfo({ ...info, address: e.target.value })} placeholder="Av. Principal 123, Ciudad" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400/20 transition text-neutral-600 placeholder:text-neutral-400" />
                           </div>
                           <div className="w-full sm:w-48">
-                            <label className="text-[10px] text-neutral-400 font-medium mb-1 block">Horario</label>
+                            <label className="text-[10px] text-neutral-400 font-medium mb-1 block">{t.editorHours}</label>
                             <input value={info.hours || ""} onChange={(e) => setInfo({ ...info, hours: e.target.value })} placeholder="Lun-Dom 12:00-23:00" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400/20 transition text-neutral-600 placeholder:text-neutral-400" />
                           </div>
                         </div>
                         <div>
-                          <label className="text-[10px] text-neutral-400 font-medium mb-1 block">Google Maps</label>
+                          <label className="text-[10px] text-neutral-400 font-medium mb-1 block">{t.editorGoogleMaps}</label>
                           <input value={info.mapsUrl || ""} onChange={(e) => setInfo({ ...info, mapsUrl: e.target.value })} placeholder="https://maps.app.goo.gl/..." className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400/20 transition text-neutral-600 placeholder:text-neutral-400" />
                         </div>
                         <div>
-                          <label className="text-[10px] text-neutral-400 font-medium mb-1 block">Descripción</label>
-                          <textarea value={info.about || ""} onChange={(e) => setInfo({ ...info, about: e.target.value })} rows={2} placeholder="Describe tu negocio — se mostrará en el encabezado del menú" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400/20 transition text-neutral-600 placeholder:text-neutral-400 resize-none" />
+                          <label className="text-[10px] text-neutral-400 font-medium mb-1 block">{t.editorDescription}</label>
+                          <textarea value={info.about || ""} onChange={(e) => setInfo({ ...info, about: e.target.value })} rows={2} placeholder={t.editorAboutPlaceholder} className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400/20 transition text-neutral-600 placeholder:text-neutral-400 resize-none" />
                         </div>
                       </div>
                     )}
@@ -477,7 +477,7 @@ useEffect(() => {
                 {/* CATEGORIES */}
                 <div className="flex items-center justify-between">
                   <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                    {categories.length} {categories.length === 1 ? "category" : "categories"}
+                    {t.editorCategories.replace("{n}", String(categories.length))}
                   </h2>
                   <button
                     onClick={() => {
@@ -487,7 +487,7 @@ useEffect(() => {
                     }}
                     className="text-[11px] font-medium px-3 py-1 rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 transition active:scale-[0.97]"
                   >
-                    + Add category
+                    {t.editorAddCategory}
                   </button>
                 </div>
 
@@ -505,11 +505,11 @@ useEffect(() => {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold text-neutral-800 truncate">{cat.name || <span className="text-neutral-400 font-normal">Category name</span>}</div>
+                          <div className="text-sm font-semibold text-neutral-800 truncate">{cat.name || <span className="text-neutral-400 font-normal">{t.editorCategoryName}</span>}</div>
                           {cat.desc && <div className="text-[11px] text-neutral-400 truncate mt-0.5">{cat.desc}</div>}
                         </div>
                         <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                          <span className="text-[10px] text-neutral-400 whitespace-nowrap">{totalItems} items</span>
+                          <span className="text-[10px] text-neutral-400 whitespace-nowrap">{t.editorItems.replace("{n}", String(totalItems))}</span>
                           <button onClick={(e) => { e.stopPropagation(); setCategories((prev) => prev.filter((_, i) => i !== catIdx)); if (expandedCat === cat.id) setExpandedCat(null); }} className="text-red-400 hover:text-red-600 transition">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                           </button>
@@ -525,19 +525,19 @@ useEffect(() => {
                             <input
                               value={cat.image}
                               onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: e.target.value }; setCategories(next); }}
-                              placeholder="Cover image URL (.jpg, .png)..."
+                              placeholder={t.editorCoverImageUrl}
                               className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 min-w-[120px]"
                             />
                             {plan === "pro" && (
                               <label title="Upload from device" className={`shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium ${uploading === `cat-${catIdx}` ? "pointer-events-none opacity-60" : ""}`} onClick={(e) => e.stopPropagation()}>
                                 {uploading === `cat-${catIdx}` ? (
-                                  <span className="flex items-center gap-1"><svg className="animate-spin w-2.5 h-2.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Subiendo...</span>
-                                ) : "+ Foto"}
+                                  <span className="flex items-center gap-1"><svg className="animate-spin w-2.5 h-2.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>{t.editorUploading}</span>
+                                ) : t.editorUploadPhoto}
                                 <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />
                               </label>
                             )}
                             {cat.image && (
-                              <button onClick={() => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: "" }; setCategories(next); }} className="text-[10px] text-red-400 hover:text-red-600">Remove</button>
+                              <button onClick={() => { const next = [...categories]; next[catIdx] = { ...next[catIdx], image: "" }; setCategories(next); }} className="text-[10px] text-red-400 hover:text-red-600">{t.editorRemove}</button>
                             )}
                           </div>
 
@@ -546,13 +546,13 @@ useEffect(() => {
                             <input
                               value={cat.name}
                               onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], name: e.target.value }; setCategories(next); }}
-                              placeholder="Category name"
+                              placeholder={t.editorCategoryName}
                               className="w-full text-sm font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-800"
                             />
                             <input
                               value={cat.desc}
                               onChange={(e) => { const next = [...categories]; next[catIdx] = { ...next[catIdx], desc: e.target.value }; setCategories(next); }}
-                              placeholder="Short description"
+                              placeholder={t.editorShortDesc}
                               className="w-full text-[11px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-400"
                             />
                           </div>
@@ -566,11 +566,11 @@ useEffect(() => {
                                   <input
                                     value={sub.name}
                                     onChange={(e) => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].name = e.target.value; setCategories(next); }}
-                                    placeholder="Section name (e.g. Burgers, Drinks...)"
+                                    placeholder={t.editorSectionName}
                                     className="flex-1 text-xs font-semibold bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-0.5 text-neutral-700"
                                   />
                                   <span className="text-[10px] text-neutral-400">{sub.items.length}</span>
-                                  <button onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.push(newItem()); setCategories(next); }} className="text-[10px] font-medium px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shrink-0">+ Item</button>
+                                  <button onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.push(newItem()); setCategories(next); }} className="text-[10px] font-medium px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shrink-0">{t.editorAddItem}</button>
                                   <button onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories.splice(subIdx, 1); setCategories(next); }} className="text-red-400 hover:text-red-600 shrink-0">
                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                   </button>
@@ -582,8 +582,8 @@ useEffect(() => {
                                     const itemKey = `${catIdx}-${subIdx}-${itemIdx}`;
                                     return (
                                       <div key={item.id} className="group flex items-center gap-2 py-0.5">
-                                        <span className="flex-1 truncate text-[11px] font-medium text-neutral-800" title={item.name || "Untitled"}>
-                                          {item.name || <span className="text-neutral-400 italic">Untitled item</span>}
+                                        <span className="flex-1 truncate text-[11px] font-medium text-neutral-800" title={item.name || t.editorUntitledItem}>
+                                          {item.name || <span className="text-neutral-400 italic">{t.editorUntitledItem}</span>}
                                         </span>
                                         {item.price && (
                                           <span className="text-[11px] font-semibold text-neutral-600 whitespace-nowrap">
@@ -593,14 +593,14 @@ useEffect(() => {
                                         <button
                                           onClick={() => openItemEdit(catIdx, subIdx, itemIdx)}
                                           className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shrink-0"
-                                          title="Edit item"
+                                          title={t.editorEditItem}
                                         >
-                                          Edit
+                                          {t.editorEdit}
                                         </button>
                                         <button
                                           onClick={() => { const next = structuredClone(categories) as Category[]; next[catIdx].subcategories[subIdx].items.splice(itemIdx, 1); setCategories(next); }}
                                           className="text-red-300 hover:text-red-500 shrink-0 opacity-0 group-hover:opacity-100 transition"
-                                          title="Delete"
+                                          title={t.editorDelete}
                                         >
                                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                         </button>
@@ -608,13 +608,13 @@ useEffect(() => {
                                     );
                                   })}
                                   {sub.items.length === 0 && (
-                                    <p className="text-[10px] text-neutral-400 py-2">No items yet. Click &quot;+ Item&quot; above.</p>
+                                    <p className="text-[10px] text-neutral-400 py-2">{t.editorNoItems}</p>
                                   )}
                                 </div>
                               </div>
                             ))}
                             {cat.subcategories.length === 0 && (
-                              <p className="text-[11px] text-neutral-400 py-3">No sections yet.</p>
+                              <p className="text-[11px] text-neutral-400 py-3">{t.editorNoSections}</p>
                             )}
                             <button
                               onClick={() => {
@@ -625,7 +625,7 @@ useEffect(() => {
                               }}
                               className="text-[10px] font-medium px-2 py-1 rounded bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                             >
-                              + Add section
+                              {t.editorAddSection}
                             </button>
                           </div>
                         </div>
@@ -641,12 +641,12 @@ useEffect(() => {
             <aside className="w-[40%] shrink-0 overflow-hidden border-l border-neutral-200 bg-white flex-col hidden lg:flex">
               <div className="shrink-0 h-10 flex items-center justify-between px-3 border-b border-neutral-200 bg-neutral-50">
                 <div className="flex items-center gap-1">
-                  <button onClick={() => setPreviewDevice("mobile")} className={`text-[10px] px-2 py-1 rounded ${previewDevice === "mobile" ? "bg-neutral-200 text-neutral-800 font-medium" : "text-neutral-400 hover:text-neutral-600"}`}>Mobile</button>
-                  <button onClick={() => setPreviewDevice("desktop")} className={`text-[10px] px-2 py-1 rounded ${previewDevice === "desktop" ? "bg-neutral-200 text-neutral-800 font-medium" : "text-neutral-400 hover:text-neutral-600"}`}>Desktop</button>
+                  <button onClick={() => setPreviewDevice("mobile")} className={`text-[10px] px-2 py-1 rounded ${previewDevice === "mobile" ? "bg-neutral-200 text-neutral-800 font-medium" : "text-neutral-400 hover:text-neutral-600"}`}>{t.editorMobile}</button>
+                  <button onClick={() => setPreviewDevice("desktop")} className={`text-[10px] px-2 py-1 rounded ${previewDevice === "desktop" ? "bg-neutral-200 text-neutral-800 font-medium" : "text-neutral-400 hover:text-neutral-600"}`}>{t.editorDesktop}</button>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => sendPreview()} className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title="Refresh">↻</button>
-                  <a href={`/c/${qrId}`} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title="Open in new tab">↗</a>
+                  <button onClick={() => sendPreview()} className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title={t.editorRefresh}>↻</button>
+                  <a href={`/c/${qrId}`} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200" title={t.editorOpenNewTab}>↗</a>
                 </div>
               </div>
               <div className="flex-1 overflow-hidden bg-neutral-100 flex items-stretch justify-center" style={{ overflowX: "hidden" }}>
@@ -660,7 +660,7 @@ useEffect(() => {
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 pb-8 px-4 bg-black/40">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-full overflow-y-auto p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-sm text-neutral-800">Edit item</h3>
+              <h3 className="font-semibold text-sm text-neutral-800">{t.editorEditItem}</h3>
               <button onClick={() => setEditingItem(null)} className="text-neutral-400 hover:text-neutral-600">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
@@ -668,11 +668,11 @@ useEffect(() => {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 space-y-1">
-                <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Name</label>
-                <input value={editingItem.data.name} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, name: e.target.value } })} placeholder="Item name" className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-800" />
+                <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{t.editorName}</label>
+                <input value={editingItem.data.name} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, name: e.target.value } })} placeholder={t.editorName} className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-800" />
               </div>
               <div className="sm:w-28 space-y-1">
-                <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Price</label>
+                <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{t.editorPrice}</label>
                 <div className="flex items-center gap-1">
                   <span className="text-sm text-neutral-500">{info?.currency || "$"}</span>
                   <input value={editingItem.data.price} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, price: e.target.value } })} placeholder="0.00" className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-800" />
@@ -681,19 +681,19 @@ useEffect(() => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Description</label>
-              <textarea value={editingItem.data.desc} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, desc: e.target.value } })} placeholder="Describe the item..." rows={3} className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700 resize-none" />
+              <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{t.editorDescription}</label>
+              <textarea value={editingItem.data.desc} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, desc: e.target.value } })} placeholder={t.editorDescription} rows={3} className="w-full text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700 resize-none" />
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Image URL</label>
+              <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{t.editorImageUrl}</label>
               <div className="flex items-center gap-2">
-                <input value={editingItem.data.image} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, image: e.target.value } })} placeholder="Direct image URL (.jpg, .png, .webp)" className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700" />
+                <input value={editingItem.data.image} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, image: e.target.value } })} placeholder={t.editorImageUrl} className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700" />
                 {plan === "pro" && (
                   <label title="Upload from device" className={`shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 ${uploading === "item-modal" ? "pointer-events-none opacity-60" : ""}`}>
                     {uploading === "item-modal" ? (
-                      <span className="flex items-center gap-1.5"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Subiendo...</span>
-                    ) : "+ Foto"}
+                      <span className="flex items-center gap-1.5"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>{t.editorUploading}</span>
+                    ) : t.editorUploadPhoto}
                     <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
                       const f = e.target.files?.[0];
                       if (!f) return;
@@ -701,10 +701,10 @@ useEffect(() => {
                       try {
                         const form = new FormData(); form.append("file", f);
                         const res = await fetch("/api/upload", { method: "POST", body: form });
-                        if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Upload failed"); }
+                        if (!res.ok) { const err = await res.json(); throw new Error(err.error || t.editorErrorUpload); }
                         const { url } = await res.json();
                         setEditingItem({ ...editingItem, data: { ...editingItem.data, image: url } });
-                      } catch (e: any) { setError(e.message || "Upload failed"); }
+                      } catch (e: any) { setError(e.message || t.editorErrorUpload); }
                       finally { setUploading(null); }
                     }} />
                   </label>
@@ -713,24 +713,24 @@ useEffect(() => {
             </div>
 
             <div className="border-t border-neutral-100 pt-3 space-y-2">
-              <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">Optional fields</p>
+              <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">{t.editorOptionalFields}</p>
               <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-600">
                 <input type="checkbox" checked={editingItem.useTag} onChange={(e) => setEditingItem({ ...editingItem, useTag: e.target.checked })} className="rounded border-neutral-300 text-neutral-800" />
-                Tag (e.g. Popular, Chef's Special, Vegan...)
+                {t.editorTag}
               </label>
               {editingItem.useTag && (
                 <input value={editingItem.data.tag || ""} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, tag: e.target.value } })} placeholder="e.g. Signature" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 outline-none focus:border-neutral-400 text-neutral-700" />
               )}
               <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-600">
                 <input type="checkbox" checked={editingItem.useKcal} onChange={(e) => setEditingItem({ ...editingItem, useKcal: e.target.checked })} className="rounded border-neutral-300 text-neutral-800" />
-                Calories (kcal)
+                {t.editorCalories}
               </label>
               {editingItem.useKcal && (
                 <input value={editingItem.data.kcal || ""} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, kcal: e.target.value } })} placeholder="e.g. 350" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 outline-none focus:border-neutral-400 text-neutral-700" />
               )}
               <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-600">
                 <input type="checkbox" checked={editingItem.useTime} onChange={(e) => setEditingItem({ ...editingItem, useTime: e.target.checked })} className="rounded border-neutral-300 text-neutral-800" />
-                Preparation time (min)
+                {t.editorPrepTime}
               </label>
               {editingItem.useTime && (
                 <input value={editingItem.data.time || ""} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, time: e.target.value } })} placeholder="e.g. 15" className="w-full text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-1.5 outline-none focus:border-neutral-400 text-neutral-700" />
@@ -738,8 +738,8 @@ useEffect(() => {
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <button onClick={() => setEditingItem(null)} className="px-4 py-2 text-xs font-medium rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200">Cancel</button>
-              <button onClick={saveItemEdit} className="px-4 py-2 text-xs font-semibold rounded-lg bg-neutral-900 text-white hover:bg-neutral-800">Save</button>
+              <button onClick={() => setEditingItem(null)} className="px-4 py-2 text-xs font-medium rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200">{t.editorCancel}</button>
+              <button onClick={saveItemEdit} className="px-4 py-2 text-xs font-semibold rounded-lg bg-neutral-900 text-white hover:bg-neutral-800">{t.editorSave}</button>
             </div>
           </div>
         </div>
