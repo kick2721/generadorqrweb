@@ -372,8 +372,10 @@ useEffect(() => {
                           className="flex-1 text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400/20 transition text-neutral-600 placeholder:text-neutral-400"
                         />
                         {plan === "pro" && (
-                          <label title="Upload from device" className="shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-700 transition border border-neutral-200">
-                            + Foto
+                          <label title="Upload from device" className={`shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-700 transition border border-neutral-200 ${uploading === "logo" ? "pointer-events-none opacity-60" : ""}`}>
+                            {uploading === "logo" ? (
+                              <span className="flex items-center gap-1.5"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Subiendo...</span>
+                            ) : "+ Foto"}
                             <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
                               const f = e.target.files?.[0];
                               if (!f) return;
@@ -527,8 +529,10 @@ useEffect(() => {
                               className="flex-1 text-[10px] bg-transparent outline-none border-b border-transparent hover:border-neutral-200 focus:border-neutral-400 py-1 text-neutral-600 min-w-[120px]"
                             />
                             {plan === "pro" && (
-                              <label title="Upload from device" className="shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium" onClick={(e) => e.stopPropagation()}>
-                                + Foto
+                              <label title="Upload from device" className={`shrink-0 cursor-pointer text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-500 hover:bg-neutral-200 font-medium ${uploading === `cat-${catIdx}` ? "pointer-events-none opacity-60" : ""}`} onClick={(e) => e.stopPropagation()}>
+                                {uploading === `cat-${catIdx}` ? (
+                                  <span className="flex items-center gap-1"><svg className="animate-spin w-2.5 h-2.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Subiendo...</span>
+                                ) : "+ Foto"}
                                 <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, catIdx); }} />
                               </label>
                             )}
@@ -686,8 +690,10 @@ useEffect(() => {
               <div className="flex items-center gap-2">
                 <input value={editingItem.data.image} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, image: e.target.value } })} placeholder="Direct image URL (.jpg, .png, .webp)" className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 outline-none focus:border-neutral-400 text-neutral-700" />
                 {plan === "pro" && (
-                  <label title="Upload from device" className="shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200">
-                    + Foto
+                  <label title="Upload from device" className={`shrink-0 cursor-pointer text-xs font-medium px-3 py-2 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 ${uploading === "item-modal" ? "pointer-events-none opacity-60" : ""}`}>
+                    {uploading === "item-modal" ? (
+                      <span className="flex items-center gap-1.5"><svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Subiendo...</span>
+                    ) : "+ Foto"}
                     <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" className="hidden" onChange={async (e) => {
                       const f = e.target.files?.[0];
                       if (!f) return;
